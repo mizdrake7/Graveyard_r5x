@@ -1261,6 +1261,8 @@ void shmem_set_file(struct vm_area_struct *vma, struct file *file);
 
 void shmem_set_file(struct vm_area_struct *vma, struct file *file);
 
+void shmem_set_file(struct vm_area_struct *vma, struct file *file);
+
 extern bool can_do_mlock(void);
 extern int user_shm_lock(size_t, struct user_struct *);
 extern void user_shm_unlock(size_t, struct user_struct *);
