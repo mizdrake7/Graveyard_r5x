@@ -60,6 +60,9 @@ struct bpf_prog_aux;
  */
 #define BPF_SYM_ELF_TYPE	't'
 
+/* unused opcode to mark special call to bpf_tail_call() helper */
+#define BPF_TAIL_CALL	0xf0
+
 /* BPF program can access up to 512 bytes of stack space. */
 #define MAX_BPF_STACK	512
 
