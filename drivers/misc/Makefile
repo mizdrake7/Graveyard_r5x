@@ -92,6 +92,7 @@ $(obj)/lkdtm_rodata_objcopy.o: $(obj)/lkdtm_rodata.o FORCE
 obj-$(CONFIG_OKL4_USER_VIPC)    += okl4-vipc.o
 obj-$(CONFIG_OKL4_GUEST)        += okl4-panic.o
 obj-$(CONFIG_OKL4_LINK_SHBUF)    += okl4-link-shbuf.o
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
 # Mengmeng.Wang@SRC.System, 2018/08/28, Add for oiface
 obj-y				+= schedx.o
