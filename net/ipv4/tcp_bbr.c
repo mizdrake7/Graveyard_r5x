@@ -182,15 +182,6 @@ static const u32 bbr_lt_bw_diff = 4000 / 8;
 /* If we estimate we're policed, use lt_bw for this many round trips: */
 static const u32 bbr_lt_bw_max_rtts = 48;
 
-/* Gain factor for adding extra_acked to target cwnd: */
-static const int bbr_extra_acked_gain = BBR_UNIT;
-/* Window length of extra_acked window. */
-static const u32 bbr_extra_acked_win_rtts = 5;
-/* Max allowed val for ack_epoch_acked, after which sampling epoch is reset */
-static const u32 bbr_ack_epoch_acked_reset_thresh = 1U << 20;
-/* Time period for clamping cwnd increment due to ack aggregation */
-static const u32 bbr_extra_acked_max_us = 100 * 1000;
-
 static void bbr_check_probe_rtt_done(struct sock *sk);
 
 /* Do we estimate that STARTUP filled the pipe? */
