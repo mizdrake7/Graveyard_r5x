@@ -1483,7 +1483,7 @@ static ssize_t debugfs_misr_setup(struct file *file,
 		return -ENODEV;
 
 	if (*ppos)
-		return 0;
+		return -EINVAL;
 
 	buf = kzalloc(MISR_BUFF_SIZE, GFP_KERNEL);
 	if (!buf)
@@ -1612,7 +1612,7 @@ static ssize_t debugfs_esd_trigger_check(struct file *file,
 		return -ENODEV;
 
 	if (*ppos)
-		return 0;
+		return -EINVAL;
 
 	if (user_len > sizeof(u32))
 		return -EINVAL;
@@ -1683,7 +1683,7 @@ static ssize_t debugfs_alter_esd_check_mode(struct file *file,
 		return -ENODEV;
 
 	if (*ppos)
-		return 0;
+		return -EINVAL;
 
 	buf = kzalloc(len + 1, GFP_KERNEL);
 	if (ZERO_OR_NULL_PTR(buf))
@@ -1707,8 +1707,11 @@ static ssize_t debugfs_alter_esd_check_mode(struct file *file,
 		goto error;
 	}
 
-	if (!esd_config->esd_enabled)
+	if (!esd_config->esd_enabled) {
+		pr_warn("esd check didn't enable\n");
+		rc = -EINVAL;
 		goto error;
+	}
 
 	if (!strcmp(buf, "te_signal_check\n")) {
 		pr_info("ESD check is switched to TE mode by user\n");
