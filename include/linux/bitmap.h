@@ -26,8 +26,8 @@
  * The available bitmap operations and their rough meaning in the
  * case that the bitmap is a single unsigned long are thus:
  *
- * Note that nbits should be always a compile time evaluable constant.
- * Otherwise many inlines will generate horrible code.
+ * The generated code is more efficient when nbits is known at
+ * compile-time and at most BITS_PER_LONG.
  *
  * bitmap_zero(dst, nbits)			*dst = 0UL
  * bitmap_fill(dst, nbits)			*dst = ~0UL
