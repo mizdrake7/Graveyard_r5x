@@ -2008,7 +2008,7 @@ int dsi_ctrl_drv_init(struct dsi_ctrl *dsi_ctrl, struct dentry *parent)
 {
 	int rc = 0;
 
-	if (!dsi_ctrl || !parent) {
+	if (!dsi_ctrl) {
 		pr_err("Invalid params\n");
 		return -EINVAL;
 	}
