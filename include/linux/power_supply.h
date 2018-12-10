@@ -449,6 +449,7 @@ enum power_supply_property {
     /* Boyu.Wen  PSW.BSP.CHG  2020-1-19  for Fixed a problem with unstable torch current */
     POWER_SUPPLY_PROP_TORCH_CURRENT_WA,
 #endif
+	POWER_SUPPLY_PROP_MAX
 };
 
 enum power_supply_type {

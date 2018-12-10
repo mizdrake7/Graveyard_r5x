@@ -399,14 +399,12 @@ static const struct fg_pt fg_tsmc_osc_table[] = {
 	{  90,		444992 },
 };
 
-struct fg_memif {
-	struct fg_dma_address	*addr_map;
-	int			num_partitions;
-	u16			address_max;
-	u8			num_bytes_per_word;
+struct fg_saved_data {
+	union power_supply_propval val;
+	unsigned long last_req_expires;
 };
 
-struct fg_dev {
+struct fg_chip {
 	struct thermal_zone_device	*tz_dev;
 	struct device		*dev;
 	struct pmic_revid_data	*pmic_rev_id;
@@ -466,6 +464,11 @@ struct fg_dev {
 	struct delayed_work	profile_load_work;
 	struct work_struct	status_change_work;
 	struct delayed_work	sram_dump_work;
+	struct delayed_work	pl_enable_work;
+	struct work_struct	esr_filter_work;
+	struct alarm		esr_filter_alarm;
+	ktime_t			last_delta_temp_time;
+	struct fg_saved_data	saved_data[POWER_SUPPLY_PROP_MAX];
 };
 
 /* Debugfs data structures are below */
