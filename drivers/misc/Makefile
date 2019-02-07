@@ -61,6 +61,8 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP) += aspeed-lpc-snoop.o
 obj-$(CONFIG_PCI_ENDPOINT_TEST)        += pci_endpoint_test.o
 obj-$(CONFIG_FPR_FPC) 	+= fpr_FingerprintCard/
 
+
+
 obj-$(CONFIG_UID_SYS_STATS)	+= uid_sys_stats.o
 obj-$(CONFIG_MEMORY_STATE_TIME)	+= memory_state_time.o
 obj-$(CONFIG_QPNP_MISC) 	+= qpnp-misc.o
@@ -101,3 +103,4 @@ obj-y				+= schedx.o
 #Hexiaosen@PSW.BSP. 2019/11/25, Add for oppo rf cable monitor
 obj-y                           += oppo_rf_cable_monitor.o
 #endif
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
