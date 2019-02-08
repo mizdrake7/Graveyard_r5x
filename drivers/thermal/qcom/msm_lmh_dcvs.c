@@ -760,6 +760,7 @@ static int limits_dcvs_probe(struct platform_device *pdev)
 	}
 #endif
 
+	sysfs_attr_init(&hw->lmh_freq_attr.attr);
 	device_create_file(&pdev->dev, &hw->lmh_freq_attr);
 
 probe_exit:
