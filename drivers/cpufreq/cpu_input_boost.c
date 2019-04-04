@@ -29,8 +29,11 @@ struct boost_drv {
 	struct notifier_block cpu_notif;
 	struct notifier_block msm_drm_notif;
 	wait_queue_head_t boost_waitq;
-	atomic64_t max_boost_expires;
-	atomic_t state;
+	atomic_long_t max_boost_expires;
+	unsigned long state;
+	unsigned long last_input_jiffies;
+	unsigned int min_freq_lp;
+	unsigned int min_freq_perf;
 };
 
 static struct boost_drv *boost_drv_g __read_mostly;
@@ -85,6 +88,14 @@ static void update_online_cpu_policy(void)
 	cpu = cpumask_first_and(cpu_perf_mask, cpu_online_mask);
 	cpufreq_update_policy(cpu);
 	put_online_cpus();
+}
+
+bool cpu_input_boost_within_input(unsigned long timeout_ms)
+{
+	struct boost_drv *b = &boost_drv_g;
+
+	return time_before(jiffies, b->last_input_jiffies +
+			   msecs_to_jiffies(timeout_ms));
 }
 
 static void __cpu_input_boost_kick(struct boost_drv *b)
@@ -250,6 +261,7 @@ static void cpu_input_boost_input_event(struct input_handle *handle,
 	struct boost_drv *b = handle->handler->private;
 
 	__cpu_input_boost_kick(b);
+	b->last_input_jiffies = jiffies;
 }
 
 static int cpu_input_boost_input_connect(struct input_handler *handler,
@@ -355,6 +367,7 @@ static int __init cpu_input_boost_init(void)
 		goto unregister_cpu_notif;
 	}
 
+	b->last_input_jiffies = jiffies;
 	b->msm_drm_notif.notifier_call = msm_drm_notifier_cb;
 	b->msm_drm_notif.priority = INT_MAX;
 	ret = msm_drm_register_client(&b->msm_drm_notif);
