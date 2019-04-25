@@ -11,6 +11,10 @@ ifeq ($(CONFIG_ARCH_SDXPOORWILLS), y)
 include $(srctree)/techpack/audio/config/sdxpoorwillsauto.conf
 export
 endif
+ifeq ($(CONFIG_ARCH_TRINKET), y)
+include $(srctree)/techpack/audio/config/trinketauto.conf
+export
+endif
 ifeq ($(CONFIG_ARCH_SM8150), y)
 include $(srctree)/techpack/audio/config/sm8150auto.conf
 export
@@ -41,6 +45,10 @@ endif
 ifeq ($(CONFIG_ARCH_SDXPOORWILLS), y)
 LINUXINCLUDE    += \
                 -include $(srctree)/techpack/audio/config/sdxpoorwillsautoconf.h
+endif
+ifeq ($(CONFIG_ARCH_TRINKET), y)
+LINUXINCLUDE    += \
+                -include $(srctree)/techpack/audio/config/trinketautoconf.h
 endif
 ifeq ($(CONFIG_ARCH_SM8150), y)
 LINUXINCLUDE    += \
