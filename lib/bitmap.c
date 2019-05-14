@@ -648,6 +648,7 @@ int bitmap_parselist_user(const char __user *ubuf,
 EXPORT_SYMBOL(bitmap_parselist_user);
 
 
+#ifdef CONFIG_NUMA
 /**
  * bitmap_pos_to_ord - find ordinal of set bit at given position in bitmap
  *	@buf: pointer to a bitmap
@@ -951,6 +952,7 @@ void bitmap_fold(unsigned long *dst, const unsigned long *orig,
 	for_each_set_bit(oldbit, orig, nbits)
 		set_bit(oldbit % sz, dst);
 }
+#endif /* CONFIG_NUMA */
 
 /*
  * Common code for bitmap_*_region() routines.
