@@ -491,25 +491,6 @@ static struct ctl_table kern_table[] = {
 		.extra2		= &one_thousand,
 	},
 	{
-		.procname	= "sched_little_cluster_coloc_fmin_khz",
-		.data		= &sysctl_sched_little_cluster_coloc_fmin_khz,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler	= sched_little_cluster_coloc_fmin_khz_handler,
-		.extra1		= &zero,
-		.extra2		= &two_million,
-	},
-#else
-	{
-		.procname	= "sched_boost",
-		.data		= &sysctl_sched_boost,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler	= sched_boost_handler,
-		.extra1		= &neg_three,
-		.extra2		= &three,
-
-	{
 		.procname       = "sched_asym_cap_sibling_freq_match_pct",
 		.data           = &sysctl_sched_asym_cap_sibling_freq_match_pct,
 		.maxlen         = sizeof(unsigned int),
