@@ -688,4 +688,6 @@ void sdcardfs_rename_record(struct dentry *old_dentry, struct dentry *new_dentry
 int sdcardfs_allunlink_uevent(struct dentry *dentry);
 #endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
+extern struct kmem_cache *kmem_file_info_pool;
+
 #endif	/* not _SDCARDFS_H_ */
