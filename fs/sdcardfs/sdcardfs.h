@@ -690,4 +690,6 @@ int sdcardfs_allunlink_uevent(struct dentry *dentry);
 
 extern struct kmem_cache *kmem_file_info_pool;
 
+extern struct kmem_cache *kmem_file_info_pool;
+
 #endif	/* not _SDCARDFS_H_ */
