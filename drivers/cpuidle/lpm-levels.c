@@ -57,6 +57,8 @@
 
 #define MAX_S2IDLE_CPU_ATTEMPTS  24   /* divide by # cpus for max suspends */
 
+#define MAX_S2IDLE_CPU_ATTEMPTS  24   /* divide by # cpus for max suspends */
+
 static struct system_pm_ops *sys_pm_ops;
 
 
