@@ -953,7 +953,6 @@ void __noreturn do_exit(long code)
 	}
 
 	exit_signals(tsk);  /* sets PF_EXITING */
-	sched_exit(tsk);
 
 	if (tsk->mm)
 		sync_mm_rss(tsk->mm);
