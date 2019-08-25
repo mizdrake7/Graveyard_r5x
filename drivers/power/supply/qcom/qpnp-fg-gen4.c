@@ -943,6 +943,16 @@ static int fg_gen4_get_prop_capacity_raw_max(struct fg_gen4_chip *chip, int *val
 	return 0;
 }
 
+static int fg_gen4_get_prop_capacity_raw_max(struct fg_gen4_chip *chip, int *val)
+{
+	if (chip->dt.soc_hi_res)
+		*val = 10000;
+	else
+		*val = FULL_SOC_RAW;
+
+	return 0;
+}
+
 static inline void get_esr_meas_current(int curr_ma, u8 *val)
 {
 	switch (curr_ma) {
