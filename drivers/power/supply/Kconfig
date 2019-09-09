@@ -608,7 +608,12 @@ config CHARGER_RT9455
 	depends on GPIOLIB || COMPILE_TEST
 	select REGMAP_I2C
 	help
-	  Say Y to enable support for Richtek RT9455 battery charger.
+
+config AUTOCUT_CHARGER
+	bool "AutoCut Charger"
+	default n
+	help
+	  Disable battery charging if battery capacity at 100.
 
 source "drivers/power/supply/qcom/Kconfig"
 
