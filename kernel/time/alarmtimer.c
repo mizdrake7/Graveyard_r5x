@@ -82,7 +82,7 @@ static void alarmtimer_triggered_func(void *p)
 
 	if (!(rtc->irq_data & RTC_AF))
 		return;
-	__pm_wakeup_event(ws, 2 * MSEC_PER_SEC);
+	__pm_wakeup_event(ws, MSEC_PER_SEC / 2);
 }
 
 static struct rtc_task alarmtimer_rtc_task = {
@@ -348,13 +348,8 @@ static int alarmtimer_suspend(struct device *dev)
 	if (min == 0)
 		return 0;
 
-	if (ktime_to_ns(min) < 2 * NSEC_PER_SEC) {
-		__pm_wakeup_event(ws, 2 * MSEC_PER_SEC);
-        #ifdef CONFIG_PRODUCT_REALME_TRINKET
-		//Nanwei.Deng@BSP.Power.Basic 2018/11/19, add for analysis power coumption. count alarm times
-		atomic_set(&alarm_atomic, 0);
-		atomic_set(&alarm_sleep_busy_atomic, 1);
-		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
+	if (ktime_to_ns(min) < NSEC_PER_SEC / 2) {
+		__pm_wakeup_event(ws, MSEC_PER_SEC / 2);
 		return -EBUSY;
 	}
 
@@ -369,7 +364,7 @@ static int alarmtimer_suspend(struct device *dev)
 	/* Set alarm, if in the past reject suspend briefly to handle */
 	ret = rtc_timer_start(rtc, &rtctimer, now, 0);
 	if (ret < 0)
-		__pm_wakeup_event(ws, MSEC_PER_SEC);
+		__pm_wakeup_event(ws, MSEC_PER_SEC / 2);
 	return ret;
 }
 
