@@ -52,8 +52,6 @@ extern __read_mostly unsigned int sched_window_stats_policy;
 extern __read_mostly unsigned int sched_group_upmigrate;
 extern __read_mostly unsigned int sched_group_downmigrate;
 
-extern struct sched_cluster init_cluster;
-
 extern void update_task_ravg(struct task_struct *p, struct rq *rq, int event,
 						u64 wallclock, u64 irqtime);
 
