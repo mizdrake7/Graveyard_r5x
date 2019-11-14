@@ -9548,6 +9548,9 @@ static int detach_tasks(struct lb_env *env)
 	if (is_min_capacity_cpu(env->dst_cpu) && !is_min_capacity_cpu(env->src_cpu))
 		env->flags |= LBF_IGNORE_STUNE_BOOSTED_TASKS;
 
+	if (is_min_capacity_cpu(env->dst_cpu) && !is_min_capacity_cpu(env->src_cpu))
+		env->flags |= LBF_IGNORE_STUNE_BOOSTED_TASKS;
+
 redo:
 	while (!list_empty(tasks)) {
 		/*
