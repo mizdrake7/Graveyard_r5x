@@ -1867,7 +1867,7 @@ void *msm_vidc_open(int core_id, int session_type)
 		goto err_invalid_core;
 	}
 #ifdef CONFIG_DEBUG_KERNEL
-	pr_info(VIDC_DBG_TAG "Opening video instance: %pK, %d\n",
+	pr_debug(VIDC_DBG_TAG "Opening video instance: %pK, %d\n",
 		"info", inst, session_type);
 #endif
 	mutex_init(&inst->sync_lock);
@@ -2159,7 +2159,7 @@ int msm_vidc_destroy(struct msm_vidc_inst *inst)
 
 	msm_vidc_debugfs_deinit_inst(inst);
 #ifdef CONFIG_DEBUG_KERNEL
-	pr_info(VIDC_DBG_TAG "Closed video instance: %pK\n",
+	pr_debug(VIDC_DBG_TAG "Closed video instance: %pK\n",
 			"info", inst);
 #endif
 	kfree(inst);
@@ -2222,4 +2222,3 @@ int msm_vidc_suspend(int core_id)
 	return msm_comm_suspend(core_id);
 }
 EXPORT_SYMBOL(msm_vidc_suspend);
-
