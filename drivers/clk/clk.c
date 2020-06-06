@@ -3398,6 +3398,7 @@ EXPORT_SYMBOL_GPL(clk_debugfs_add_file);
  */
 void clock_debug_print_enabled(bool print_parent)
 {
+	return;
 	if (likely(!debug_suspend))
 		return;
 
