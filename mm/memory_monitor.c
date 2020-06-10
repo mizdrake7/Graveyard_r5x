@@ -20,7 +20,6 @@
 #include <linux/kernel.h>
 #include <linux/proc_fs.h>
 #include <linux/fs.h>
-#include <soc/oppo/oppo_healthinfo.h>
 #include <linux/seq_file.h>
 #include <asm/uaccess.h>
 #include "internal.h"
@@ -86,12 +85,7 @@ void memory_alloc_monitor(gfp_t gfp_mask, unsigned int order, u64 wait_ms)
 	if (wait_ms >= alloc_wait_h_ms) {
 		allocwait_para.total_alloc_wait_h_cnt++;
 		if (ohm_memmon_logon && (wait_ms >= alloc_wait_log_ms)) {
-        	ohm_debug("[alloc_wait / %s] long, order %d, wait %lld ms!\n", (fg ? "fg":"bg"), order, wait_ms);
             warn_alloc(gfp_mask, NULL,"page allocation stalls for %lld ms, order: %d",wait_ms, order);
-        }
-        if (ohm_memmon_trig && wait_ms >= alloc_wait_trig_ms) {
-            /* Trig Uevent */
-            ohm_action_trig(OHM_MEM_MON);
         }
 	}else if (wait_ms >= alloc_wait_l_ms) {
 		allocwait_para.total_alloc_wait_l_cnt++;
@@ -119,13 +113,6 @@ void oppo_ionwait_monitor(u64 wait_ms)
 
 	if (wait_ms >= ion_wait_h_ms) {
 		ionwait_para.total_ion_wait_h_cnt++;
-        if (ohm_ionmon_logon && (wait_ms >= ion_wait_log_ms)) {
-        	ohm_debug("[ion_wait / %s] long, wait %lld ms!\n", (fg ? "fg":"bg"), wait_ms);
-        }
-        if (ohm_ionmon_trig && wait_ms >= ion_wait_trig_ms) {
-            /* Trig Uevent */
-        	ohm_action_trig(OHM_ION_MON);
-        }
 	} else if (wait_ms >= ion_wait_l_ms) {
     		ionwait_para.total_ion_wait_l_cnt++;
 		}
