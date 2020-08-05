@@ -1204,6 +1204,29 @@ static int a6xx_gmu_suspend(struct kgsl_device *device)
 	/* Check no outstanding RPMh voting */
 	a6xx_complete_rpmh_votes(device);
 
+	gmu_core_regwrite(device, A6XX_GMU_CM3_SYSRESET, 1);
+
+	if (adreno_has_gbif(adreno_dev)) {
+		struct adreno_gpudev *gpudev =
+			ADRENO_GPU_DEVICE(adreno_dev);
+
+		/* Halt GX traffic */
+		if (a6xx_gmu_gx_is_on(adreno_dev))
+			do_gbif_halt(device, A6XX_RBBM_GBIF_HALT,
+				A6XX_RBBM_GBIF_HALT_ACK,
+				gpudev->gbif_gx_halt_mask,
+				"GX");
+		/* Halt CX traffic */
+		do_gbif_halt(device, A6XX_GBIF_HALT, A6XX_GBIF_HALT_ACK,
+			gpudev->gbif_arb_halt_mask, "CX");
+	}
+
+	if (a6xx_gmu_gx_is_on(adreno_dev))
+		kgsl_regwrite(device, A6XX_RBBM_SW_RESET_CMD, 0x1);
+
+	/* Allow the software reset to complete */
+	udelay(100);
+
 	/*
 	 * This is based on the assumption that GMU is the only one controlling
 	 * the GX HS. This code path is the only client voting for GX through
