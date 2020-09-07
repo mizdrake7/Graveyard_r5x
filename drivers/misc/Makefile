@@ -68,6 +68,7 @@ obj-$(CONFIG_MEMORY_STATE_TIME)	+= memory_state_time.o
 obj-$(CONFIG_QPNP_MISC) 	+= qpnp-misc.o
 # Hongzhu.Su@ODM_WT.BSP 2020/08/27, Add for WT hardware information
 obj-$(CONFIG_ODM_WT_EDIT)       += hardware_info.o
+obj-$(CONFIG_BATTERY_SAVER)	+= battery_saver.o
 
 obj-$(CONFIG_OKL4_USER_VIRQ)	+= okl4-virq.o
 obj-$(CONFIG_OKL4_RINGBUF)	+= okl4-ringbuf.o
