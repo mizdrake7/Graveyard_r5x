@@ -717,7 +717,7 @@ int schedtune_task_boost(struct task_struct *p)
 	struct boost_groups *bg;
 #endif
 
-	if (unlikely(!schedtune_initialized))
+	if (unlikely(!schedtune_initialized) || is_battery_saver_on())
 		return 0;
 
 	/* Get task boost value */
