@@ -35,7 +35,7 @@
 //liwei.a@PSW.MM.Display.Stability, 2019/07/12, add interface for tp to get lcd status resumed or not
 int lcd_running_tag = -1;
 
-int get_lcd_status(){
+int get_lcd_status(void){
 	return lcd_running_tag;
 }
 #endif
