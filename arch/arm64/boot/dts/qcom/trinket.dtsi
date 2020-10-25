@@ -1597,7 +1597,7 @@
 		};
 		qcom,l1_tlb_dump103 {
 			qcom,dump-node = <&L1_TLB_103>;
-			qcom,dump-id = <0x27>;
+			qcom,dump-id = <0x127>;
 		};
 	};
 
