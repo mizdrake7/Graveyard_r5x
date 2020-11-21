@@ -47,15 +47,6 @@
 
 #include "nt36xxx_mem_map.h"
 
-#ifdef CONFIG_MTK_SPI
-/* Please copy mt_spi.h file under mtk spi driver folder */
-#include "mt_spi.h"
-#endif
-
-#ifdef CONFIG_SPI_MT65XX
-#include <linux/platform_data/spi-mt65xx.h>
-#endif
-
 #define NVT_DEBUG 1
 
 //---GPIO number---
@@ -318,12 +309,6 @@ struct nvt_ts_data {
 	struct work_struct tp_usb_work_queue;
 	struct work_struct headset_work_queue;
 	struct touch_info_dev *tid;
-#ifdef CONFIG_MTK_SPI
-	struct mt_chip_conf spi_ctrl;
-#endif
-#ifdef CONFIG_SPI_MT65XX
-    struct mtk_chip_config spi_ctrl;
-#endif
 #ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 	int vendor_id;

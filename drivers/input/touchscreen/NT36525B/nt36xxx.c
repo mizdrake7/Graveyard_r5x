@@ -154,37 +154,6 @@ const uint16_t touch_key_array[TOUCH_KEY_NUM] = {
 };
 #endif
 
-#ifdef CONFIG_MTK_SPI
-const struct mt_chip_conf spi_ctrdata = {
-	.setuptime = 25,
-	.holdtime = 25,
-	.high_time = 5,	/* 10MHz (SPI_SPEED=100M / (high_time+low_time(10ns)))*/
-	.low_time = 5,
-	.cs_idletime = 2,
-	.ulthgh_thrsh = 0,
-	.cpol = 0,
-	.cpha = 0,
-	.rx_mlsb = 1,
-	.tx_mlsb = 1,
-	.tx_endian = 0,
-	.rx_endian = 0,
-	.com_mod = DMA_TRANSFER,
-	.pause = 0,
-	.finish_intr = 1,
-	.deassert = 0,
-	.ulthigh = 0,
-	.tckdly = 0,
-};
-#endif
-
-#ifdef CONFIG_SPI_MT65XX
-const struct mtk_chip_config spi_ctrdata = {
-    .rx_mlsb = 1,
-    .tx_mlsb = 1,
-    .cs_pol = 0,
-};
-#endif
-
 #ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 struct upgrade_fw_info nvt_fw_list[] = {
@@ -2443,20 +2412,6 @@ static int32_t nvt_ts_probe(struct spi_device *client)
 	}
 
 	ts->recovery_flag = 0;
-	
-
-
-#ifdef CONFIG_MTK_SPI
-    /* old usage of MTK spi API */
-    memcpy(&ts->spi_ctrl, &spi_ctrdata, sizeof(struct mt_chip_conf));
-    ts->client->controller_data = (void *)&ts->spi_ctrl;
-#endif
-
-#ifdef CONFIG_SPI_MT65XX
-    /* new usage of MTK spi API */
-    memcpy(&ts->spi_ctrl, &spi_ctrdata, sizeof(struct mtk_chip_config));
-    ts->client->controller_data = (void *)&ts->spi_ctrl;
-#endif
 
 	NVT_LOG("mode=%d, max_speed_hz=%d\n", ts->client->mode, ts->client->max_speed_hz);
 
