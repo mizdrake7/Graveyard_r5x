@@ -81,6 +81,15 @@ static void patch_sar_flags(char *cmd)
 	patch_flag_remove_flag(cmd, "skip_initram");
 }
 
+static bool in_recovery;
+
+static int __init boot_mode_setup(char *value)
+{
+	in_recovery = !strcmp(value, "recovery");
+	return 1;
+}
+__setup("androidboot.mode=", boot_mode_setup);
+
 static int __init proc_cmdline_init(void)
 {
 	strcpy(new_command_line, saved_command_line);
@@ -89,7 +98,8 @@ static int __init proc_cmdline_init(void)
 	 * Patch various flags from command line seen by userspace in order to
 	 * pass SafetyNet checks.
 	 */
-	patch_safetynet_flags(new_command_line);
+	if (!in_recovery)
+		patch_safetynet_flags(new_command_line);
 
 	if (check_rdp())
 		patch_sar_flags(new_command_line);
