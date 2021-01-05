@@ -840,6 +840,10 @@ ifeq ($(ld-name),lld)
 LDFLAGS += --lto-O3 --strip-debug
 endif
 
+ifeq ($(ld-name),lld)
+LDFLAGS += -z norelro
+endif
+
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
 
 # These result in bogus false positives
