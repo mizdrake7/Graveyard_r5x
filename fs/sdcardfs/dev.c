@@ -139,8 +139,8 @@ static int sdcardfs_rename_uevent(char *old_path, char *new_path, unsigned int m
 	}
 
 free_memory:
-    for(i--; i > 0; i--)
-        kmem_cache_free(sdcardfs_path_cachep, denied_param[i]);
+	for(i--; i > 0; i--)
+		kmem_cache_free(sdcardfs_path_cachep, denied_param[i]);
 
 	return 0;
 }
@@ -249,8 +249,8 @@ int sdcardfs_allunlink_uevent(struct dentry *dentry)
 	}
 
 free_memory:
-    for(i--; i > 0; i--)
-        kmem_cache_free(sdcardfs_path_cachep, denied_param[i]);
+	for(i--; i > 0; i--)
+		kmem_cache_free(sdcardfs_path_cachep, denied_param[i]);
 
 	kmem_cache_free(sdcardfs_path_cachep, buf);
 
@@ -303,8 +303,8 @@ int sdcardfs_unlink_uevent(struct dentry *dentry, unsigned int mask)
 	}
 
 free_memory:
-    for(i--; i > 0; i--)
-        kmem_cache_free(sdcardfs_path_cachep, denied_param[i]);
+	for(i--; i > 0; i--)
+		kmem_cache_free(sdcardfs_path_cachep, denied_param[i]);
 
 	kmem_cache_free(sdcardfs_path_cachep, buf);
 
