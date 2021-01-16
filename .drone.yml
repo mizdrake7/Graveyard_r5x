@@ -1,0 +1,25 @@
+--- 
+clone: 
+  depth: 1
+kind: pipeline
+name: IrawansCI
+steps: 
+  - 
+    commands: 
+      - "curl https://gitlab.com/dodyirawan85/scripts/raw/master/r5x-kernel-on-docker.sh | bash"
+    environment: 
+      TELEGRAM_TOKEN: 
+        from_secret: BOT_API_KEY
+      CHAT_ID:
+        from_secret: CHAT_ID
+      KERNAME:
+        from_secret: KERNEL_NAME
+      DEFCONFIG: vendor/RMX1911_defconfig
+      DEVICE: RMX1911
+      SUPPORTED: 5, 5s, 5i
+      FIRMWARE: RealmeUI
+    image: fadlyas/kernel_dockerfile:latest
+    name: Build & Upload
+    trigger: 
+      branch: 
+        - kernel.lnx.4.14.r4-rel
