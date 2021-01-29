@@ -7654,6 +7654,10 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 			if (capacity_of(i) < boosted_task_util(p))
 				continue;
 
+			/* Skip CPUs which do not fit task requirements */
+			if (capacity_of(i) < boosted_task_util(p))
+				continue;
+
 			/*
 			 * p's blocked utilization is still accounted for on prev_cpu
 			 * so prev_cpu will receive a negative bias due to the double
