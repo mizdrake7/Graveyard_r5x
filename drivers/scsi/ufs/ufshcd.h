@@ -58,6 +58,7 @@
 #include <linux/regulator/consumer.h>
 #include <linux/reset.h>
 #include <linux/extcon.h>
+#include <linux/pm_qos.h>
 #include "unipro.h"
 
 #include <asm/irq.h>
@@ -1043,6 +1044,23 @@ struct ufs_hba {
 	bool force_g4;
 	/* distinguish between resume and restore */
 	bool restore;
+#ifdef CONFIG_SCSI_UFS_IMPAIRED
+	struct kobject *impaired_kobj;
+	struct ufs_impaired_storage impaired;
+	struct task_struct *impaired_thread;
+	struct mutex impaired_thread_mutex;
+	struct list_head impaired_list_head;
+	unsigned long delayed_reqs;
+#endif
+
+	struct {
+		struct pm_qos_request req;
+		struct work_struct get_work;
+		struct work_struct put_work;
+		struct mutex lock;
+		atomic_t count;
+		bool active;
+	} pm_qos;
 };
 
 static inline void ufshcd_mark_shutdown_ongoing(struct ufs_hba *hba)
