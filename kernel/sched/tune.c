@@ -696,7 +696,7 @@ int schedtune_task_boost(struct task_struct *p)
 	struct boost_groups *bg;
 #endif
 
-	if (unlikely(!schedtune_initialized) || is_battery_saver_on())
+	if (unlikely(!schedtune_initialized) || unlikely(is_battery_saver_on()))
 		return 0;
 
 #ifdef CONFIG_KPROFILES
@@ -744,7 +744,7 @@ int schedtune_prefer_idle(struct task_struct *p)
 	struct schedtune *st;
 	int prefer_idle;
 
-	if (unlikely(!schedtune_initialized) || is_battery_saver_on())
+	if (unlikely(!schedtune_initialized) || unlikely(is_battery_saver_on()))
 		return 0;
 
 #ifdef CONFIG_KPROFILES
@@ -766,7 +766,7 @@ prefer_idle_read(struct cgroup_subsys_state *css, struct cftype *cft)
 {
 	struct schedtune *st = css_st(css);
 
-	if (is_battery_saver_on())
+	if (unlikely(is_battery_saver_on()))
 		return 0;
 
 #ifdef CONFIG_KPROFILES
@@ -792,7 +792,7 @@ boost_read(struct cgroup_subsys_state *css, struct cftype *cft)
 {
 	struct schedtune *st = css_st(css);
 
-	if (is_battery_saver_on())
+	if (unlikely(is_battery_saver_on()))
 		return 0;
 
 #ifdef CONFIG_KPROFILES
