@@ -46,6 +46,7 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
 
+
 DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
 
 /*
@@ -3441,6 +3442,22 @@ again:
 	BUG();
 }
 
+#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2019-02-26,
+ * collect reclaimed_shrinked task schedule record
+ */
+static inline void collect_reclaimed_task(struct task_struct *prev,
+		struct task_struct *next)
+{
+	if (next->flags & PF_RECLAIM_SHRINK)
+		next->reclaim_ns = sched_clock();
+
+	if (prev->flags & PF_RECLAIM_SHRINK)
+		prev->reclaim_run_ns += sched_clock() - prev->reclaim_ns;
+}
+#endif
+
+
 /*
  * __schedule() is the main scheduler function.
  *
@@ -3574,6 +3591,12 @@ static void __sched notrace __schedule(bool preempt)
 
 		trace_sched_switch(preempt, prev, next);
 
+#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+		/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2019-02-26,
+		 * collect reclaimed_shrinked task schedule record
+		 */
+		collect_reclaimed_task(prev, next);
+#endif
 		/* Also unlocks the rq: */
 		rq = context_switch(rq, prev, next, &rf);
 	} else {
@@ -6454,6 +6477,7 @@ void __init sched_init(void)
 		init_cfs_rq(&rq->cfs);
 		init_rt_rq(&rq->rt);
 		init_dl_rq(&rq->dl);
+
 #ifdef CONFIG_FAIR_GROUP_SCHED
 		root_task_group.shares = ROOT_TASK_GROUP_LOAD;
 		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
@@ -6937,6 +6961,7 @@ static void sched_update_updown_migrate_values(unsigned int *data,
 						 cluster_cpus);
 }
 
+static DEFINE_MUTEX(mutex);
 int sched_updown_migrate_handler(struct ctl_table *table, int write,
 				 void __user *buffer, size_t *lenp,
 				 loff_t *ppos)
@@ -6944,7 +6969,6 @@ int sched_updown_migrate_handler(struct ctl_table *table, int write,
 	int ret, i;
 	unsigned int *data = (unsigned int *)table->data;
 	unsigned int *old_val;
-	static DEFINE_MUTEX(mutex);
 	static int cap_margin_levels = -1;
 
 	mutex_lock(&mutex);
@@ -7003,6 +7027,57 @@ unlock_mutex:
 
 	return ret;
 }
+
+#ifdef VENDOR_EDIT
+//cuixiaogang@SRC.hypnus.2018.07.11. add for change up/down migrate
+int sched_get_updown_migrate(unsigned int *up_pct, unsigned int *down_pct)
+{
+	int i;
+
+	if (!up_pct || !down_pct)
+		return -EINVAL;
+
+	mutex_lock(&mutex);
+	for (i = 0; i < MAX_CLUSTERS - 1; i++) {
+		up_pct[i] = SCHED_FIXEDPOINT_SCALE * 100
+			/ sysctl_sched_capacity_margin_up[i];
+		down_pct[i] = SCHED_FIXEDPOINT_SCALE * 100
+			/ sysctl_sched_capacity_margin_down[i];
+	}
+	mutex_unlock(&mutex);
+
+	return 0;
+}
+EXPORT_SYMBOL(sched_get_updown_migrate);
+
+int sched_set_updown_migrate(unsigned int *up_pct, unsigned int *down_pct)
+{
+	int i;
+
+	if (!up_pct || !down_pct)
+		return -EINVAL;
+
+	mutex_lock(&mutex);
+
+	for (i = 0; i < MAX_CLUSTERS - 1; i++) {
+		sysctl_sched_capacity_margin_up[i]
+			= SCHED_FIXEDPOINT_SCALE * 100 / up_pct[i];
+		sysctl_sched_capacity_margin_down[i]
+			= SCHED_FIXEDPOINT_SCALE * 100 / down_pct[i];
+	}
+
+	sched_update_updown_migrate_values(sysctl_sched_capacity_margin_up,
+						 MAX_CLUSTERS - 1);
+
+	sched_update_updown_migrate_values(sysctl_sched_capacity_margin_down,
+						 MAX_CLUSTERS - 1);
+
+	mutex_unlock(&mutex);
+
+	return 0;
+}
+EXPORT_SYMBOL(sched_set_updown_migrate);
+#endif /* VENDOR_EDIT */
 #endif
 
 static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
@@ -7572,3 +7647,11 @@ void sched_exit(struct task_struct *p)
 #endif /* CONFIG_SCHED_WALT */
 
 __read_mostly bool sched_predl = 1;
+
+#ifdef VENDOR_EDIT
+/*fanhui@PhoneSW.BSP, 2016-06-23, get current task on one cpu*/
+struct task_struct *oppo_get_cpu_task(int cpu)
+{
+	return cpu_curr(cpu);
+}
+#endif

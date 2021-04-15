@@ -127,6 +127,7 @@ static inline bool rwsem_list_add_per_prio(struct rwsem_waiter *waiter_in,
 
 		list_for_each(pos, head) {
 			waiter = list_entry(pos, struct rwsem_waiter, list);
+
 			if (waiter->task->prio > waiter_in->task->prio) {
 				list_add(&waiter_in->list, pos->prev);
 				sem->m_count++;
