@@ -28,6 +28,7 @@
 #ifdef CONFIG_COMPAT
 #include <linux/compat.h>
 #endif
+#include <soc/oppo/oppo_project.h>
 
 struct nqx_platform_data {
 	unsigned int irq_gpio;
@@ -1116,6 +1117,11 @@ static int nqx_probe(struct i2c_client *client,
 	int irqn = 0;
 	struct nqx_platform_data *platform_data;
 	struct nqx_dev *nqx_dev;
+
+	if((get_project() != 19579) && (get_project() != 19573) && (get_project() != 19026) && (get_project() != 19328) && !(get_oppo_feature(1) & 0x01)){
+		dev_err(&client->dev, "%s: Do not support NFC return\n", __func__);
+		return -ENOMEM;
+	}
 
 	dev_dbg(&client->dev, "%s: enter\n", __func__);
 	if (client->dev.of_node) {
