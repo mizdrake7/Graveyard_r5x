@@ -627,10 +627,18 @@ static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info,
 			stream_info->current_framedrop_period =
 				MSM_VFE_STREAM_STOP_PERIOD;
 	}
-
-	if (stream_info->undelivered_request_cnt > 0)
-		stream_info->current_framedrop_period =
-			MSM_VFE_STREAM_STOP_PERIOD;
+#ifdef VENDOR_EDIT /* Camera@Drv 2019/07/22, Add for frame remap support on frame drop */
+		if (stream_info->undelivered_request_cnt > 0)
+			stream_info->current_framedrop_period =
+				MSM_VFE_STREAM_STOP_PERIOD;
+#else
+		if (stream_info->undelivered_request_cnt > 0 &&
+			drop_reconfig != 1)
+			stream_info->current_framedrop_period =
+				MSM_VFE_STREAM_STOP_PERIOD;
+		if (stream_info->controllable_output && drop_reconfig == 1)
+			stream_info->current_framedrop_period = 1;
+#endif
 	/*
 	 * re-configure the period pattern, only if it's not already
 	 * set to what we want
@@ -692,8 +700,7 @@ void msm_isp_process_reg_upd_epoch_irq(struct vfe_device *vfe_dev,
 				uint32_t drop_reconfig =
 					vfe_dev->isp_page->drop_reconfig;
 				if (stream_info->num_isp > 1 &&
-					vfe_dev->pdev->id == ISP_VFE0 &&
-					!vfe_dev->dual_vfe_sync_mode) {
+					vfe_dev->pdev->id == ISP_VFE0) {
 					c_data = vfe_dev->common_data;
 					temp = c_data->dual_vfe_res->vfe_dev[
 						ISP_VFE1];
@@ -1153,19 +1160,6 @@ void msm_isp_notify(struct vfe_device *vfe_dev, uint32_t event_type,
 
 	default:
 		break;
-	}
-
-	if ((vfe_dev->nanosec_ts_enable) &&
-		(event_type == ISP_EVENT_SOF) &&
-			(frame_src == VFE_PIX_0)) {
-		struct msm_isp_event_data_nanosec event_data_nanosec;
-
-		event_data_nanosec.frame_id =
-			vfe_dev->axi_data.src_info[frame_src].frame_id;
-		event_data_nanosec.nano_timestamp = ts->buf_time_ns;
-		msm_isp_send_event_update_nanosec(vfe_dev,
-			ISP_EVENT_SOF_UPDATE_NANOSEC,
-			&event_data_nanosec);
 	}
 
 	event_data.frame_id = vfe_dev->axi_data.src_info[frame_src].frame_id;
@@ -3737,8 +3731,7 @@ static int msm_isp_request_frame(struct vfe_device *vfe_dev,
 		vfe_dev->hw_info->vfe_ops.axi_ops.get_pingpong_status(vfe_dev);
 
 	/* As MCT is still processing it, need to drop the additional requests*/
-	if (vfe_dev->isp_page->drop_reconfig &&
-		frame_src == VFE_PIX_0) {
+	if (vfe_dev->isp_page->drop_reconfig) {
 		pr_err("%s: MCT has not yet delayed %d drop request %d\n",
 			__func__, vfe_dev->isp_page->drop_reconfig, frame_id);
 		goto error;
