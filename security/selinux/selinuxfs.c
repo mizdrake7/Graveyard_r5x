@@ -41,6 +41,7 @@
 #include "objsec.h"
 #include "conditional.h"
 
+
 unsigned int selinux_checkreqprot = CONFIG_SECURITY_SELINUX_CHECKREQPROT_VALUE;
 
 static int __init checkreqprot_setup(char *str)
