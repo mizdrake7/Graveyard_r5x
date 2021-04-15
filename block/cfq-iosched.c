@@ -24,7 +24,8 @@
  */
 /* max queue in one round of service */
 static const int cfq_quantum = 8;
-static const u64 cfq_fifo_expire[2] = { NSEC_PER_SEC / 4, NSEC_PER_SEC / 8 };
+//static const u64 cfq_fifo_expire[2] = { NSEC_PER_SEC / 4, NSEC_PER_SEC / 8 };
+static const u64 cfq_fifo_expire[2] = { NSEC_PER_SEC / 8, NSEC_PER_SEC / 20 };
 /* maximum backwards seek, in KiB */
 static const int cfq_back_max = 16 * 1024;
 /* penalty of a backwards seek */
