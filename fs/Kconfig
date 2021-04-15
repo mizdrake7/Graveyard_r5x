@@ -32,7 +32,12 @@ source "fs/gfs2/Kconfig"
 source "fs/ocfs2/Kconfig"
 source "fs/btrfs/Kconfig"
 source "fs/nilfs2/Kconfig"
-source "fs/f2fs/Kconfig"
+#ifdef VENDOR_EDIT
+#zhangdongdong@TECH.Storage.FS.OF2FS,2020/02/10,Only applicable to F2FS independent warehouse projects
+source "fs/of2fs/Kconfig"
+#else
+#source "fs/f2fs/Kconfig"
+#endif
 
 config FS_DAX
 	bool "Direct Access (DAX) support"
@@ -313,5 +318,10 @@ config FILE_TABLE_DEBUG
 	bool "Enable FILE_TABLE_DEBUG"
 	help
 	  This option enables debug of the open files using a global filetable
+
+#ifdef VENDOR_EDIT
+#Xinhua.Song@BSP.Driver, 2015/04/03, Add for exfat filesystem
+source "fs/exfat/Kconfig"
+#endif /*VENDOR_EDIT*/
 
 endmenu
