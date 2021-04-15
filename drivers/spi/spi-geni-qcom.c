@@ -1337,6 +1337,14 @@ static void geni_spi_handle_tx(struct spi_geni_master *mas)
 
 	if (!mas->cur_xfer)
 		return;
+#ifdef VENDOR_EDIT
+//Lijie.Yang@ODM_WT.BSP.Kernel.Stability.1941873, 2020/06/08, modify for debug tx buff is none issue
+	if (mas->cur_xfer->tx_buf == NULL) {
+		dev_err(mas->dev, "geni_spi_handle_tx:[%s] tx_buf is Null len = %d tx_rem_bytes = %d\n",
+			mas->cur_xfer->len,mas->tx_rem_bytes);
+		return;
+	}
+#endif
 
 	/*
 	 * For non-byte aligned bits-per-word values:
@@ -1396,6 +1404,15 @@ static void geni_spi_handle_rx(struct spi_geni_master *mas)
 
 	if (!mas->cur_xfer)
 		return;
+
+#ifdef VENDOR_EDIT 
+//Lijie.Yang@ODM_WT.BSP.Kernel.Stability.1941873, 2020/06/08, modify for debug tx buff is none issue
+	if (mas->cur_xfer->rx_buf == NULL) {
+		dev_err(mas->dev, "geni_spi_handle_rx:[%s] rx_buf is Null len = %d rx_rem_bytes = %d\n",
+			mas->cur_xfer->len,mas->rx_rem_bytes);
+		return;
+	}
+#endif
 
 	rx_fifo_status = geni_read_reg(mas->base, SE_GENI_RX_FIFO_STATUS);
 	rx_buf = mas->cur_xfer->rx_buf;
@@ -1797,6 +1814,7 @@ static int spi_geni_suspend(struct device *dev)
 {
 	int ret = 0;
 
+	#if 0
 	if (!pm_runtime_status_suspended(dev)) {
 		struct spi_master *spi = get_spi_master(dev);
 		struct spi_geni_master *geni_mas = spi_master_get_devdata(spi);
@@ -1804,7 +1822,7 @@ static int spi_geni_suspend(struct device *dev)
 		if (list_empty(&spi->queue) && !spi->cur_msg) {
 			GENI_SE_ERR(geni_mas->ipc, true, dev,
 					"%s: Force suspend", __func__);
-			ret = spi_geni_runtime_suspend(dev);
+			/*ret = spi_geni_runtime_suspend(dev);
 			if (ret) {
 				GENI_SE_ERR(geni_mas->ipc, true, dev,
 					"Force suspend Failed:%d", ret);
@@ -1812,11 +1830,13 @@ static int spi_geni_suspend(struct device *dev)
 				pm_runtime_disable(dev);
 				pm_runtime_set_suspended(dev);
 				pm_runtime_enable(dev);
-			}
+			}*/
 		} else {
 			ret = -EBUSY;
 		}
 	}
+	#endif
+	printk("come in spi_geni_suspend %d\n",ret);
 	return ret;
 }
 #else
