@@ -739,8 +739,20 @@ static const struct adc_channels adc_chans_pmic5[ADC_MAX_CHANNEL] = {
 					SCALE_HW_CALIB_XOTHERM)
 	[ADC_BAT_THERM_PU2]	= ADC_CHAN_TEMP("bat_therm_pu2", 1,
 					SCALE_HW_CALIB_BATT_THERM_100K)
-	[ADC_BAT_THERM_PU1]	= ADC_CHAN_TEMP("bat_therm_pu1", 1,
-					SCALE_HW_CALIB_BATT_THERM_30K)
+#ifndef VENDOR_EDIT
+    /* wangchao@ODM.BSP.charge, 2020/2/21, Add for Batt_NTC ADC compensation */
+    [ADC_BAT_THERM_PU1]	= ADC_CHAN_TEMP("bat_therm_pu1", 1,
+            SCALE_HW_CALIB_BATT_THERM_30K)
+#else
+#if 1 //(SHIPPING_API_LEVEL == 28)
+    /* shanliangliang@PSW.CHG.BASE, 2020/2/24, Add for Batt_NTC ADC compensation */
+    [ADC_BAT_THERM_PU1]	= ADC_CHAN_TEMP("bat_therm_pu1", 1,
+            SCALE_HW_CALIB_BATT_THERM_30K)
+#else
+    [ADC_BAT_THERM_PU1] = ADC_CHAN_TEMP("bat_therm_pu1", 1,
+            SCALE_HW_CALIB_DEFAULT)
+#endif
+#endif
 	[ADC_BAT_THERM_PU3]	= ADC_CHAN_TEMP("bat_therm_pu3", 1,
 					SCALE_HW_CALIB_BATT_THERM_400K)
 	[ADC_BAT_ID_PU2]	= ADC_CHAN_TEMP("bat_id", 1,
@@ -763,14 +775,57 @@ static const struct adc_channels adc_chans_pmic5[ADC_MAX_CHANNEL] = {
 					SCALE_HW_CALIB_PM5_SMB_TEMP)
 	[ADC_AMUX_THM3]			= ADC_CHAN_TEMP("amux_thm3", 1,
 					SCALE_HW_CALIB_PM5_SMB_TEMP)
+#if 0 //def VENDOR_EDIT
+/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200406, Modify for 86125 Q */
+/*LiYue@BSP.CHG.Basic, 2019/07/04, modefy for usb connector temp check*/
+#if 1 //(SHIPPING_API_LEVEL == 28)
+/*shanliangliang@BSP.CHG.Basic, 2020/03/24, modefy for usb connector temp check*/
+    [ADC_GPIO1_PU2] = ADC_CHAN_VOLT("usb_temp_v_l", 1,
+            SCALE_HW_CALIB_DEFAULT)
+#else
+    [ADC_GPIO1_PU2] = ADC_CHAN_VOLT("usb_temp1", 1,
+            SCALE_HW_CALIB_DEFAULT)
+#endif
+#else
 	[ADC_GPIO1_PU2]	= ADC_CHAN_TEMP("gpio1_pu2", 1,
 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+#endif
+#if 0 //def   VENDOR_EDIT /* Cong.Dai@PSW.BSP.TP, 2019/05/13, add for A board adc */
+/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200406, Modify for 86125 Q */
+#if 1 //(SHIPPING_API_LEVEL == 28)
+	[ADC_GPIO2_PU2] = ADC_CHAN_VOLT("sub_adc_gpio3", 1,
+					SCALE_HW_CALIB_DEFAULT)
+#else
+	 [ADC_GPIO2_PU2]	= ADC_CHAN_TEMP("gpio2_pu2", 1,
+					 SCALE_HW_CALIB_THERM_100K_PULLUP)
+#endif
+#else
 	[ADC_GPIO2_PU2]	= ADC_CHAN_TEMP("gpio2_pu2", 1,
 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+#endif
+#if 0 //def VENDOR_EDIT
+/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200406, Modify for 86125 Q */
+/*LiYue@BSP.CHG.Basic, 2019/07/04, modefy for usb connector temp check*/
+#if 1 //(SHIPPING_API_LEVEL == 28)
+     /*LiYue@BSP.CHG.Basic, 2019/07/04, modefy for usb connector temp check*/
+     [ADC_GPIO3_PU2] = ADC_CHAN_VOLT("usb_temp_v_r", 1,
+             SCALE_HW_CALIB_DEFAULT)
+#else
+     [ADC_GPIO3_PU2] = ADC_CHAN_VOLT("usb_temp2", 1,
+             SCALE_HW_CALIB_DEFAULT)
+#endif
+#else
 	[ADC_GPIO3_PU2]	= ADC_CHAN_TEMP("gpio3_pu2", 1,
 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+#endif
 	[ADC_GPIO4_PU2]	= ADC_CHAN_TEMP("gpio4_pu2", 1,
 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+	#if 0 //def VENDOR_EDIT
+	/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200406, Modify for 86125 Q */
+	/* Weizhi.Chen@BSP.Kernel.Driver, 2019/11/27, Add for adc read for aboard */
+	[ADC_GPIO2]	= ADC_CHAN_VOLT("board_id_vdata", 1,
+					SCALE_HW_CALIB_DEFAULT)
+	#endif /* VENDOR_EDIT */
 };
 
 static const struct adc_channels adc_chans_rev2[ADC_MAX_CHANNEL] = {
