@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
+ * SPDX-License-Identifier: GPL-2.0
  * This module exports the functions:
  *
  *     'int set_selection(struct tiocl_selection __user *, struct tty_struct *)'
@@ -346,6 +347,7 @@ int set_selection(const struct tiocl_selection __user *v, struct tty_struct *tty
 
 	return ret;
 }
+
 
 /* Insert the contents of the selection buffer into the
  * queue of the tty associated with the current console.
