@@ -28,6 +28,15 @@ config QPNP_QG
 	  to determine the battery state-of-charge (SOC) and supports other
 	  battery management features.
 
+config OPPO_QPNP_QG
+	bool "OPPO QPNP Qgauge driver"
+	depends on MFD_SPMI_PMIC
+	help
+	  Say Y here to enable the Qualcomm Technologies, Inc. QGauge driver
+	  which uses the periodic sampling of the battery voltage and current
+	  to determine the battery state-of-charge (SOC) and supports other
+	  battery management features.	  
+	  
 config SMB1351_USB_CHARGER
 	tristate "smb1351 usb charger (with VBUS detection)"
 	depends on I2C
