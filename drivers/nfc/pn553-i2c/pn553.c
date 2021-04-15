@@ -130,10 +130,10 @@ static bool  sIsWakeLocked = false;
 #endif
 
 
-#ifdef CONFIG_ODM_WT_EDIT
+#ifdef ODM_WT_EDIT
 //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,add for load nfc driver according to boardid
 char nfc_hardware_info[20];
-#endif /* CONFIG_ODM_WT_EDIT */
+#endif /* ODM_WT_EDIT */
 
 
 static struct pn544_dev *pn544_dev;
@@ -211,7 +211,7 @@ static ssize_t pn544_dev_read(struct file *filp, char __user *buf,
     struct pn544_dev *pn544_dev = filp->private_data;
 	char *tmp = NULL;
     int ret;
-	
+
 
     if (count > pn544_dev->kbuflen)
         count = pn544_dev->kbuflen;
@@ -323,7 +323,7 @@ static ssize_t pn544_dev_write(struct file *filp, const char __user *buf,
         pr_err("%s : i2c_master_send returned %d\n", __func__, ret);
         ret = -EIO;
     }
-	
+
 
     /* pn544 seems to be slow in handling I2C write requests
      * so add 1ms delay after I2C send oparation */
@@ -630,7 +630,7 @@ long pn544_dev_ioctl(struct file *filp, unsigned int cmd,
         unsigned long pwrLevel = arg & 0x0F;
         p61_access_state_t current_state = P61_STATE_INVALID;
         p61_get_access_state(pn544_dev, &current_state);
-        
+
         if (pwrLevel == 1) {
             //pr_info("%s : PN61_SET_SPI_PWR - power on ese\n", __func__);
             if (((current_state & (P61_STATE_SPI|P61_STATE_SPI_PRIO)) == 0) || (current_state & P61_STATE_SPI_FAILED))
@@ -1280,7 +1280,7 @@ static int pn544_parse_dt(struct device *dev,
 				return -EINVAL;
         }
 
-        
+
         data->ese_pwr_gpio = of_get_named_gpio(np, "nxp,pn544-ese-pwr", 0);
         if ((!gpio_is_valid(data->ese_pwr_gpio)))
 		{
@@ -1737,7 +1737,7 @@ static void check_hw_info() {
  * module load/unload record keeping
  */
 
-#ifdef CONFIG_ODM_WT_EDIT
+#ifdef ODM_WT_EDIT
 //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,add for load nfc driver according to boardid
 static int __init nfc_board_id_get(char *str)
 {
@@ -1747,15 +1747,15 @@ static int __init nfc_board_id_get(char *str)
     return 0;
 }
 __setup("board_id=", nfc_board_id_get);
-#endif /* CONFIG_ODM_WT_EDIT */
+#endif /* ODM_WT_EDIT */
 
 static int __init pn544_dev_init(void)
 {
     pr_info("Loading pn544 driver\n");
-	#ifndef CONFIG_ODM_WT_EDIT
+	#ifndef ODM_WT_EDIT
     //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,modify for load nfc driver according to boardid
     return i2c_add_driver(&pn544_driver);
-    #else /* CONFIG_ODM_WT_EDIT */
+    #else /* ODM_WT_EDIT */
     if((strncmp(nfc_hardware_info,"S86125FA1",strlen("S86125FA1")) == 0)||
       (strncmp(nfc_hardware_info,"S86125EA1",strlen("S86125EA1")) == 0)||
       (strncmp(nfc_hardware_info,"S86125UA1",strlen("S86125UA1")) == 0)||
@@ -1772,7 +1772,7 @@ static int __init pn544_dev_init(void)
         pr_info(" %s This Board doesn't support NFC,BoardID:%s Exit! \n",__func__,nfc_hardware_info);
         return -1;
     }
-    #endif /* CONFIG_ODM_WT_EDIT */
+    #endif /* ODM_WT_EDIT */
 }
 
 module_init(pn544_dev_init);
