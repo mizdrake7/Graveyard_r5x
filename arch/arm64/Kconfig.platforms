@@ -213,6 +213,16 @@ config ARCH_TRINKET
 	  This enables support for the TRINKET chipset. If you do not
 	  wish to build a kernel that runs on this chipset, say 'N' here.
 
+# WT000007@ODM_WT.BSP.Kernel.Boot.Bugid,2020/03/09,Add for ODM_WT_EDIT macro for kernel usage
+config ODM_WT_EDIT
+	bool "Enable Support for ODM WT Projects"
+	depends on ARCH_QCOM
+	select CPU_FREQ_QCOM
+	select COMMON_CLK_MSM
+	help
+	  This enables support for the ODM Wingtech projects. If you do not
+	  wish to build a kernel that runs on this chipset, say 'N' here.
+
 config ARCH_REALTEK
 	bool "Realtek Platforms"
 	help
