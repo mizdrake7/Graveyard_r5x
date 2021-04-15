@@ -782,8 +782,11 @@ static int __dwc3_gadget_ep_enable(struct dwc3_ep *dep,
 
 		init_waitqueue_head(&dep->wait_end_transfer);
 
-		if (usb_endpoint_xfer_control(desc))
+		if (usb_endpoint_xfer_control(desc)) {
+			memset(dwc->ep0_trb, 0, sizeof(struct dwc3_trb));
 			goto out;
+		}
+
 
 		/* Initialize the TRB ring */
 		dep->trb_dequeue = 0;
@@ -871,6 +874,20 @@ static void dwc3_remove_requests(struct dwc3 *dwc, struct dwc3_ep *dep)
 			dwc3_gadget_giveback(dep, req, -ESHUTDOWN);
 	}
 
+	if (dep->number == 1 && dwc->ep0state != EP0_SETUP_PHASE) {
+		unsigned int dir;
+
+		dbg_log_string("CTRLPEND", dwc->ep0state);
+		dir = !!dwc->ep0_expect_in;
+		if (dwc->ep0state == EP0_DATA_PHASE)
+			dwc3_ep0_end_control_data(dwc, dwc->eps[dir]);
+		else
+			dwc3_ep0_end_control_data(dwc, dwc->eps[!dir]);
+
+		dwc->eps[0]->trb_enqueue = 0;
+		dwc->eps[1]->trb_enqueue = 0;
+	}
+
 	dbg_log_string("DONE for %s(%d)", dep->name, dep->number);
 }
 
@@ -894,6 +911,21 @@ static void dwc3_stop_active_transfers(struct dwc3 *dwc)
 				DWC3_CONTROLLER_NOTIFY_CLEAR_DB, 0);
 
 		dwc3_remove_requests(dwc, dep);
+		if (dep->endpoint.ep_type != EP_TYPE_GSI &&
+			!dep->endpoint.endless) {
+			if (dep->trb_pool) {
+				memset(&dep->trb_pool[0], 0, sizeof(struct dwc3_trb) * dep->num_trbs);
+				dbg_event(dep->number, "Clr_TRB", 0);
+			}
+		}
+#ifdef VENDOR_EDIT
+//Achang.Zhang@ODM.BSP.USB, 2020/02/19, Add for qcom usb patch
+		if (dep->trb_pool) {
+				memset(&dep->trb_pool[0], 0,
+								sizeof(struct dwc3_trb) * dep->num_trbs);
+				dbg_event(dep->number, "Clr_TRB", 0);
+		}
+#endif /* VENDOR_EDIT */
 	}
 	dbg_log_string("DONE");
 }
@@ -2113,11 +2145,21 @@ done:
 
 	return 0;
 }
+#define MIN_RUN_STOP_DELAY_MS 50
+
+#ifdef VENDOR_EDIT
+/*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
+#define DWC3_SOFT_RESET_TIMEOUT 10
+#endif
 
 static int dwc3_gadget_run_stop(struct dwc3 *dwc, int is_on, int suspend)
 {
 	u32			reg, reg1;
 	u32			timeout = 1500;
+#ifdef VENDOR_EDIT
+/*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
+	ktime_t			start, diff;
+#endif
 
 	dbg_event(0xFF, "run_stop", is_on);
 	reg = dwc3_readl(dwc->regs, DWC3_DCTL);
@@ -2129,6 +2171,32 @@ static int dwc3_gadget_run_stop(struct dwc3 *dwc, int is_on, int suspend)
 
 		if (dwc->revision >= DWC3_REVISION_194A)
 			reg &= ~DWC3_DCTL_KEEP_CONNECT;
+
+#ifdef VENDOR_EDIT
+/*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
+		if(reg & DWC3_DCTL_RUN_STOP)/*only restart core if run bit already been set*/
+		{
+			start = ktime_get();
+			/* issue device SoftReset */
+			dwc3_writel(dwc->regs, DWC3_DCTL, reg | DWC3_DCTL_CSFTRST);
+			do {
+				reg = dwc3_readl(dwc->regs, DWC3_DCTL);
+				if (!(reg & DWC3_DCTL_CSFTRST)) {
+					udelay(20);
+					break;
+				}
+
+				diff = ktime_sub(ktime_get(), start);
+				/* poll for max. 10ms */
+				if (ktime_to_ms(diff) > DWC3_SOFT_RESET_TIMEOUT) {
+					printk_ratelimited(KERN_ERR
+						"%s:core Reset Timed Out\n", __func__);
+					break;
+				}
+				cpu_relax();
+			} while (true);
+		}
+#endif
 
 		dwc3_event_buffers_setup(dwc);
 		__dwc3_gadget_start(dwc);
@@ -2226,7 +2294,8 @@ static int dwc3_gadget_pullup(struct usb_gadget *g, int is_on)
 	struct dwc3		*dwc = gadget_to_dwc(g);
 	unsigned long		flags;
 	int			ret;
-
+    ktime_t			diff;
+	
 	is_on = !!is_on;
 	dwc->softconnect = is_on;
 
@@ -2243,6 +2312,15 @@ static int dwc3_gadget_pullup(struct usb_gadget *g, int is_on)
 	pm_runtime_get_sync(dwc->dev);
 	dbg_event(0xFF, "Pullup gsync",
 		atomic_read(&dwc->dev->power.usage_count));
+
+	diff = ktime_sub(ktime_get(), dwc->last_run_stop);
+	if (ktime_to_ms(diff) < MIN_RUN_STOP_DELAY_MS) {
+		dbg_event(0xFF, "waitBefRun_Stop",
+			  MIN_RUN_STOP_DELAY_MS - ktime_to_ms(diff));
+		msleep(MIN_RUN_STOP_DELAY_MS - ktime_to_ms(diff));
+	}
+
+	dwc->last_run_stop = ktime_get();
 
 	/*
 	 * Per databook, when we want to stop the gadget, if a control transfer
@@ -2376,6 +2454,8 @@ static int dwc3_gadget_vbus_session(struct usb_gadget *_gadget, int is_active)
 	is_active = !!is_active;
 
 	dbg_event(0xFF, "VbusSess", is_active);
+	disable_irq(dwc->irq);
+	flush_work(&dwc->bh_work);
 	spin_lock_irqsave(&dwc->lock, flags);
 
 	/* Mark that the vbus was powered */
@@ -2411,7 +2491,7 @@ static int dwc3_gadget_vbus_session(struct usb_gadget *_gadget, int is_active)
 		dev_err(dwc->dev, "%s: Core soft reset...\n", __func__);
 		dwc3_device_core_soft_reset(dwc);
 	}
-
+    enable_irq(dwc->irq);
 	return 0;
 }
 
@@ -3062,6 +3142,10 @@ static void dwc3_endpoint_interrupt(struct dwc3 *dwc,
 
 		if (cmd == DWC3_DEPCMD_ENDTRANSFER) {
 			dep->flags &= ~DWC3_EP_END_TRANSFER_PENDING;
+#ifdef VENDOR_EDIT
+//Achang.Zhang@ODM.BSP.USB, 2020/02/19, Add for qcom usb patch
+			dbg_event(0xFF, "DWC3_DEPEVT_EPCMDCMPLT", dep->number);
+#endif /* VENDOR_EDIT */
 			wake_up(&dep->wait_end_transfer);
 		}
 		break;
@@ -3838,16 +3922,25 @@ static irqreturn_t dwc3_thread_interrupt(int irq, void *_evt)
 
 static irqreturn_t dwc3_check_event_buf(struct dwc3_event_buffer *evt)
 {
+#ifdef VENDOR_EDIT
+/*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
 	struct dwc3 *dwc;
+#else
+	struct dwc3 *dwc = evt->dwc;
+#endif
 	u32 amount;
 	u32 count;
 	u32 reg;
 	ktime_t start_time;
 
+#ifdef VENDOR_EDIT
+/*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
 	if (!evt)
 		return IRQ_NONE;
 
 	dwc = evt->dwc;
+#endif
+
 	start_time = ktime_get();
 	dwc->irq_cnt++;
 
