@@ -706,6 +706,12 @@ static int pil_shutdown_trusted(struct pil_desc *pil)
 	u32 proc, scm_ret = 0;
 	int rc;
 	struct scm_desc desc = {0};
+	#ifdef VENDOR_EDIT
+	//Wentiam.Mai@PSW.NW.EM.1389836, 2019/04/27
+	//Add for skip mini dump encryption
+	int i = 0;
+	struct md_ss_toc *toc = NULL;
+	#endif
 
 	if (d->subsys_desc.no_auth)
 		return 0;
@@ -734,9 +740,42 @@ static int pil_shutdown_trusted(struct pil_desc *pil)
 	if (rc)
 		goto err_clks;
 
+	#ifdef VENDOR_EDIT
+	//Wentiam.Mai@PSW.NW.EM.1389836, 2019/04/27
+	//Add for skip mini dump encryption
+	//disable for TZ don't encryption
+	if ( pil->minidump_id ==3 ) {  //only check for modem . currently 3 is modem
+		pil->minidump_ss->md_ss_enable_status = 0;
+		pil->minidump_ss->encryption_status = 0;
+
+		for ( i = 0; i < pil->num_aux_minidump_ids; i++ ) {
+			toc = pil->aux_minidump[i];
+			toc->md_ss_enable_status = 0;
+			toc->encryption_status  = 0;
+		}
+	}
+	#endif
+
 	rc = scm_call2(SCM_SIP_FNID(SCM_SVC_PIL, PAS_SHUTDOWN_CMD),
 		       &desc);
 	scm_ret = desc.ret[0];
+
+	#ifdef VENDOR_EDIT
+	//Wentiam.Mai@PSW.NW.EM.1389836, 2019/04/27
+	//Add for skip mini dump encryption
+	//disable for TZ don't encryption
+	//set back for miindump flow
+	if( pil->minidump_id == 3 ) {  //only check for modem . currently 3 is modem
+		pil->minidump_ss->md_ss_enable_status  =MD_SS_ENABLED;
+		pil->minidump_ss->encryption_status =MD_SS_ENCR_DONE;
+
+		for (i = 0; i < pil->num_aux_minidump_ids; i++) {
+			toc = pil->aux_minidump[i];
+			toc->md_ss_enable_status = MD_SS_ENABLED;
+			toc->encryption_status  = MD_SS_ENCR_DONE;
+		}
+	}
+	#endif
 
 	disable_unprepare_clocks(d->proxy_clks, d->proxy_clk_count);
 	disable_regulators(d, d->proxy_regs, d->proxy_reg_count, false);
@@ -797,6 +836,13 @@ static struct pil_reset_ops pil_ops_trusted = {
 	.deinit_image = pil_deinit_image_trusted,
 };
 
+#ifdef VENDOR_EDIT
+//Wentiam.Mai@PSW.NW.EM.1248599, 2018/01/25
+//Add for customized subsystem ramdump to skip generate dump cause by SAU
+bool SKIP_GENERATE_RAMDUMP = false;
+extern void mdmreason_set(char * buf);
+#endif
+
 static void log_failure_reason(const struct pil_tz_data *d)
 {
 	size_t size;
@@ -819,6 +865,7 @@ static void log_failure_reason(const struct pil_tz_data *d)
 
 	strlcpy(reason, smem_reason, min(size, (size_t)MAX_SSR_REASON_LEN));
 	pr_err("%s subsystem failure reason: %s.\n", name, reason);
+
 }
 
 static int subsys_shutdown(const struct subsys_desc *subsys, bool force_stop)

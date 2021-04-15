@@ -35,6 +35,8 @@
 #include <linux/soc/qcom/smem.h>
 #include <soc/qcom/boot_stats.h>
 
+#include <soc/oppo/oppo_project.h>
+
 #define BUILD_ID_LENGTH 32
 #define CHIP_ID_LENGTH 32
 #define SMEM_IMAGE_VERSION_BLOCKS_COUNT 32
@@ -267,6 +269,14 @@ struct socinfo_v0_15 {
 	uint32_t nmodem_supported;
 };
 
+//#ifdef ODM_WT_EDIT
+//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+struct socinfo_v0_16 {
+	struct socinfo_v0_15 v0_15;
+	uint32_t board_nfc_support;
+};
+//#endif
+
 static union {
 	struct socinfo_v0_1 v0_1;
 	struct socinfo_v0_2 v0_2;
@@ -283,10 +293,21 @@ static union {
 	struct socinfo_v0_13 v0_13;
 	struct socinfo_v0_14 v0_14;
 	struct socinfo_v0_15 v0_15;
+    //#ifdef ODM_WT_EDIT
+	//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+	struct socinfo_v0_16 v0_16;
+    //#endif
 } *socinfo;
 
+//#if defined(VENDOR_EDIT) && defined(CONFIG_CONFIDENTIAL_EUCLID_VERSION)
+/* Weizhi.Chen@BSP.Kernel.Driver, 2019/12/10, Add for fake soc id string */
+//static char *final_soc_id_string = "SM6150";
+//#else
+//static char *final_soc_id_string = "SM6125";
+//#endif /* VENDOR_EDIT */
+
 /* max socinfo format version supported */
-#define MAX_SOCINFO_FORMAT SOCINFO_VERSION(0, 15)
+#define MAX_SOCINFO_FORMAT SOCINFO_VERSION(0, 16)
 
 static struct msm_soc_info cpu_of_id[] = {
 	[0]  = {MSM_CPU_UNKNOWN, "Unknown CPU"},
@@ -414,8 +435,10 @@ static struct msm_soc_info cpu_of_id[] = {
 	[384] = {MSM_CPU_SA6155, "SA6155"},
 
 	/* trinket ID */
-	[394] = {MSM_CPU_TRINKET, "TRINKET"},
-
+	//#ifdef ODM_WT_EDIT
+	//Lijie.Yang@ODM_WT.BSP.Kernel.Stability.2746102, 2020/05/11,Modify the CPU display data
+	[394] = {MSM_CPU_TRINKET, "SDM665"},
+	//#endif
 	/* qcs610 ID */
 	[401] = {MSM_CPU_QCS610, "QCS610"},
 
@@ -445,6 +468,11 @@ static struct socinfo_v0_1 dummy_socinfo = {
 	.format = SOCINFO_VERSION(0, 1),
 	.version = 1,
 };
+
+//#ifdef ODM_WT_EDIT
+//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+uint32_t nfc_support_info;
+//#endif
 
 uint32_t socinfo_get_id(void)
 {
@@ -689,6 +717,14 @@ static uint32_t socinfo_get_nmodem_supported(void)
 			socinfo->v0_15.nmodem_supported : 0)
 		: 0;
 }
+
+//#ifdef ODM_WT_EDIT
+//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+static uint32_t socinfo_get_board_nfc_support(void)
+{
+	return socinfo ? socinfo->v0_16.board_nfc_support : 0;
+}
+//#endif
 
 enum pmic_model socinfo_get_pmic_model(void)
 {
@@ -989,6 +1025,18 @@ msm_get_pmic_die_revision(struct device *dev,
 			 socinfo_get_pmic_die_revision());
 }
 
+//#ifdef ODM_WT_EDIT
+//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+static ssize_t
+msm_get_board_nfc_support(struct device *dev,
+			       struct device_attribute *attr,
+			       char *buf)
+{
+	return sprintf(buf, "%u\n",
+			 socinfo_get_board_nfc_support());
+}
+//#endif
+
 static ssize_t
 msm_get_image_version(struct device *dev,
 			struct device_attribute *attr,
@@ -1286,6 +1334,13 @@ static struct device_attribute msm_soc_attr_pmic_die_revision =
 	__ATTR(pmic_die_revision, 0444,
 			msm_get_pmic_die_revision, NULL);
 
+//#ifdef ODM_WT_EDIT
+//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+static struct device_attribute msm_soc_attr_board_nfc_support =
+	__ATTR(board_nfc_support, 0444,
+			msm_get_board_nfc_support, NULL);
+//#endif
+
 static struct device_attribute image_version =
 	__ATTR(image_version, 0644,
 			msm_get_image_version, msm_set_image_version);
@@ -1438,6 +1493,10 @@ static void __init populate_soc_sysfs_files(struct device *msm_soc_device)
 	device_create_file(msm_soc_device, &image_crm_version);
 	device_create_file(msm_soc_device, &select_image);
 	device_create_file(msm_soc_device, &images);
+     //#ifdef ODM_WT_EDIT
+	 //xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+	device_create_file(msm_soc_device, &msm_soc_attr_board_nfc_support);
+     //#endif
 
 	switch (socinfo_format) {
 	case SOCINFO_VERSION(0, 15):
@@ -1734,11 +1793,77 @@ static void socinfo_print(void)
 			socinfo->v0_15.nmodem_supported);
 		break;
 
+    //#ifdef ODM_WT_EDIT
+	//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+	case SOCINFO_VERSION(0, 16):
+		pr_info("v%u.%u, id=%u, ver=%u.%u, raw_id=%u, raw_ver=%u, hw_plat=%u, hw_plat_ver=%u\n accessory_chip=%u, hw_plat_subtype=%u, pmic_model=%u, pmic_die_revision=%u foundry_id=%u serial_number=%u num_pmics=%u chip_family=0x%x raw_device_family=0x%x raw_device_number=0x%x nproduct_id=0x%x num_clusters=0x%x ncluster_array_offset=0x%x num_defective_parts=0x%x ndefective_parts_array_offset=0x%x nmodem_supported=0x%x board_nfc_support=%u\n",
+			f_maj, f_min, socinfo->v0_1.id, v_maj, v_min,
+			socinfo->v0_2.raw_id, socinfo->v0_2.raw_version,
+			socinfo->v0_3.hw_platform,
+			socinfo->v0_4.platform_version,
+			socinfo->v0_5.accessory_chip,
+			socinfo->v0_6.hw_platform_subtype,
+			socinfo->v0_7.pmic_model,
+			socinfo->v0_7.pmic_die_revision,
+			socinfo->v0_9.foundry_id,
+			socinfo->v0_10.serial_number,
+			socinfo->v0_11.num_pmics,
+			socinfo->v0_12.chip_family,
+			socinfo->v0_12.raw_device_family,
+			socinfo->v0_12.raw_device_number,
+			socinfo->v0_13.nproduct_id,
+			socinfo->v0_14.num_clusters,
+			socinfo->v0_14.ncluster_array_offset,
+			socinfo->v0_14.num_defective_parts,
+			socinfo->v0_14.ndefective_parts_array_offset,
+			socinfo->v0_15.nmodem_supported,
+			socinfo->v0_16.board_nfc_support);
+		break;
+    //#endif
+
 	default:
 		pr_err("Unknown format found: v%u.%u\n", f_maj, f_min);
 		break;
 	}
 }
+
+//#ifdef ODM_WT_EDIT
+//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+static unsigned int str2u(char *str)
+{
+	int len = 0;
+	int i = 0;
+	unsigned int val = 0;
+
+	len = strlen(str);
+
+	for (i = 0; i < len; i++) {
+		val = val*10 + (str[i] - '0');
+	}
+
+	return val;
+}
+
+static int __init modem_id_get(char *value)
+{
+	nfc_support_info = str2u(value);
+    pr_info("%s ModemID= %u\n ",__func__,nfc_support_info);
+    return 0;
+}
+__setup("modemId=", modem_id_get);
+
+static void detect_board_nfc_support(void)
+{
+	if(nfc_support_info == 1 || nfc_support_info == 2 || nfc_support_info == 4 || nfc_support_info == 5){
+
+		socinfo->v0_16.board_nfc_support = 0;
+	}
+	else if(nfc_support_info == 3){
+		socinfo->v0_16.board_nfc_support = 1;
+	}
+	pr_info("%s board_nfc_support= %u\n ", __func__, socinfo->v0_16.board_nfc_support);
+}
+//#endif
 
 static void socinfo_select_format(void)
 {
@@ -1786,7 +1911,15 @@ int __init socinfo_init(void)
 		pr_warn("New IDs added! ID => CPU mapping needs an update.\n");
 
 	cur_cpu = cpu_of_id[socinfo->v0_1.id].generic_soc_type;
+	//#ifdef VENDOR_EDIT
+	/* Weizhi.Chen@BSP.Kernel.Driver, 2019/12/10, Add for fake soc id string */
+	//cpu_of_id[socinfo->v0_1.id].soc_id_string = final_soc_id_string;
+	//#endif /* VENDOR_EDIT */
 	boot_stats_init();
+    //#ifdef ODM_WT_EDIT
+	//xubuchao1_wt@ODM_WT.BSP.SENSOR,2020/04/20, Add for mag compatible
+	detect_board_nfc_support();
+	//#endif
 	socinfo_print();
 	arch_read_hardware_id = msm_read_hardware_id;
 	socinfo_init_done = true;
