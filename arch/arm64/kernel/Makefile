@@ -62,6 +62,9 @@ arm64-obj-$(CONFIG_HARDEN_BRANCH_PREDICTOR)	+= bpi.o
 endif
 arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
 
+# ifdef VENDOR_EDIT //yixue.ge@bsp.drv add for minidump
+obj-y 					+=get_regs.o
+# endif
 obj-y					+= $(arm64-obj-y) vdso/ probes/
 obj-m					+= $(arm64-obj-m)
 head-y					:= head.o
@@ -70,3 +73,4 @@ extra-y					+= $(head-y) vmlinux.lds
 ifeq ($(CONFIG_DEBUG_EFI),y)
 AFLAGS_head.o += -DVMLINUX_PATH="\"$(realpath $(objtree)/vmlinux)\""
 endif
+
