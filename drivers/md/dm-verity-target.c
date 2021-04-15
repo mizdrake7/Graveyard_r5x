@@ -296,7 +296,12 @@ out:
 #ifdef CONFIG_DM_VERITY_AVB
 		dm_verity_avb_error_handler();
 #endif
+		#ifndef VENDOR_EDIT
+		#Fangfang.Hui@TECH.AD.Stability, 2019/12/09, Modify for kernel_restart cannot be catched
 		kernel_restart("dm-verity device corrupted");
+		#else
+		panic("dm-verity device corrupted");
+		#endif /* VENDOR_EDIT */
 	}
 
 	return 1;
