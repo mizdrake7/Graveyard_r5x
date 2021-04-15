@@ -117,7 +117,6 @@ static int update_config(struct clk_rcg2 *rcg, u32 cfg)
 	u32 cmd;
 	struct clk_hw *hw = &rcg->clkr.hw;
 	const char *name = clk_hw_get_name(hw);
-
 	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
 				 CMD_UPDATE, CMD_UPDATE);
 	if (ret)
@@ -417,11 +416,15 @@ static bool clk_rcg2_current_config(struct clk_rcg2 *rcg,
 	if (rcg->mnd_width) {
 		mask = BIT(rcg->mnd_width) - 1;
 		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + M_REG, &cfg);
-		if ((cfg & mask) != (f->m & mask))
+		if (!cfg && (f->m == f->n))
+			return true;
+		else if ((cfg & mask) != (f->m & mask))
 			return false;
 
 		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + N_REG, &cfg);
-		if ((cfg & mask) != (~(f->n - f->m) & mask))
+		if (!cfg && (f->m == f->n))
+			return true;
+		else if ((cfg & mask) != (~(f->n - f->m) & mask))
 			return false;
 	}
 
@@ -1181,8 +1184,11 @@ static int clk_pixel_set_rate(struct clk_hw *hw, unsigned long rate,
 		f.m = frac->num;
 		f.n = frac->den;
 
-		if (clk_rcg2_current_config(rcg, &f))
+		if (clk_rcg2_current_config(rcg, &f)) {
+			pr_err("clk_rcg2_current_config check\n");
 			return 0;
+		}
+		pr_err("clk_rcg2_configure called\n");
 		return clk_rcg2_configure(rcg, &f);
 	}
 	return -EINVAL;
