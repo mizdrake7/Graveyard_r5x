@@ -203,6 +203,40 @@ struct task_group;
 
 #endif
 
+#ifdef VENDOR_EDIT
+
+extern int sysctl_uifirst_enabled;
+extern int sysctl_launcher_boost_enabled;
+#endif /* VENDOR_EDIT */
+
+#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
+struct uifirst_d_state {
+    u64 iowait_ns;
+    u64 downread_ns;
+    u64 downwrite_ns;
+    u64 mutex_ns;
+    u64 other_ns;
+    int cnt;
+};
+
+struct uifirst_s_state{
+    u64 binder_ns;
+    u64 epoll_ns;
+    u64 futex_ns;
+    u64 other_ns;
+    int cnt;
+};
+
+struct oppo_uifirst_monitor_info {
+    u64 runnable_state;
+    u64 ltt_running_state; /* ns */
+    u64 big_running_state; /* ns */
+    struct uifirst_d_state d_state;
+    struct uifirst_s_state s_state;
+};
+#endif
+
 /* Task command name length: */
 #define TASK_COMM_LEN			16
 
@@ -543,8 +577,36 @@ struct cpu_cycle_counter_cb {
 #define MAX_NUM_CGROUP_COLOC_ID	20
 
 extern DEFINE_PER_CPU_READ_MOSTLY(int, sched_load_boost);
+#ifdef CONFIG_SMP
+#ifdef VENDOR_EDIT
+//wangmengmeng@swdp.shanghai, 2019/6/20, export some symbol
+extern unsigned long sched_get_capacity_orig(int cpu);
+extern unsigned int sched_get_cpu_util(int cpu);
+#endif
+#else
+#ifdef VENDOR_EDIT
+//wangmengmeng@swdp.shanghai, 2019/6/20, export some symbol
+static inline unsigned long sched_get_capacity_orig(int cpu)
+{
+	return 0;
+}
+
+static inline unsigned int sched_get_cpu_util(int cpu)
+{
+	return 0;
+}
+#endif
+#endif
+
 
 #ifdef CONFIG_SCHED_WALT
+#ifdef VENDOR_EDIT
+//cuixiaogang@swdp.shanghai, 2018/3/18, export some symbol
+extern int sched_boost(void);
+extern int sched_set_updown_migrate(unsigned int *up_pct, unsigned int *down_pct);
+extern int sched_get_updown_migrate(unsigned int *up_pct, unsigned int *down_pct);
+void sched_boost_disable_all(void);
+#endif /* VENDOR_EDIT */
 extern void sched_exit(struct task_struct *p);
 extern int register_cpu_cycle_counter_cb(struct cpu_cycle_counter_cb *cb);
 extern void sched_set_io_is_busy(int val);
@@ -731,6 +793,16 @@ enum perf_event_task_context {
 struct wake_q_node {
 	struct wake_q_node *next;
 };
+
+#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM)
+/* Kui.Zhang@TEC.Kernel.Performance, 2019/03/04
+ * Record process reclaim infor
+ */
+union reclaim_limit {
+   unsigned long stop_jiffies;
+   unsigned long stop_scan_addr;
+};
+#endif
 
 struct task_struct {
 #ifdef CONFIG_THREAD_INFO_IN_TASK
@@ -1350,7 +1422,34 @@ struct task_struct {
 	/* Used by LSM modules for access restriction: */
 	void				*security;
 #endif
-
+#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM)
+	/* Kui.Zhang@TEC.Kernel.Performance, 2019/03/04
+	* Record process reclaim infor
+	*/
+	union reclaim_limit reclaim;
+#endif
+#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+	   /* Kui.Zhang@TEC.Kernel.Performance, 2019/03/05
+	    * record the time used of process reclaim
+	    */
+	   unsigned long reclaim_ns;
+	   unsigned long reclaim_run_ns;
+	   unsigned long reclaim_intr_ns;
+#endif
+#ifdef VENDOR_EDIT
+	int static_ux;
+#endif /* VENDOR_EDIT */
+#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
+    int stuck_trace;
+    struct oppo_uifirst_monitor_info oppo_stuck_info;
+    unsigned in_mutex:1;
+    unsigned in_downread:1;
+    unsigned in_downwrite:1;
+    unsigned in_futex:1;
+    unsigned in_binder:1;
+    unsigned in_epoll:1;
+#endif
 	/*
 	 * New fields for task_struct should be added above here, so that
 	 * they are included in the randomized portion of task_struct.
@@ -1574,6 +1673,12 @@ extern struct pid *cad_pid;
 #define PF_MUTEX_TESTER		0x20000000	/* Thread belongs to the rt mutex tester */
 #define PF_FREEZER_SKIP		0x40000000	/* Freezer should not count it as freezable */
 #define PF_SUSPEND_TASK		0x80000000      /* This thread called freeze_processes() and should not be frozen */
+#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM)
+/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-12-25, flag that current task is process reclaimer */
+#define PF_RECLAIM_SHRINK	0x10000000
+
+#define current_is_reclaimer() (current->flags & PF_RECLAIM_SHRINK)
+#endif
 
 /*
  * Only the _current_ task can read/write to tsk->flags, but other

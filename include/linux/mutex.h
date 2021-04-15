@@ -64,6 +64,7 @@ struct mutex {
 #ifdef CONFIG_DEBUG_LOCK_ALLOC
 	struct lockdep_map	dep_map;
 #endif
+
 };
 
 static inline struct task_struct *__mutex_owner(struct mutex *lock)
@@ -83,6 +84,7 @@ struct mutex_waiter {
 	void			*magic;
 #endif
 };
+
 
 #ifdef CONFIG_DEBUG_MUTEXES
 
