@@ -341,6 +341,11 @@ struct kgsl_device {
 	unsigned int num_l3_pwrlevels;
 	/* store current L3 vote to determine if we should change our vote */
 	unsigned int cur_l3_pwrlevel;
+#ifdef VENDOR_EDIT
+//wenhua.Leng@PSW.MM.Display.GPU.minidump,2019-04-21
+	bool snapshot_control;
+	int snapshotfault;
+#endif /*VENDOR_EDIT*/
 };
 
 #define KGSL_MMU_DEVICE(_mmu) \
@@ -546,6 +551,10 @@ struct kgsl_snapshot {
 	bool first_read;
 	bool gmu_fault;
 	bool recovered;
+#ifdef VENDOR_EDIT
+//wenhua.Leng@PSW.MM.Display.GPU.minidump,2019-04-21
+	char snapshot_hashid[96];
+#endif /*VENDOR_EDIT*/
 };
 
 /**

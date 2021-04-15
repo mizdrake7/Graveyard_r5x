@@ -26,6 +26,9 @@
 
 #define BL_NODE_NAME_SIZE 32
 
+extern int panel_which;
+extern int is_ktd3136;
+
 /* Autorefresh will occur after FRAME_CNT frames. Large values are unlikely */
 #define AUTOREFRESH_MAX_FRAME_CNT 6
 
@@ -64,6 +67,73 @@ static const struct drm_prop_enum_list e_qsync_mode[] = {
 	{SDE_RM_QSYNC_ONE_SHOT_MODE,	"one_shot"},
 };
 
+#ifdef VENDOR_EDIT
+/*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-11-04 add for global hbm */
+#if 0
+static int interpolate(int x, int xa, int xb, int ya, int yb)
+{
+	int bf, factor, plus;
+
+	bf = 2 * (yb - ya) * (x - xa) / (xb - xa);
+	factor = bf / 2;
+	plus = bf % 2;
+
+	return ya + factor + plus;
+}
+#endif
+#endif
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09,Add blmap for BL
+static int backlight_remapping_into_tddic_reg(int level_brightness, struct dsi_display *display)
+{
+	int level_temp, value_a, value_b;
+	int level = level_brightness;
+
+	if ( level > 0) {
+		pr_debug(" %s  level %lld \n", __func__, level);
+
+		if (display->panel->bl_config.blmap){
+			if (level%32 > 0)
+				level_temp = level/32 + 1;
+			else
+				level_temp = level/32;
+
+			level_temp = level_temp - 1;
+			if((level_temp*2 + 1) > display->panel->bl_config.blmap_size){
+				pr_err(" %s android brightness level is more than 2047 or LCM blmap_size is setting short than 128 = %d\n", __func__, display->panel->bl_config.blmap_size);
+				return 0;
+			}
+			value_a = display->panel->bl_config.blmap[level_temp*2];
+			value_b = display->panel->bl_config.blmap[level_temp*2 + 1];
+
+			if (level <= 383)
+				level = value_a*level/100 + value_b;
+			else
+				level = value_a*level/100 - value_b;
+
+			pr_debug(" %s value_a %d   value_b %d level_temp %d level %lld\n", __func__, value_a, value_b, level_temp, level);
+			if (level < 0){
+				pr_err(" %s backlight value had been converted into a minus type = %d\n", __func__, level);
+				return 0;
+			}
+		}
+
+	if (level < display->panel->bl_config.bl_min_level)
+		level = display->panel->bl_config.bl_min_level;
+	if (level > display->panel->bl_config.bl_max_level)
+			level = display->panel->bl_config.bl_max_level;
+	return level;
+	} else if (level == 0){
+		return 0;
+	} else {
+		pr_err(" %s android brightness level is error = %d\n", __func__, level);
+		return 0;
+	}
+}
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09,Add blmap for BL
+//#endif /* ODM_WT_EDIT */
+
 static int sde_backlight_device_update_status(struct backlight_device *bd)
 {
 	int brightness;
@@ -84,10 +154,36 @@ static int sde_backlight_device_update_status(struct backlight_device *bd)
 	display = (struct dsi_display *) c_conn->display;
 	if (brightness > display->panel->bl_config.bl_max_level)
 		brightness = display->panel->bl_config.bl_max_level;
-
+#if 0
+#ifndef VENDOR_EDIT
+/*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-11-04 add for global hbm */
 	/* map UI brightness into driver backlight level with rounding */
 	bl_lvl = mult_frac(brightness, display->panel->bl_config.bl_max_level,
 			display->panel->bl_config.brightness_max_level);
+#else
+	if (brightness > display->panel->bl_config.brightness_normal_max_level) {
+		bl_lvl = interpolate(brightness,
+				display->panel->bl_config.brightness_normal_max_level,
+				display->panel->bl_config.brightness_max_level,
+				display->panel->bl_config.bl_normal_max_level,
+				display->panel->bl_config.bl_max_level);
+	} else {
+		bl_lvl = mult_frac(brightness, display->panel->bl_config.bl_normal_max_level,
+				display->panel->bl_config.brightness_normal_max_level);
+	}
+#endif
+#endif
+
+//#ifndef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09,Add blmap for BL
+	//bl_lvl = mult_frac(brightness, display->panel->bl_config.bl_max_level,
+	//		display->panel->bl_config.brightness_max_level);
+//#else /* ODM_WT_EDIT */
+	bl_lvl=backlight_remapping_into_tddic_reg(brightness, display);
+	pr_info("LCD_LOG0 %s  level after %lld \n", __func__, bl_lvl);
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09,Add blmap for BL
+//#endif /* ODM_WT_EDIT */
+
 
 	if (!bl_lvl && brightness)
 		bl_lvl = 1;
@@ -465,6 +561,11 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 	struct dsi_backlight_config *bl_config;
 	int rc = 0;
 
+#ifdef VENDOR_EDIT
+/*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
+	struct backlight_device *bd;
+#endif /* VENDOR_EDIT */
+
 	if (!c_conn) {
 		SDE_ERROR("Invalid params sde_connector null\n");
 		return -EINVAL;
@@ -478,11 +579,26 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 		return -EINVAL;
 	}
 
+#ifdef VENDOR_EDIT
+/*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
+	bd = c_conn->bl_device;
+	if (!bd) {
+		SDE_ERROR("Invalid params backlight_device null\n");
+		return -EINVAL;
+	}
+
+	mutex_lock(&bd->update_lock);
+#endif /* VENDOR_EDIT */
+
 	bl_config = &dsi_display->panel->bl_config;
 
 	if (dsi_display->panel->bl_config.bl_update ==
 		BL_UPDATE_DELAY_UNTIL_FIRST_FRAME && !c_conn->allow_bl_update) {
 		c_conn->unset_bl_level = bl_config->bl_level;
+#ifdef VENDOR_EDIT
+/*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
+		mutex_unlock(&bd->update_lock);
+#endif /* VENDOR_EDIT */
 		return 0;
 	}
 
@@ -505,6 +621,11 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 	rc = c_conn->ops.set_backlight(&c_conn->base,
 			dsi_display, bl_config->bl_level);
 	c_conn->unset_bl_level = 0;
+
+#ifdef VENDOR_EDIT
+/*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
+	mutex_unlock(&bd->update_lock);
+#endif /* VENDOR_EDIT */
 
 	return rc;
 }
@@ -537,6 +658,178 @@ void sde_connector_set_qsync_params(struct drm_connector *connector)
 		}
 	}
 }
+
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.Service.Feature,2018/11/21
+ * For OnScreenFingerprint feature
+*/
+extern bool sde_crtc_get_fingerprint_mode(struct drm_crtc_state *crtc_state);
+extern bool sde_crtc_get_fingerprint_pressed(struct drm_crtc_state *crtc_state);
+extern int oppo_display_get_hbm_mode(void);
+extern int sde_crtc_set_onscreenfinger_defer_sync(struct drm_crtc_state *crtc_state, bool defer_sync);
+extern int oppo_dimlayer_bl;
+extern int oppo_dimlayer_bl_enable_real;
+extern int oppo_dimlayer_bl_enable;
+extern int oppo_dimlayer_bl_enabled;
+extern int oppo_dimlayer_bl_delay;
+extern int oppo_dimlayer_bl_delay_after;
+extern int oppo_dimlayer_bl_enable_v2;
+int oppo_dimlayer_bl_enable_v2_real = 0;
+
+int sde_connector_update_backlight(struct drm_connector *connector)
+{
+	if (oppo_dimlayer_bl != oppo_dimlayer_bl_enabled) {
+		struct sde_connector *c_conn = to_sde_connector(connector);
+
+		oppo_dimlayer_bl_enabled = oppo_dimlayer_bl;
+		usleep_range(oppo_dimlayer_bl_delay, oppo_dimlayer_bl_delay + 100);
+		_sde_connector_update_bl_scale(c_conn);
+		usleep_range(oppo_dimlayer_bl_delay_after, oppo_dimlayer_bl_delay_after + 100);
+	}
+
+	if (oppo_dimlayer_bl_enable_v2 != oppo_dimlayer_bl_enable_v2_real) {
+		struct sde_connector *c_conn = to_sde_connector(connector);
+
+		oppo_dimlayer_bl_enable_v2_real = oppo_dimlayer_bl_enable_v2;
+		_sde_connector_update_bl_scale(c_conn);
+	}
+
+	return 0;
+}
+
+int sde_connector_update_hbm_backlight(struct drm_connector *connector)
+{
+    struct sde_connector *c_conn = to_sde_connector(connector);
+	_sde_connector_update_bl_scale(c_conn);
+	return 0;
+}
+
+extern u32 flag_writ;
+extern int oppo_dimlayer_hbm_vblank_count;
+extern atomic_t oppo_dimlayer_hbm_vblank_ref;
+extern u32 oppo_onscreenfp_pressed_up_status;
+extern int oppo_fod_on_vblank;
+extern int oppo_fod_off_vblank;
+extern int oppo_display_mode;
+int sde_connector_update_hbm(struct drm_connector *connector)
+{
+	struct sde_connector *c_conn = to_sde_connector(connector);
+	struct dsi_display *dsi_display;
+	struct sde_connector_state *c_state;
+	int rc = 0;
+	int fingerprint_mode;
+
+	if (!c_conn) {
+		SDE_ERROR("Invalid params sde_connector null\n");
+		return -EINVAL;
+	}
+
+	if (c_conn->connector_type != DRM_MODE_CONNECTOR_DSI)
+		return 0;
+
+	c_state = to_sde_connector_state(connector->state);
+
+	dsi_display = c_conn->display;
+	if (!dsi_display || !dsi_display->panel) {
+		SDE_ERROR("Invalid params(s) dsi_display %pK, panel %pK\n",
+			dsi_display,
+			((dsi_display) ? dsi_display->panel : NULL));
+		return -EINVAL;
+	}
+
+	if (!c_conn->encoder || !c_conn->encoder->crtc ||
+	    !c_conn->encoder->crtc->state) {
+		return 0;
+	}
+
+	fingerprint_mode = sde_crtc_get_fingerprint_mode(c_conn->encoder->crtc->state);
+	if (OPPO_DISPLAY_AOD_SCENE == get_oppo_display_scene()) {
+		if (sde_crtc_get_fingerprint_pressed(c_conn->encoder->crtc->state)) {
+			sde_crtc_set_onscreenfinger_defer_sync(c_conn->encoder->crtc->state, true);
+		} else {
+			sde_crtc_set_onscreenfinger_defer_sync(c_conn->encoder->crtc->state, false);
+			fingerprint_mode = false;
+		}
+	} else {
+		sde_crtc_set_onscreenfinger_defer_sync(c_conn->encoder->crtc->state, false);
+	}
+
+	if (fingerprint_mode != dsi_display->panel->is_hbm_enabled) {
+		struct dsi_panel *panel = dsi_display->panel;
+
+		if (oppo_fod_on_vblank >= 0)
+			panel->cur_mode->priv_info->fod_on_vblank = oppo_fod_on_vblank;
+		if (oppo_fod_off_vblank >= 0)
+			panel->cur_mode->priv_info->fod_off_vblank = oppo_fod_off_vblank;
+
+		pr_err("OnscreenFingerprint mode: %s",
+		       fingerprint_mode ? "Enter" : "Exit");
+		oppo_onscreenfp_pressed_up_status = 0;
+		dsi_display->panel->is_hbm_enabled = fingerprint_mode;
+		if (fingerprint_mode) {
+			if (!dsi_display->panel->oppo_priv.is_aod_ramless || oppo_display_mode) {
+			    _sde_connector_update_bl_scale(c_conn);
+			    mutex_lock(&dsi_display->panel->panel_lock);
+
+			    if (OPPO_DISPLAY_AOD_SCENE != get_oppo_display_scene() &&
+			        dsi_display->panel->bl_config.bl_level) {
+				    rc = dsi_panel_tx_cmd_set(dsi_display->panel, DSI_CMD_AOD_HBM_ON);
+			    } else {
+				    dsi_display_clk_ctrl(dsi_display->dsi_clk_handle,
+						         DSI_CORE_CLK, DSI_CLK_ON);
+				    rc = dsi_panel_tx_cmd_set(dsi_display->panel, DSI_CMD_AOD_HBM_ON);
+				    dsi_display_clk_ctrl(dsi_display->dsi_clk_handle,
+						         DSI_CORE_CLK, DSI_CLK_OFF);
+			    }
+
+			    mutex_unlock(&dsi_display->panel->panel_lock);
+			    if (rc) {
+				    pr_err("failed to send DSI_CMD_HBM_ON cmds, rc=%d\n", rc);
+				    return rc;
+			    }
+			}
+		} else {
+
+			mutex_lock(&dsi_display->panel->panel_lock);
+
+			dsi_display_clk_ctrl(dsi_display->dsi_clk_handle,
+					     DSI_CORE_CLK, DSI_CLK_ON);
+			if(OPPO_DISPLAY_AOD_HBM_SCENE == get_oppo_display_scene()) {
+				if (OPPO_DISPLAY_POWER_DOZE_SUSPEND == get_oppo_display_power_status() ||
+				    OPPO_DISPLAY_POWER_DOZE == get_oppo_display_power_status()) {
+					rc = dsi_panel_tx_cmd_set(dsi_display->panel, DSI_CMD_AOD_HBM_OFF);
+					set_oppo_display_scene(OPPO_DISPLAY_AOD_SCENE);
+				} else {
+					rc = dsi_panel_tx_cmd_set(dsi_display->panel, DSI_CMD_SET_NOLP);
+					/* set nolp would exit hbm, restore when panel status on hbm */
+					if (oppo_display_get_hbm_mode()) {
+						rc = dsi_panel_tx_cmd_set(dsi_display->panel, DSI_CMD_AOD_HBM_ON);
+					}
+					set_oppo_display_scene(OPPO_DISPLAY_NORMAL_SCENE);
+				}
+			} else if (oppo_display_get_hbm_mode()) {
+				/* Do nothing to skip hbm off */
+			} else if(OPPO_DISPLAY_AOD_SCENE == get_oppo_display_scene()) {
+				rc = dsi_panel_tx_cmd_set(dsi_display->panel, DSI_CMD_AOD_HBM_OFF);
+			} else {
+				rc = dsi_panel_tx_cmd_set(dsi_display->panel, DSI_CMD_HBM_OFF);
+				//oppo_onscreenfp_pressed_up_status = 1;
+			}
+
+			dsi_display_clk_ctrl(dsi_display->dsi_clk_handle,
+					     DSI_CORE_CLK, DSI_CLK_OFF);
+			mutex_unlock(&dsi_display->panel->panel_lock);
+			if (rc) {
+				pr_err("failed to send DSI_CMD_HBM_OFF cmds, rc=%d\n", rc);
+				return rc;
+			}
+			_sde_connector_update_bl_scale(c_conn);
+		}
+	}
+
+	return 0;
+}
+#endif
 
 static int _sde_connector_update_dirty_properties(
 				struct drm_connector *connector)
@@ -711,6 +1004,11 @@ void sde_connector_helper_bridge_enable(struct drm_connector *connector)
 				BL_UPDATE_DELAY_UNTIL_FIRST_FRAME)
 		sde_encoder_wait_for_event(c_conn->encoder,
 				MSM_ENC_TX_COMPLETE);
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Adjust LCD timing t7 more than 50ms to satisfy spec
+		msleep(15);
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Adjust LCD timing t7 more than 50ms to satisfy spec
+//#endif /* ODM_WT_EDIT */
 	c_conn->allow_bl_update = true;
 
 	if (c_conn->bl_device) {
@@ -2329,7 +2627,13 @@ struct drm_connector *sde_connector_init(struct drm_device *dev,
 	msm_property_install_range(&c_conn->property_info, "ad_bl_scale",
 		0x0, 0, MAX_AD_BL_SCALE_LEVEL, MAX_AD_BL_SCALE_LEVEL,
 		CONNECTOR_PROP_AD_BL_SCALE);
-
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Feature,2018-11-21
+ * Support custom propertys
+*/
+	msm_property_install_range(&c_conn->property_info,"CONNECTOR_CUST",
+		0x0, 0, INT_MAX, 0, CONNECTOR_PROP_CUSTOM);
+#endif
 	c_conn->bl_scale_dirty = false;
 	c_conn->bl_scale = MAX_BL_SCALE_LEVEL;
 	c_conn->bl_scale_ad = MAX_AD_BL_SCALE_LEVEL;

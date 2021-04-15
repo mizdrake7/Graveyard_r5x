@@ -19,10 +19,23 @@
 #include <linux/of_gpio.h>
 #include <linux/pwm.h>
 #include <video/mipi_display.h>
+//#ifdef ODM_WT_EDIT
+//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP  resume update firmware function begain
+#include <linux/update_tpfw_notifier.h>
+//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP  resume update firmware function end
+//#endif /* ODM_WT_EDIT */
 
 #include "dsi_panel.h"
 #include "dsi_ctrl_hw.h"
 #include "dsi_parser.h"
+#include "../lm3697_bl.h"
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/12/13
+ * Add for get boot mode.
+*/
+#include <soc/oppo/boot_mode.h>
+extern int oppo_display_update_aod_area_unlock(void);
+#endif /*VENDOR_EDIT*/
 
 /**
  * topology is currently defined by a set of following 3 values:
@@ -44,12 +57,71 @@
 #define DEFAULT_PANEL_PREFILL_LINES	25
 #define TICKS_IN_MICRO_SECOND		1000000
 
+#ifdef VENDOR_EDIT
+/* HQ001218@MM.Display.Driver.Stability. 20200107 */
+extern char *saved_command_line;
+#endif
+
+//#ifdef ODM_WT_EDIT
+//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP  resume update firmware function begain
+//extern bool is_ilitek_tp;
+//extern bool this_is_nvt_touch;
+void  __attribute__((weak)) lcd_resume_load_ili_fw(void) { return; }
+int __attribute__((weak)) update_tpfw_notifier_call_chain(unsigned long val, void *v){return 0 ;}
+//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP  resume update firmware function end
+//#endif /* ODM_WT_EDIT */
+
+
 enum dsi_dsc_ratio_type {
 	DSC_8BPC_8BPP,
 	DSC_10BPC_8BPP,
 	DSC_12BPC_8BPP,
 	DSC_RATIO_TYPE_MAX
 };
+
+#if 0
+//guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
+extern int lm3697_reg_init(void);
+extern void lm3697_bl_enable(int enable);
+extern int lm3697_lcd_backlight_set_level(unsigned int bl_level);
+#endif /* VENDOR_EDIT */
+
+#if 0
+extern int dim_enable_tag;
+extern int test_dimming;
+extern int close_tag;
+#endif
+
+/* liwei.a@PSW.MM.Display.LCD.Stability, 2019/05/06
+ * add for judging ilitek IC panel
+*/
+int is_ilitek_panel = 0;
+
+int panel_which = -1;
+
+
+extern int is_ktd3136;
+
+#ifdef VENDOR_EDIT
+/*Kui.Feng@BSP.TP.Function, 2019/12/16, add shutdownflag node for lcd reset - /sys/kernel/oppo_display/shutdownflag*/
+extern int shutdown_flag;
+int  __attribute__((weak)) tp_control_reset_gpio(bool enable) { return 0; }
+#endif/*VENDOR_EDIT*/
+#ifdef VENDOR_EDIT
+/*Kui.Feng@BSP.TP.Function, 2019/12/10, add for trigger load tp fw by lcd driver after lcd reset*/
+#if 0
+void __attribute__((weak)) lcd_queue_load_tp_fw(void){ return;}
+int  __attribute__((weak)) tp_gesture_enable_flag(void) { return 0; }
+void  __attribute__((weak)) tp_goto_sleep_ftm(void) { return ; }
+static bool is_pd_with_guesture = false;
+#endif
+#endif/*VENDOR_EDIT*/
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/09/18, add ILI9881H INNOLUX INX GG3 LCD tag
+bool mipi_d_phy_ilitek_innolux_gg3_flag;
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add ILI9881H INNOLUX INX GG3 LCD tag
+//#endif /* ODM_WT_EDIT */
 
 static u32 dsi_dsc_rc_buf_thresh[] = {0x0e, 0x1c, 0x2a, 0x38, 0x46, 0x54,
 		0x62, 0x69, 0x70, 0x77, 0x79, 0x7b, 0x7d, 0x7e};
@@ -353,6 +425,11 @@ static int dsi_panel_reset(struct dsi_panel *panel)
 	int rc = 0;
 	struct dsi_panel_reset_config *r_config = &panel->reset_config;
 	int i;
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, optimize lcd wakeup time
+	u32 esd_sleep_ms=120;
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, optimize lcd wakeup time
+//#endif /* ODM_WT_EDIT */
 
 	if (gpio_is_valid(panel->reset_config.disp_en_gpio)) {
 		rc = gpio_direction_output(panel->reset_config.disp_en_gpio, 1);
@@ -361,6 +438,13 @@ static int dsi_panel_reset(struct dsi_panel *panel)
 			goto exit;
 		}
 	}
+
+     //#ifdef VENDOR_EDIT
+      /* W9001377@PSW.MM.Display.LCD.Stability,2019/10/16
+       * Add delay between VCI and reset
+       */
+        //usleep_range(10000,10100);
+     //#endif
 
 	if (r_config->count) {
 		rc = gpio_direction_output(r_config->reset_gpio,
@@ -379,7 +463,22 @@ static int dsi_panel_reset(struct dsi_panel *panel)
 		if (r_config->sequence[i].sleep_ms)
 			usleep_range(r_config->sequence[i].sleep_ms * 1000,
 				(r_config->sequence[i].sleep_ms * 1000) + 100);
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, optimize lcd wakeup time
+		if(i==2&&atomic_read(&panel->esd_recovery_flag)) {
+		usleep_range(esd_sleep_ms * 1000,(esd_sleep_ms * 1000) + 100);
+		atomic_set(&panel->esd_recovery_flag, 0);
+		}
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, optimize lcd wakeup time
+//#endif /* ODM_WT_EDIT */
 	}
+
+     //#ifdef VENDOR_EDIT
+      /* W9001377@PSW.MM.Display.LCD.Stability,2019/10/16
+       * Add delay after reset
+      */
+       // usleep_range(5000,5100);
+     //#endif
 
 	if (gpio_is_valid(panel->bl_config.en_gpio)) {
 		rc = gpio_direction_output(panel->bl_config.en_gpio, 1);
@@ -405,6 +504,11 @@ static int dsi_panel_reset(struct dsi_panel *panel)
 		if (rc)
 			pr_err("unable to set dir for mode gpio rc=%d\n", rc);
 	}
+	#ifdef VENDOR_EDIT
+	//guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
+	if(is_ktd3136 > 0)
+		lm3697_bl_enable(1);
+	#endif /* VENDOR_EDIT */
 exit:
 	return rc;
 }
@@ -434,7 +538,11 @@ static int dsi_panel_set_pinctrl_state(struct dsi_panel *panel, bool enable)
 static int dsi_panel_power_on(struct dsi_panel *panel)
 {
 	int rc = 0;
-
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, Add lcd log
+	pr_info("LCD_LOG : %s , begin\n", __func__);
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, Add lcd log
+//#endif /* ODM_WT_EDIT */
 	rc = dsi_pwr_enable_regulator(&panel->power_info, true);
 	if (rc) {
 		pr_err("[%s] failed to enable vregs, rc=%d\n", panel->name, rc);
@@ -448,10 +556,37 @@ static int dsi_panel_power_on(struct dsi_panel *panel)
 	}
 
 	rc = dsi_panel_reset(panel);
+
 	if (rc) {
 		pr_err("[%s] failed to reset panel, rc=%d\n", panel->name, rc);
 		goto error_disable_gpio;
 	}
+#ifdef VENDOR_EDIT
+/*Kui.Feng@BSP.TP.Function, 2019/12/10, add for trigger load tp fw by lcd driver after lcd reset*/
+#if 0
+	mode = get_boot_mode();
+	pr_err("[oppo_test] in dsi_panel_power_on, mode=%d\n",mode);
+
+	if((mode != MSM_BOOT_MODE__FACTORY) && (mode != MSM_BOOT_MODE__RF) && (mode != MSM_BOOT_MODE__WLAN))
+	{
+		lcd_queue_load_tp_fw();
+	}
+#endif
+
+//#ifdef ODM_WT_EDIT
+//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP  resume update firmware function begin
+	if(!panel->novatek_flag){
+		lcd_resume_load_ili_fw();
+	}
+//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP  resume update firmware function end
+//#endif /* ODM_WT_EDIT */
+
+#endif/*VENDOR_EDIT*/
+	#ifdef VENDOR_EDIT
+	//guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
+	if (is_ktd3136 > 0)
+		lm3697_reg_init();
+	#endif /* VENDOR_EDIT */
 
 	goto exit;
 
@@ -468,13 +603,23 @@ error_disable_vregs:
 	(void)dsi_pwr_enable_regulator(&panel->power_info, false);
 
 exit:
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, Add lcd log
+	pr_info("LCD_LOG : %s , end\n", __func__);
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, Add lcd log
+//#endif /* ODM_WT_EDIT */
 	return rc;
 }
 
 static int dsi_panel_power_off(struct dsi_panel *panel)
 {
 	int rc = 0;
-
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd.1941873, Start 2019/05/24, Add lcd log
+	pr_info("LCD_LOG : %s , begin\n", __func__);
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd.1941873, 2019/05/24, Add lcd log
+//#endif /* ODM_WT_EDIT */
+/*
 	if (gpio_is_valid(panel->reset_config.disp_en_gpio))
 		gpio_set_value(panel->reset_config.disp_en_gpio, 0);
 
@@ -483,7 +628,7 @@ static int dsi_panel_power_off(struct dsi_panel *panel)
 
 	if (gpio_is_valid(panel->reset_config.lcd_mode_sel_gpio))
 		gpio_set_value(panel->reset_config.lcd_mode_sel_gpio, 0);
-
+*/
 	rc = dsi_panel_set_pinctrl_state(panel, false);
 	if (rc) {
 		pr_err("[%s] failed set pinctrl state, rc=%d\n", panel->name,
@@ -493,11 +638,122 @@ static int dsi_panel_power_off(struct dsi_panel *panel)
 	rc = dsi_pwr_enable_regulator(&panel->power_info, false);
 	if (rc)
 		pr_err("[%s] failed to enable vregs, rc=%d\n", panel->name, rc);
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, Add lcd log
+	pr_info("LCD_LOG : %s , end\n", __func__);
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, Add lcd log
+//#endif /* ODM_WT_EDIT */
+
+	#ifdef VENDOR_EDIT
+	//guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
+	if (is_ktd3136 > 0)
+		lm3697_bl_enable(0);
+	#endif /* VENDOR_EDIT */
 
 	return rc;
 }
+
+#ifdef VENDOR_EDIT
+//Liping-M@PSW.MM.Display.LCD.Stability,2019/7/31, add DC 2.0
+int oppo_seed_backlight = 0;
+static struct dsi_panel_cmd_set oppo_priv_seed_cmd_set;
+extern int oppo_dimlayer_bl_alpha_value;
+extern int oppo_seed_bright_to_alpha(int brightness);
+static struct dsi_panel_cmd_set *
+oppo_dsi_update_seed_backlight(struct dsi_panel *panel, int brightness,
+				enum dsi_cmd_set_type type)
+{
+	enum dsi_cmd_set_state state;
+	struct dsi_cmd_desc *cmds;
+	struct dsi_cmd_desc *oppo_cmd;
+	u8 *tx_buf;
+	int count, rc = 0;
+	int i = 0;
+	int k = 0;
+	int alpha = oppo_seed_bright_to_alpha(brightness);
+
+	if (type != DSI_CMD_SEED_MODE0 &&
+		type != DSI_CMD_SEED_MODE1 &&
+		type != DSI_CMD_SEED_MODE2 &&
+		type != DSI_CMD_SEED_MODE3 &&
+		type != DSI_CMD_SEED_MODE4 &&
+		type != DSI_CMD_SEED_OFF) {
+		return NULL;
+	}
+
+	if (type == DSI_CMD_SEED_OFF)
+		type = DSI_CMD_SEED_MODE0;
+
+	cmds = panel->cur_mode->priv_info->cmd_sets[type].cmds;
+	count = panel->cur_mode->priv_info->cmd_sets[type].count;
+	state = panel->cur_mode->priv_info->cmd_sets[type].state;
+
+	oppo_cmd = kmemdup(cmds, sizeof(*cmds) * count, GFP_KERNEL);
+	if (!oppo_cmd) {
+		rc = -ENOMEM;
+		goto error;
+	}
+
+	for (i = 0; i < count; i++)
+		oppo_cmd[i].msg.tx_buf = NULL;
+
+	for (i = 0; i < count; i++) {
+		u32 size;
+
+		size = oppo_cmd[i].msg.tx_len * sizeof(u8);
+
+		oppo_cmd[i].msg.tx_buf = kmemdup(cmds[i].msg.tx_buf, size, GFP_KERNEL);
+		if (!oppo_cmd[i].msg.tx_buf) {
+			rc = -ENOMEM;
+			goto error;
+		}
+	}
+
+	for (i = 0; i < count; i++) {
+		if (oppo_cmd[i].msg.tx_len != 0x16)
+			continue;
+		tx_buf = (u8 *)oppo_cmd[i].msg.tx_buf;
+		for (k = 0; k < oppo_cmd[i].msg.tx_len; k++) {
+			if (k == 0) {
+				continue;
+			}
+			tx_buf[k] = tx_buf[k] * (255 - alpha) / 255;
+		}
+	}
+
+	if (oppo_priv_seed_cmd_set.cmds) {
+		for (i = 0; i < oppo_priv_seed_cmd_set.count; i++)
+			kfree(oppo_priv_seed_cmd_set.cmds[i].msg.tx_buf);
+		kfree(oppo_priv_seed_cmd_set.cmds);
+	}
+
+	oppo_priv_seed_cmd_set.cmds = oppo_cmd;
+	oppo_priv_seed_cmd_set.count = count;
+	oppo_priv_seed_cmd_set.state = state;
+
+	return &oppo_priv_seed_cmd_set;
+
+error:
+	if (oppo_cmd) {
+		for (i = 0; i < count; i++)
+			kfree(oppo_cmd[i].msg.tx_buf);
+		kfree(oppo_cmd);
+	}
+	return ERR_PTR(rc);
+}
+#endif /*VENDOR_EDIT*/
+
+#ifndef VENDOR_EDIT
 static int dsi_panel_tx_cmd_set(struct dsi_panel *panel,
 				enum dsi_cmd_set_type type)
+#else  /*VENDOR_EDIT*/
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21
+ * Add for oppo display new structure
+*/
+const char *cmd_set_prop_map[];
+int dsi_panel_tx_cmd_set(struct dsi_panel *panel,
+				enum dsi_cmd_set_type type)
+#endif /*VENDOR_EDIT*/
 {
 	int rc = 0, i = 0;
 	ssize_t len;
@@ -507,6 +763,10 @@ static int dsi_panel_tx_cmd_set(struct dsi_panel *panel,
 	struct dsi_display_mode *mode;
 	const struct mipi_dsi_host_ops *ops = panel->host->ops;
 
+#ifdef VENDOR_EDIT
+//Liping-M@PSW.MM.Display.LCD.Stability,2019/7/31, add DC 2.0
+	struct dsi_panel_cmd_set *oppo_cmd_set = NULL;
+#endif
 	if (!panel || !panel->cur_mode)
 		return -EINVAL;
 
@@ -515,6 +775,22 @@ static int dsi_panel_tx_cmd_set(struct dsi_panel *panel,
 	cmds = mode->priv_info->cmd_sets[type].cmds;
 	count = mode->priv_info->cmd_sets[type].count;
 	state = mode->priv_info->cmd_sets[type].state;
+
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/12/13
+ * Add for oppo display new structure
+*/
+	pr_err("dsi_cmd %s\n", cmd_set_prop_map[type]);
+//Liping-M@PSW.MM.Display.LCD.Stability,2019/7/31, add DC 2.0
+	if (oppo_seed_backlight) {
+		oppo_cmd_set = oppo_dsi_update_seed_backlight(panel, oppo_seed_backlight, type);
+		if (!IS_ERR_OR_NULL(oppo_cmd_set)) {
+			cmds = oppo_cmd_set->cmds;
+			count = oppo_cmd_set->count;
+			state = oppo_cmd_set->state;
+		}
+	}
+#endif /*VENDOR_EDIT*/
 
 	if (count == 0) {
 		pr_debug("[%s] No commands to be sent for state(%d)\n",
@@ -528,6 +804,11 @@ static int dsi_panel_tx_cmd_set(struct dsi_panel *panel,
 
 		if (cmds->last_command)
 			cmds->msg.flags |= MIPI_DSI_MSG_LASTCOMMAND;
+		#ifdef VENDOR_EDIT
+		/*Mark.Yao@PSW.MM.Display.LCD.Stable,2019-11-30 add for video mode skip last_command */
+		if (panel->oppo_priv.skip_mipi_last_cmd)
+			cmds->msg.flags &= ~MIPI_DSI_MSG_LASTCOMMAND;
+		#endif /* VENDOR_EDIT */
 
 		len = ops->transfer(panel->host, &cmds->msg);
 		if (len < 0) {
@@ -607,6 +888,20 @@ static int dsi_panel_wled_register(struct dsi_panel *panel,
 	return 0;
 }
 
+#ifdef VENDOR_EDIT
+extern int oppo_display_get_hbm_mode(void);
+extern int oppo_dimlayer_bl_enable_v2;
+extern int oppo_dimlayer_bl_enable_v2_real;
+extern int oppo_dimlayer_bl_alpha;
+extern int oppo_dimlayer_bl_enabled;
+extern int oppo_dimlayer_bl_enable_real;
+ktime_t oppo_backlight_time;
+u32 oppo_last_backlight = 0;
+u32 oppo_backlight_delta = 0;
+extern int oppo_panel_update_seed_mode_unlock(struct dsi_panel *panel);
+extern void oppo_panel_process_dimming_v2_post(struct dsi_panel *panel);
+extern int oppo_display_mode;
+#endif /* VENDOR_EDIT */
 static int dsi_panel_update_backlight(struct dsi_panel *panel,
 	u32 bl_lvl)
 {
@@ -618,12 +913,97 @@ static int dsi_panel_update_backlight(struct dsi_panel *panel,
 		return -EINVAL;
 	}
 
+	pr_err("dsi_panel_update_backlight---lvl:%d\n", bl_lvl);
 	dsi = &panel->mipi_device;
 
+	//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add NT36525B HOLITECH BOE LCD bringup code
+	if (!panel->novatek_flag)
+		bl_lvl = (bl_lvl << 1);
 	rc = mipi_dsi_dcs_set_display_brightness(dsi, bl_lvl);
 	if (rc < 0)
 		pr_err("failed to update dcs backlight:%d\n", bl_lvl);
 
+
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add NT36525B HOLITECH BOE LCD bringup code
+//#endif /* ODM_WT_EDIT */
+
+#if 0
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Feature,2018-11-21
+ * Add for OnScreenFingerprint feature
+*/
+	if (!panel->is_hbm_enabled &&
+		oppo_dimlayer_bl_enable_v2_real && bl_lvl > 1 && bl_lvl < 260) {
+		oppo_seed_backlight = bl_lvl;
+		bl_lvl = oppo_dimlayer_bl_alpha;
+                oppo_panel_process_dimming_v2_post(panel);
+	} else if (oppo_seed_backlight) {
+		oppo_seed_backlight = 0;
+		oppo_panel_process_dimming_v2_post(panel);
+	}
+
+	if (panel->is_hbm_enabled || (panel->oppo_priv.is_aod_ramless && !oppo_display_mode))
+		return rc;
+
+	if (bl_lvl > 1) {
+		if (bl_lvl > oppo_last_backlight)
+			oppo_backlight_delta = bl_lvl - oppo_last_backlight;
+		else
+			oppo_backlight_delta = oppo_last_backlight - bl_lvl;
+		oppo_last_backlight = bl_lvl;
+		oppo_backlight_time = ktime_get();
+	}
+	if (oppo_dimlayer_bl_enabled != oppo_dimlayer_bl_enable_real) {
+		oppo_dimlayer_bl_enable_real = oppo_dimlayer_bl_enabled;
+		if (oppo_dimlayer_bl_enable_real) {
+			pr_err("Enter DC backlight\n");
+		} else {
+			pr_err("Exit DC backlight\n");
+		}
+	}
+	if (oppo_dimlayer_bl_enable_real) {
+		/*
+		 * avoid effect power and aod mode
+		 */
+		if (bl_lvl > 1)
+			bl_lvl = oppo_dimlayer_bl_alpha;
+	}
+
+	if (!strcmp(panel->name,"s6e8fc1x0 amoled fhd+ video mode dsi samsung panel")) {
+		const struct mipi_dsi_host_ops *ops = dsi->host->ops;
+		char payload[] = {MIPI_DCS_WRITE_CONTROL_DISPLAY, 0xE0};
+		struct mipi_dsi_msg msg;
+
+	dsi = &panel->mipi_device;
+	}else{
+	#ifdef VENDOR_EDIT
+	//guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
+	if (bl_lvl > 2047) {
+		bl_lvl = 2047;
+	}
+
+	if (is_ktd3136 > 0) {
+		lm3697_lcd_backlight_set_level(bl_lvl);
+	} else {
+	#endif /* VENDOR_EDIT */
+
+	#ifndef VENDOR_EDIT
+	//liwei.a@PSW.MM.Display.LCD.Machine, 2019/05/12, add for setting backlight by dcs
+	rc = mipi_dsi_dcs_set_display_brightness(dsi, bl_lvl);
+	#else
+	rc = oppo_mipi_dsi_dcs_set_display_brightness(dsi, bl_lvl, is_ilitek_panel);
+	#endif
+	if (rc < 0)
+		pr_err("failed to update dcs backlight:%d\n", bl_lvl);
+		return rc;
+	#ifdef VENDOR_EDIT
+	//liwei.a@PSW.MM.Display.LCD.Machine, 2019/05/12, add for setting backlight by dcs
+	}
+	#endif
+	}
+#endif
+#endif
 	return rc;
 }
 
@@ -706,6 +1086,101 @@ int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 
 	return rc;
 }
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC cmd used for power saving
+static unsigned int panel_cabc_mode = 0;
+int dsi_panel_set_cabc_mode(struct dsi_panel *panel, u32 cabc_mode)
+{
+	int rc = 0;
+	struct mipi_dsi_device *dsi;
+
+	if (!panel) {
+		pr_err("Invalid Params\n");
+		return -EINVAL;
+	}
+	dsi = &panel->mipi_device;
+
+	switch (cabc_mode) {
+	case 0:
+		if (!panel->novatek_flag)
+		{
+			rc = mipi_dsi_dcs_set_display_cabc(dsi, 0);
+			if (rc < 0) {
+				pr_err("Failed to update dcs cabc:%d\n", cabc_mode);
+				return -EINVAL;
+			}
+			pr_info("LCD LOG ili9881h cabc func:%s\n",__func__);
+		}
+		else
+		{
+			rc = dsi_panel_cabc_off_enable(panel);
+			if (rc < 0) {
+				pr_err("Failed to update dcs cabc:%d\n", cabc_mode);
+				return -EINVAL;
+			}
+			pr_info("LCD LOG nt36525b cabc func:%s\n",__func__);
+		}
+		pr_info("cabc_mode:%d\n", cabc_mode);
+		break;
+	case 1:
+		rc = dsi_panel_cabc_ui_mode_enable(panel);
+		if (rc) {
+		pr_err("[%s] failed to cabc ui mode enable DSI panel, rc=%d\n",
+			panel->name, rc);
+		return -EINVAL;
+		}
+		break;
+	case 2:
+		rc = dsi_panel_cabc_still_mode_enable(panel);
+		if (rc) {
+		pr_err("[%s] failed to cabc ui mode enable DSI panel, rc=%d\n",
+			panel->name, rc);
+		return -EINVAL;
+		}
+		break;
+	case 3:
+		rc = dsi_panel_cabc_moving_mode_enable(panel);
+		if (rc) {
+		pr_err("[%s] failed to cabc ui mode enable DSI panel, rc=%d\n",
+			panel->name, rc);
+		return -EINVAL;
+		}
+		break;
+	default:
+		pr_info("cabc_mode:%d is invaild parameter,off cabc default\n", cabc_mode);
+		rc = mipi_dsi_dcs_set_display_cabc(dsi, 0);
+		if (rc < 0) {
+			pr_err("Failed to update dcs cabc:%d\n", cabc_mode);
+			return -EINVAL;
+		}
+		pr_info("cabc_mode:%d,turn off cabc default\n", cabc_mode);
+		break;
+	}
+
+	panel_cabc_mode = cabc_mode;
+
+	return rc;
+}
+
+int dsi_panel_get_cabc_mode(struct dsi_panel *panel, unsigned int *cabc_mode)
+{
+	int rc = 0;
+
+	if (!panel) {
+		pr_err("Invalid Params\n");
+		return -EINVAL;
+	}
+	if(!cabc_mode){
+		pr_err("Invalid Params\n");
+		return -EINVAL;
+	}
+	*cabc_mode = panel_cabc_mode;
+	pr_info(" read panel dcs cabc:%d\n", *cabc_mode);
+	return rc;
+}
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
+//#endif /* ODM_WT_EDIT */
 
 static u32 dsi_panel_get_brightness(struct dsi_backlight_config *bl)
 {
@@ -1743,6 +2218,40 @@ const char *cmd_set_prop_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-post-mode-switch-on-command",
 	"qcom,mdss-dsi-qsync-on-commands",
 	"qcom,mdss-dsi-qsync-off-commands",
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/4/28
+ * add for support aod,hbm,seed
+*/
+	"qcom,mdss-dsi-post-on-backlight",
+	"qcom,mdss-dsi-aod-on-command",
+	"qcom,mdss-dsi-aod-off-command",
+	"qcom,mdss-dsi-hbm-on-command",
+	"qcom,mdss-dsi-hbm-off-command",
+	"qcom,mdss-dsi-aod-hbm-on-command",
+	"qcom,mdss-dsi-aod-hbm-off-command",
+	"qcom,mdss-dsi-seed-0-command",
+	"qcom,mdss-dsi-seed-1-command",
+	"qcom,mdss-dsi-seed-2-command",
+	"qcom,mdss-dsi-seed-3-command",
+	"qcom,mdss-dsi-seed-4-command",
+	"qcom,mdss-dsi-seed-off-command",
+	"qcom,mdss-dsi-normal-hbm-on-command",
+	"qcom,mdss-dsi-aod-high-mode-command",
+	"qcom,mdss-dsi-aod-low-mode-command",
+	"qcom,mdss-dsi-cabc-off-command",
+	"qcom,mdss-dsi-cabc-low-mode-command",
+	"qcom,mdss-dsi-cabc-high-mode-command",
+	"qcom,mdss-dsi-failsafe-on-command",
+	"qcom,mdss-dsi-failsafe-off-command",
+#endif /*VENDOR_EDIT*/
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC cmd used for power saving
+	"qcom,mdss-dsi-cabc-off-command",
+	"qcom,mdss-dsi-cabc-ui-mode-command",
+	"qcom,mdss-dsi-cabc-still-mode-command",
+	"qcom,mdss-dsi-cabc-moving-mode-command",
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
+//#endif /* ODM_WT_EDIT */
 };
 
 const char *cmd_set_state_map[DSI_CMD_SET_MAX] = {
@@ -1769,6 +2278,40 @@ const char *cmd_set_state_map[DSI_CMD_SET_MAX] = {
 	"qcom,mdss-dsi-post-mode-switch-on-command-state",
 	"qcom,mdss-dsi-qsync-on-commands-state",
 	"qcom,mdss-dsi-qsync-off-commands-state",
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/4/28
+ * add for support aod,hbm,seed
+*/
+	"qcom,mdss-dsi-post-on-backlight-state",
+	"qcom,mdss-dsi-aod-on-command-state",
+	"qcom,mdss-dsi-aod-off-command-state",
+	"qcom,mdss-dsi-hbm-on-command-state",
+	"qcom,mdss-dsi-hbm-off-command-state",
+	"qcom,mdss-dsi-aod-hbm-on-command-state",
+	"qcom,mdss-dsi-aod-hbm-off-command-state",
+	"qcom,mdss-dsi-seed-0-command-state",
+	"qcom,mdss-dsi-seed-1-command-state",
+	"qcom,mdss-dsi-seed-2-command-state",
+	"qcom,mdss-dsi-seed-3-command-state",
+	"qcom,mdss-dsi-seed-4-command-state",
+	"qcom,mdss-dsi-seed-off-command-state",
+	"qcom,mdss-dsi-normal-hbm-on-command-state",
+	"qcom,mdss-dsi-aod-high-mode-command-state",
+	"qcom,mdss-dsi-aod-low-mode-command-state",
+	"qcom,mdss-dsi-cabc-off-command-state",
+	"qcom,mdss-dsi-cabc-low-mode-command-state",
+	"qcom,mdss-dsi-cabc-high-mode-command-state",
+	"qcom,mdss-dsi-failsafe-on-command-state",
+	"qcom,mdss-dsi-failsafe-off-command-state",
+#endif /*VENDOR_EDIT*/
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC cmd used for power saving
+	"qcom,mdss-dsi-cabc-off-command-state",
+	"qcom,mdss-dsi-cabc-ui-mode-command-state",
+	"qcom,mdss-dsi-cabc-still-mode-command-state",
+	"qcom,mdss-dsi-cabc-moving-mode-command-state",
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
+//#endif /* ODM_WT_EDIT */
 };
 
 static int dsi_panel_get_cmd_pkt_count(const char *data, u32 length, u32 *cnt)
@@ -2065,8 +2608,67 @@ static int dsi_panel_parse_misc_features(struct dsi_panel *panel)
 
 	panel->lp11_init = utils->read_bool(utils->data,
 			"qcom,mdss-dsi-lp11-init");
+			
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add NT36525B HOLITECH BOE LCD bringup code
+	panel->novatek_flag = utils->read_bool(utils->data,
+			"qcom,mdss-dsi-novatek-flag");
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add NT36525B HOLITECH BOE LCD bringup code
+//#endif /* ODM_WT_EDIT */
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/09/18, add ILI9881H INNOLUX INX GG3 LCD tag
+	panel->ilitek_innolux_gg3_flag = utils->read_bool(utils->data,
+			"qcom,mdss-dsi-ilitek-innolux-gg3-flag");
+	mipi_d_phy_ilitek_innolux_gg3_flag = panel->ilitek_innolux_gg3_flag;
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add ILI9881H INNOLUX INX GG3 LCD tag
+//#endif /* ODM_WT_EDIT */
 	return 0;
 }
+
+#ifdef VENDOR_EDIT
+/*Guoqiang.Jiang@PSW.MM.Display.LCD.Stable,2019-11-17 add for fingerprint */
+static int dsi_panel_parse_oppo_config(struct dsi_panel *panel)
+{
+	struct dsi_parser_utils *utils = &panel->utils;
+
+
+	panel->oppo_priv.is_aod_ramless = utils->read_bool(utils->data,
+		"oppo,aod_ramless");
+	pr_err("aod ramless mode: %s", panel->oppo_priv.is_aod_ramless ? "true" : "false");
+
+	return 0;
+}
+static int dsi_panel_parse_oppo_mode_config(struct dsi_display_mode *mode,
+				struct dsi_parser_utils *utils)
+{
+	int rc;
+	struct dsi_display_mode_priv_info *priv_info;
+	int val = 0;
+
+	priv_info = mode->priv_info;
+
+	rc = utils->read_u32(utils->data, "oppo,fod-on-vblank", &val);
+	if (rc) {
+		pr_err("oppo,fod-on-vblank is not defined, rc=%d\n", rc);
+		priv_info->fod_on_vblank = 0;
+	} else {
+		priv_info->fod_on_vblank = val;
+		pr_err("oppo,fod-on-vblank is %d", val);
+	}
+
+	rc = utils->read_u32(utils->data, "oppo,fod-off-vblank", &val);
+	if (rc) {
+		pr_err("oppo,fod-on-vblank is not defined, rc=%d\n", rc);
+		priv_info->fod_off_vblank = 0;
+	} else {
+		priv_info->fod_off_vblank = val;
+		pr_err("oppo,fod-off-vblank is %d", val);
+	}
+
+	return 0;
+}
+#endif
 
 static int dsi_panel_parse_jitter_config(
 				struct dsi_display_mode *mode,
@@ -2243,6 +2845,12 @@ static int dsi_panel_parse_bl_config(struct dsi_panel *panel)
 	const char *data;
 	struct dsi_parser_utils *utils = &panel->utils;
 	char *bl_name;
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09,Add blmap for BL
+	u32 *array;
+	int bl_i;
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09,Add blmap for BL
+//#endif /* ODM_WT_EDIT */
 
 	if (!strcmp(panel->type, "primary"))
 		bl_name = "qcom,mdss-dsi-bl-pmic-control-type";
@@ -2307,6 +2915,63 @@ static int dsi_panel_parse_bl_config(struct dsi_panel *panel)
 	} else {
 		panel->bl_config.brightness_max_level = val;
 	}
+
+#ifdef VENDOR_EDIT
+/*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-11-04 add for global hbm */
+	rc = utils->read_u32(utils->data, "qcom,mdss-dsi-bl-normal-max-level", &val);
+	if (rc) {
+		pr_debug("[%s] bl-max-level unspecified, defaulting to max level\n",
+			 panel->name);
+		panel->bl_config.bl_normal_max_level = panel->bl_config.bl_max_level;
+	} else {
+		panel->bl_config.bl_normal_max_level = val;
+	}
+
+	rc = utils->read_u32(utils->data, "qcom,mdss-brightness-normal-max-level",
+		&val);
+	if (rc) {
+		pr_debug("[%s] brigheness-max-level unspecified, defaulting to 255\n",
+			 panel->name);
+		panel->bl_config.brightness_normal_max_level = panel->bl_config.brightness_max_level;
+	} else {
+		panel->bl_config.brightness_normal_max_level = val;
+	}
+#endif
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09,Add blmap for BL
+		rc = utils->read_u32(utils->data, "qcom,blmap-size", &val);
+			panel->bl_config.blmap_size = (!rc ? val : 0);
+
+		if (panel->bl_config.blmap_size) {
+			array = kzalloc(sizeof(u32) * panel->bl_config.blmap_size, GFP_KERNEL);
+
+			if (!array)
+				return -ENOMEM;
+			rc = utils->read_u32_array(utils->data,
+							"qcom,blmap", array, panel->bl_config.blmap_size);
+
+			if (rc) {
+				pr_err("%s:%d, unable to read backlight map\n",
+							__func__, __LINE__);
+				kfree(array);
+				goto error;
+			}
+			panel->bl_config.blmap = kzalloc(sizeof(int) * panel->bl_config.blmap_size,
+								GFP_KERNEL);
+			if (!panel->bl_config.blmap) {
+				kfree(array);
+				return -ENOMEM;
+			}
+
+			for (bl_i = 0; bl_i < panel->bl_config.blmap_size; bl_i++)
+				panel->bl_config.blmap[bl_i] = array[bl_i];
+			kfree(array);
+		} else {
+			panel->bl_config.blmap = NULL;
+		}
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09,Add blmap for BL
+//#endif /* ODM_WT_EDIT */
 
 	rc = utils->read_u32(utils->data,
 			"qcom,mdss-dsi-bl-default-level", &val);
@@ -3180,9 +3845,29 @@ static int dsi_panel_parse_esd_config(struct dsi_panel *panel)
 
 	esd_config = &panel->esd_config;
 	esd_config->status_mode = ESD_MODE_MAX;
+
 	esd_config->esd_enabled = utils->read_bool(utils->data,
 		"qcom,esd-check-enabled");
+#if 0
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/12/13
+ * Add for disable esd check while in test mode.
+*/
+	switch(get_boot_mode())
+	{
+		case MSM_BOOT_MODE__RF:
+		case MSM_BOOT_MODE__WLAN:
+		case MSM_BOOT_MODE__FACTORY:
+			esd_config->esd_enabled = 0x0;
+			pr_err("%s force disable esd check while in rf,wlan and factory mode, esd staus: 0x%x\n",
+						__func__, esd_config->esd_enabled);
+			break;
 
+		default:
+			break;
+	}
+#endif /*VENDOR_EDIT*/
+#endif
 	if (!esd_config->esd_enabled)
 		return 0;
 
@@ -3282,6 +3967,25 @@ struct dsi_panel *dsi_panel_get(struct device *parent,
 	if (!panel->name)
 		panel->name = DSI_PANEL_DEFAULT_LABEL;
 
+	#ifdef VENDOR_EDIT
+	//liwei.a@PSW.MM.Display.LCD.Stability,2019/05/06, add for judging ilitek IC panel
+	if(NULL != strnstr(panel->name, "ili9881", strlen(panel->name))){
+		is_ilitek_panel = 1;
+	}
+
+	if (NULL != strnstr(panel->name, "inx", strlen(panel->name))) {
+		panel_which = 0;
+	} else if (NULL != strnstr(panel->name, "tm", strlen(panel->name))) {
+		panel_which = 1;
+	} else if (NULL != strnstr(panel->name, "auo", strlen(panel->name))) {
+		panel_which = 2;
+	} else if (NULL != strnstr(panel->name, "boe", strlen(panel->name))) {
+		panel_which = 3;
+	} else if (NULL != strnstr(panel->name, "hlt", strlen(panel->name))) {
+		panel_which = 4;
+	}
+	#endif /* VENDOR_EDIT */
+
 	/*
 	 * Set panel type to LCD as default.
 	 */
@@ -3331,6 +4035,13 @@ struct dsi_panel *dsi_panel_get(struct device *parent,
 		pr_err("failed to parse panel gpios, rc=%d\n", rc);
 		goto error;
 	}
+
+#ifdef VENDOR_EDIT
+/*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-10-30 add for fod config */
+	rc = dsi_panel_parse_oppo_config(panel);
+	if (rc)
+		pr_err("failed to parse panel config, rc=%d\n", rc);
+#endif /* VENDOR_EDIT */
 
 	rc = dsi_panel_parse_power_cfg(panel);
 	if (rc)
@@ -3684,6 +4395,14 @@ int dsi_panel_get_mode(struct dsi_panel *panel,
 			goto parse_fail;
 		}
 
+#ifdef VENDOR_EDIT
+/*Guoqiang.Jiang@PSW.MM.Display.LCD.Stable,2019-11-17 add for fingerprint */
+		rc = dsi_panel_parse_oppo_mode_config(mode, utils);
+		if (rc)
+			pr_err(
+			"failed to parse oppo config, rc=%d\n", rc);
+#endif
+
 		rc = dsi_panel_parse_jitter_config(mode, utils);
 		if (rc)
 			pr_err(
@@ -3845,6 +4564,12 @@ int dsi_panel_set_lp1(struct dsi_panel *panel)
 		return -EINVAL;
 	}
 
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.Lcd.Stability, 2018-11-21
+ * Add to mark power states
+*/
+	pr_err("%s\n", __func__);
+#endif
 	mutex_lock(&panel->panel_lock);
 	if (!panel->panel_initialized)
 		goto exit;
@@ -3865,6 +4590,16 @@ int dsi_panel_set_lp1(struct dsi_panel *panel)
 	if (rc)
 		pr_err("[%s] failed to send DSI_CMD_SET_LP1 cmd, rc=%d\n",
 		       panel->name, rc);
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stable,2018-11-21
+ * Fix aod flash problem
+*/
+	panel->need_power_on_backlight = true;
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21
+ * Set and save display status
+*/
+	set_oppo_display_power_status(OPPO_DISPLAY_POWER_DOZE);
+#endif
 exit:
 	mutex_unlock(&panel->panel_lock);
 	return rc;
@@ -3879,6 +4614,12 @@ int dsi_panel_set_lp2(struct dsi_panel *panel)
 		return -EINVAL;
 	}
 
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.Lcd.Stability, 2018-05-31
+ * Add to mark power states
+*/
+	pr_err("%s\n", __func__);
+#endif
 	mutex_lock(&panel->panel_lock);
 	if (!panel->panel_initialized)
 		goto exit;
@@ -3887,6 +4628,12 @@ int dsi_panel_set_lp2(struct dsi_panel *panel)
 	if (rc)
 		pr_err("[%s] failed to send DSI_CMD_SET_LP2 cmd, rc=%d\n",
 		       panel->name, rc);
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21,
+ * Set and save display status
+*/
+	set_oppo_display_power_status(OPPO_DISPLAY_POWER_DOZE_SUSPEND);
+#endif
 exit:
 	mutex_unlock(&panel->panel_lock);
 	return rc;
@@ -3901,6 +4648,12 @@ int dsi_panel_set_nolp(struct dsi_panel *panel)
 		return -EINVAL;
 	}
 
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.Lcd.Stability, 2018-11-21
+ * Add to mark power states
+*/
+	pr_err("%s\n", __func__);
+#endif
 	mutex_lock(&panel->panel_lock);
 	if (!panel->panel_initialized)
 		goto exit;
@@ -3917,6 +4670,12 @@ int dsi_panel_set_nolp(struct dsi_panel *panel)
 	if (rc)
 		pr_err("[%s] failed to send DSI_CMD_SET_NOLP cmd, rc=%d\n",
 		       panel->name, rc);
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21
+ * Set and save display status
+*/
+	set_oppo_display_power_status(OPPO_DISPLAY_POWER_ON);
+#endif
 exit:
 	mutex_unlock(&panel->panel_lock);
 	return rc;
@@ -3941,6 +4700,44 @@ int dsi_panel_prepare(struct dsi_panel *panel)
 			goto error;
 		}
 	}
+#if 0
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stable,2018-07-17
+ * need wait 5ms after lp11 init
+*/
+	if (is_brandon()) {
+		usleep_range(5 * 1000, 5 * 1000);
+	}
+#endif /* VENDOR_EDIT */
+#endif
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, Adjust lcd power on/off sequence for nt36525b
+	if (panel->novatek_flag) {
+		pr_info("LCD_LOG [%s] reset panel novatek\n", __func__);
+		rc = dsi_panel_reset(panel);
+		if (rc) {
+			pr_err("[%s] failed to reset panel, rc=%d\n", panel->name, rc);
+			goto error;
+		}
+		usleep_range(5 * 1000,(5 * 1000) + 100);
+				
+		//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP	resume update firmware function begin
+		if(panel->novatek_flag){
+			update_tpfw_notifier_call_chain(1,NULL);
+		}
+		//Bo.Zhang@ODM_WT.BSP.TP,2020/03/23,Add TP	resume update firmware function end
+	}
+
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, Adjust lcd power on/off sequence for nt36525b
+//#endif /* ODM_WT_EDIT */
+
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stable,2018-07-17
+ * need wait 5ms after lp11 init
+*/
+	usleep_range(5 * 1000, 5 * 1000);
+#endif /* VENDOR_EDIT */
 
 	rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_PRE_ON);
 	if (rc) {
@@ -4165,6 +4962,8 @@ int dsi_panel_mode_switch_to_cmd(struct dsi_panel *panel)
 	if (rc)
 		pr_err("[%s] failed to send DSI_CMD_SET_POST_VID_TO_CMD_SWITCH cmds, rc=%d\n",
 			panel->name, rc);
+	oppo_display_update_aod_area_unlock();
+
 	mutex_unlock(&panel->panel_lock);
 	return rc;
 }
@@ -4230,11 +5029,20 @@ int dsi_panel_post_switch(struct dsi_panel *panel)
 int dsi_panel_enable(struct dsi_panel *panel)
 {
 	int rc = 0;
-
+#if 0
+	dim_enable_tag = 0;
+	close_tag = 0;
+	test_dimming = 0;
+#endif
 	if (!panel) {
 		pr_err("Invalid params\n");
 		return -EINVAL;
 	}
+
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.Lcd.Stability, 2018-05-31,add to mark power states*/
+	pr_err("%s\n", __func__);
+#endif
 
 	mutex_lock(&panel->panel_lock);
 
@@ -4244,9 +5052,104 @@ int dsi_panel_enable(struct dsi_panel *panel)
 		       panel->name, rc);
 	else
 		panel->panel_initialized = true;
+#if 0
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stable,2018-08-23
+ * avoid screen flash when esd reset
+*/
+	panel->need_power_on_backlight = true;
+/* Gou shengjun@PSW.MM.Display.LCD.Stable,2018-08-23
+ * add for save display panel power status at oppo display management
+*/
+	set_oppo_display_power_status(OPPO_DISPLAY_POWER_ON);
+#endif
+#endif
 	mutex_unlock(&panel->panel_lock);
+
+#if 0
+#ifdef VENDOR_EDIT
+/* HQ001218@MM.Display.Driver.Stability. 20200218 */
+	if((get_boot_mode() == MSM_BOOT_MODE__FACTORY)&&(strstr(saved_command_line, "dsi_nt36672a_tm_vid_display")))
+	{
+		tp_goto_sleep_ftm();
+		pr_err("[oppo_test] nt36672a_tm tp ftm mode goto sleep\n");
+	}
+#endif
+#endif
 	return rc;
 }
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC cmd used for power saving
+int dsi_panel_cabc_off_enable(struct dsi_panel *panel)
+{
+	int rc = 0;
+
+	if (!panel) {
+		pr_err("Invalid params\n");
+		return -EINVAL;
+	}
+	rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_CABC_OFF);
+	if (rc) {
+		pr_err("[%s] failed to send DSI_CMD_SET_CABC_OFF cmds, rc=%d\n",
+		       panel->name, rc);
+	}
+	return rc;
+}
+
+int dsi_panel_cabc_ui_mode_enable(struct dsi_panel *panel)
+{
+	int rc = 0;
+
+	if (!panel) {
+		pr_err("Invalid params\n");
+		return -EINVAL;
+	}
+	rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_CABC_UI_MODE);
+	if (rc) {
+		pr_err("[%s] failed to send DSI_CMD_SET_CABC_UI_MODE cmds, rc=%d\n",
+		       panel->name, rc);
+	}
+	return rc;
+}
+
+int dsi_panel_cabc_still_mode_enable(struct dsi_panel *panel)
+{
+	int rc = 0;
+
+	if (!panel) {
+		pr_err("Invalid params\n");
+		return -EINVAL;
+	}
+
+	rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_CABC_STILL_MODE);
+	if (rc) {
+		pr_err("[%s] failed to send DSI_CMD_SET_CABC_STILL_MODE cmds, rc=%d\n",
+		       panel->name, rc);
+	}
+	return rc;
+}
+
+int dsi_panel_cabc_moving_mode_enable(struct dsi_panel *panel)
+{
+	int rc = 0;
+
+	if (!panel) {
+		pr_err("Invalid params\n");
+		return -EINVAL;
+	}
+
+	rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_CABC_MOVING_MODE);
+	if (rc) {
+		pr_err("[%s] failed to send DSI_CMD_SET_CABC_MOVING_MODE cmds, rc=%d\n",
+		       panel->name, rc);
+	}
+	return rc;
+}
+
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
+//#endif /* ODM_WT_EDIT */
+
 
 int dsi_panel_post_enable(struct dsi_panel *panel)
 {
@@ -4302,6 +5205,13 @@ int dsi_panel_disable(struct dsi_panel *panel)
 		return -EINVAL;
 	}
 
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.Lcd.Stability, 2018-11-21
+ * Add to mark power states
+*/
+	pr_err("%s\n", __func__);
+#endif
+
 	mutex_lock(&panel->panel_lock);
 
 	/* Avoid sending panel off commands when ESD recovery is underway */
@@ -4331,6 +5241,16 @@ int dsi_panel_disable(struct dsi_panel *panel)
 	}
 	panel->panel_initialized = false;
 	panel->power_mode = SDE_MODE_DPMS_OFF;
+#ifdef VENDOR_EDIT
+/* Gou shengjun@PSW.MM.Display.LCD.Stable,2018-11-21
+ * fix esd not work when enable OnScreenFingerprint
+*/
+	panel->is_hbm_enabled = false;
+/* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21
+ * add for save display panel power status at oppo display management
+*/
+	set_oppo_display_power_status(OPPO_DISPLAY_POWER_OFF);
+#endif
 
 	mutex_unlock(&panel->panel_lock);
 	return rc;
@@ -4354,6 +5274,19 @@ int dsi_panel_unprepare(struct dsi_panel *panel)
 		goto error;
 	}
 
+	#ifdef VENDOR_EDIT
+	//Kui.Feng@BSP.TP.Function, 2019/12/16, add for close lcd panel power in lp11 when shutdown
+	if ((shutdown_flag == 1) && (strcmp(panel->name,"s6e8fc1x0 amoled fhd+ video mode dsi samsung panel"))) {
+		rc = dsi_panel_power_off(panel);
+
+		if (rc) {
+			pr_err("[%s] panel power_Off failed, rc=%d\n",
+				panel->name, rc);
+			goto error;
+		}
+	}
+	#endif
+
 error:
 	mutex_unlock(&panel->panel_lock);
 	return rc;
@@ -4370,12 +5303,20 @@ int dsi_panel_post_unprepare(struct dsi_panel *panel)
 
 	mutex_lock(&panel->panel_lock);
 
+	#ifdef VENDOR_EDIT
+	//Kui.Feng@BSP.TP.Function, 2019/12/16, add for close lcd panel power in lp11 when shutdown
+	if ((shutdown_flag == 0) || (!strcmp(panel->name,"s6e8fc1x0 amoled fhd+ video mode dsi samsung panel"))) {
+	#endif
 	rc = dsi_panel_power_off(panel);
 	if (rc) {
 		pr_err("[%s] panel power_Off failed, rc=%d\n",
 		       panel->name, rc);
 		goto error;
+		}
+	#ifdef VENDOR_EDIT
+	//Kui.Feng@BSP.TP.Function, 2019/12/16, add for close lcd panel power in lp11 when shutdown
 	}
+	#endif
 error:
 	mutex_unlock(&panel->panel_lock);
 	return rc;
