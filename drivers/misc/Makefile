@@ -64,6 +64,8 @@ obj-$(CONFIG_FPR_FPC) 	+= fpr_FingerprintCard/
 obj-$(CONFIG_UID_SYS_STATS)	+= uid_sys_stats.o
 obj-$(CONFIG_MEMORY_STATE_TIME)	+= memory_state_time.o
 obj-$(CONFIG_QPNP_MISC) 	+= qpnp-misc.o
+# Hongzhu.Su@ODM_WT.BSP 2020/08/27, Add for WT hardware information
+obj-$(CONFIG_ODM_WT_EDIT)       += hardware_info.o
 
 obj-$(CONFIG_OKL4_USER_VIRQ)	+= okl4-virq.o
 obj-$(CONFIG_OKL4_RINGBUF)	+= okl4-ringbuf.o
@@ -90,3 +92,12 @@ $(obj)/lkdtm_rodata_objcopy.o: $(obj)/lkdtm_rodata.o FORCE
 obj-$(CONFIG_OKL4_USER_VIPC)    += okl4-vipc.o
 obj-$(CONFIG_OKL4_GUEST)        += okl4-panic.o
 obj-$(CONFIG_OKL4_LINK_SHBUF)    += okl4-link-shbuf.o
+#ifdef VENDOR_EDIT
+# Mengmeng.Wang@SRC.System, 2018/08/28, Add for oiface
+obj-y				+= schedx.o
+#endif
+
+#ifdef VENDOR_EDIT
+#Hexiaosen@PSW.BSP. 2019/11/25, Add for oppo rf cable monitor
+obj-y                           += oppo_rf_cable_monitor.o
+#endif
