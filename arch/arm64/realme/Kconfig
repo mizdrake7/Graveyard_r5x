@@ -1,0 +1,13 @@
+menu "Realme product selection"
+
+config PRODUCT_REALME
+	bool "Realme devices"
+	help
+	  This enables support for Realme devices.
+
+config PRODUCT_REALME_TRINKET
+	bool "Realme TRINKET-Common"
+    select PRODUCT_REALME
+    depends on ARCH_TRINKET
+
+endmenu
