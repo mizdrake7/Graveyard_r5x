@@ -96,6 +96,8 @@
 		qcom,wsa-swr-gpios = <&wsa_swr_gpios>;
 		qcom,wsa-bcl-pmic-params = /bits/ 8 <0x00 0x00 0x1E>;
 		swr0: wsa_swr_master {
+			//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/23, Add for codec
+			status = "disabled";
 			compatible = "qcom,swr-mstr";
 			#address-cells = <2>;
 			#size-cells = <0>;
@@ -110,33 +112,36 @@
 				<6 SPKR_R_BOOST 0x3>, <7 SPKR_L_VI 0x3>,
 				<8 SPKR_R_VI 0x3>;
 			qcom,swr-num-dev = <1>;
+			//ifdef ODM_WT_EDIT
+			//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/19, Modify for wcd9370
 			wsa881x_0211: wsa881x@20170211 {
 				compatible = "qcom,wsa881x";
+				status = "disabled";
 				reg = <0x0 0x20170211>;
 				qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
-				qcom,bolero-handle = <&bolero>;
 			};
 
 			wsa881x_0212: wsa881x@20170212 {
 				compatible = "qcom,wsa881x";
+				status = "disabled";
 				reg = <0x0 0x20170212>;
 				qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
-				qcom,bolero-handle = <&bolero>;
 			};
 
 			wsa881x_0213: wsa881x@21170213 {
 				compatible = "qcom,wsa881x";
+				status = "disabled";
 				reg = <0x0 0x21170213>;
 				qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
-				qcom,bolero-handle = <&bolero>;
 			};
 
 			wsa881x_0214: wsa881x@21170214 {
 				compatible = "qcom,wsa881x";
+				status = "disabled";
 				reg = <0x0 0x21170214>;
 				qcom,spkr-sd-n-node = <&wsa_spkr_en1>;
-				qcom,bolero-handle = <&bolero>;
 			};
+			//endif ODM_WT_EDIT
 		};
 	};
 
@@ -176,9 +181,18 @@
 		cdc-vdd-buck-supply = <&L14A>;
 		qcom,cdc-vdd-buck-voltage = <1800000 1800000>;
 		qcom,cdc-vdd-buck-current = <650000>;
+		//ifdef ODM_WT_EDIT
+		//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/19, Modify for micbias
+		qcom,ext-pa-gpio = <&tlmm 94 0x00>;
 
-		qcom,cdc-micbias1-mv = <1800>;
-		qcom,cdc-micbias2-mv = <1800>;
+		qcom,cdc-micbias1-mv = <2700>;
+/*#ifndef VENDOR_EDIT*/
+/*Jianqing.Liao@PSW.MM.AudioDriver.MBHC, 2019/07/13, modify micbias 2 to 2.7v */
+/*		qcom,cdc-micbias2-mv = <1800>; */
+/*else*/
+		qcom,cdc-micbias2-mv = <2700>;
+/*endif*/
+		//endif ODM_WT_EDIT
 		qcom,cdc-micbias3-mv = <1800>;
 
 		qcom,cdc-static-supplies = "cdc-vdd-ldo-rxtx",
@@ -190,10 +204,25 @@
 &sm6150_snd {
 	qcom,model = "trinket-idp-snd-card";
 	qcom,msm-mi2s-master = <1>, <1>, <1>, <1>, <1>;
-	qcom,ext-disp-audio-rx = <1>;
+	qcom,ext-disp-audio-rx = <0>;
+	//ifdef ODM_WT_EDIT
+	//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/19, Modify for audio route
 	qcom,audio-routing =
+/*#ifdef VENDOR_EDIT*/
+/* GuoWang.Huang@PSW.MM.AudioDriver.Machine,2020/03/05, Add for audio bringup*/
+		"AMIC1", "MIC BIAS1",
+		"MIC BIAS1", "Analog Mic1",
+
+		/*
+		"AMIC3", "MIC BIAS3",
+		"MIC BIAS3", "Analog Mic3",
+                */
+		/*#endif*/
 		"AMIC2", "MIC BIAS2",
 		"MIC BIAS2", "Analog Mic2",
+		/*#ifndef VENDOR_EDIT*/
+		/* he.lu@PSW.MM.AudioDriver.Machine,2019/12/08, Remove for homer bringup*/
+		/*
 		"TX DMIC0", "MIC BIAS1",
 		"MIC BIAS1", "Digital Mic0",
 		"TX DMIC1", "MIC BIAS1",
@@ -202,6 +231,8 @@
 		"MIC BIAS3", "Digital Mic2",
 		"TX DMIC3", "MIC BIAS3",
 		"MIC BIAS3", "Digital Mic3",
+		*/
+		/*#endif*/
 		"TX_AIF1 CAP", "VA_MCLK",
 		"TX_AIF2 CAP", "VA_MCLK",
 		"RX AIF1 PB", "VA_MCLK",
@@ -222,27 +253,48 @@
 		"RX_TX DEC0_INP", "TX DEC0 MUX",
 		"RX_TX DEC1_INP", "TX DEC1 MUX",
 		"RX_TX DEC2_INP", "TX DEC2 MUX",
-		"RX_TX DEC3_INP", "TX DEC3 MUX",
+		"RX_TX DEC3_INP", "TX DEC3 MUX";
+		/*#ifndef VENDOR_EDIT*/
+		/* he.lu@PSW.MM.AudioDriver.Machine,2019/12/08, Remove for homer bringup*/
+		/*
 		"SpkrLeft IN", "WSA_SPK1 OUT",
 		"SpkrRight IN", "WSA_SPK2 OUT",
 		"WSA_SPK1 OUT", "VA_MCLK",
 		"WSA_SPK2 OUT", "VA_MCLK";
+		*/
+		/*#endif*/
 	qcom,msm-mbhc-hphl-swh = <1>;
-	qcom,msm-mbhc-gnd-swh = <1>;
-	qcom,cdc-dmic01-gpios = <&cdc_dmic01_gpios>;
-	qcom,cdc-dmic23-gpios = <&cdc_dmic23_gpios>;
+	qcom,msm-mbhc-gnd-swh = <0>;
+/*#ifdef VENDOR_EDIT*/
+/* GuoWang.Huang@PSW.MM.AudioDriver.Machine,2020/03/05, Add for audio bringup*/
+
+	qcom,cdc-dmic01-gpios;
+	qcom,cdc-dmic23-gpios;
+
+/*#endif*/
 	asoc-codec  = <&stub_codec>, <&bolero>, <&ext_disp_audio_codec>;
 	asoc-codec-names = "msm-stub-codec.1", "bolero_codec",
-				"msm-ext-disp-audio-codec-rx";
-	qcom,wsa-max-devs = <1>;
+		               "msm-ext-disp-audio-codec-rx";
+/*#ifdef VENDOR_EDIT*/
+/* GuoWang.Huang@PSW.MM.AudioDriver.Machine,2020/03/05, Add for audio bringup*/
+	//qcom,wsa-max-devs = <0>;
+	//oppo,speaker-pa = "awinic";
+/*#else*/
+
+	qcom,wsa-max-devs = <0>;
 	qcom,wsa-devs = <&wsa881x_0211>, <&wsa881x_0212>,
 			<&wsa881x_0213>, <&wsa881x_0214>;
 	qcom,wsa-aux-dev-prefix = "SpkrLeft", "SpkrRight",
 				  "SpkrLeft", "SpkrRight";
+
+/*#endif*/
 	qcom,codec-max-aux-devs = <1>;
 	qcom,codec-aux-devs = <&wcd937x_codec>;
 	qcom,msm_audio_ssr_devs = <&audio_apr>, <&q6core>,
 				<&bolero>;
+	//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/30, Modify for headset follow p
+	qcom,mbhc-audio-jack-type = "4-pole-jack";
+	//endif ODM_WT_EDIT
 };
 
 &soc {

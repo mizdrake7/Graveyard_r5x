@@ -19,4 +19,5 @@
 	model = "Qualcomm Technologies, Inc. TRINKET SoC";
 	compatible = "qcom,trinket";
 	qcom,board-id = <0 0>;
+	oppo,prjversion = <1 19631>;
 };

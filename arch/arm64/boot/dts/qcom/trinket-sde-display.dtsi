@@ -15,13 +15,32 @@
 #include "dsi-panel-sim-video.dtsi"
 #include "dsi-panel-hx83112a-truly-singlemipi-fhd-video.dtsi"
 #include "dsi-panel-nt36672-truly-fhd-video.dtsi"
+#include "dsi_oppo19012_himax_83112a_video.dtsi"
+#include "dsi_oppo19631_ili9881_auo_video.dtsi"
+#include "dsi_oppo19631_nt36525b_boe_video.dtsi"
+#include "dsi_oppo19631_ili9881_tm_video.dtsi"
+#include "dsi_oppo19631_nt36525b_hlt_video.dtsi"
+#include "dsi_oppo19631_ili9881_inx_video.dtsi"
 #include <dt-bindings/clock/mdss-14nm-pll-clk.h>
 
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Add for LCD bring up
+#include "dsi-panel-ili9881h-truly-singlemipi-hdp-video.dtsi"
+#include "dsi-panel-hx83102d-auo-singlemipi-hdp-video.dtsi"
+#include "dsi-panel-ili9881h-truly-auo-singlemipi-hdp-video.dtsi"
+#include "dsi-panel-ili9881h-innolux-inx-singlemipi-hdp-video.dtsi"
+#include "dsi-panel-nt36525b-hlt-boe-singlemipi-hdp-video.dtsi"
+#include "dsi-panel-ili9881h-truly-auo-singlemipi-hdp-gg3-video.dtsi"
+#include "dsi-panel-nt36525b-hlt-boe-singlemipi-hdp-gg3-video.dtsi"
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Add for LCD bring up
+//#endif /* ODM_WT_EDIT */
 &soc {
 	dsi_panel_pwr_supply: dsi_panel_pwr_supply {
 		#address-cells = <1>;
 		#size-cells = <0>;
 
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Add for LCD bring up
 		qcom,panel-supply-entry@0 {
 			reg = <0>;
 			qcom,supply-name = "vddio";
@@ -29,27 +48,29 @@
 			qcom,supply-max-voltage = <1800000>;
 			qcom,supply-enable-load = <62000>;
 			qcom,supply-disable-load = <80>;
-			qcom,supply-post-on-sleep = <20>;
 		};
 
 		qcom,panel-supply-entry@1 {
 			reg = <1>;
 			qcom,supply-name = "lab";
-			qcom,supply-min-voltage = <4600000>;
+			qcom,supply-min-voltage = <6000000>;
 			qcom,supply-max-voltage = <6000000>;
 			qcom,supply-enable-load = <100000>;
 			qcom,supply-disable-load = <100>;
+			qcom,supply-pre-off-sleep = <1>;
 		};
 
 		qcom,panel-supply-entry@2 {
 			reg = <2>;
 			qcom,supply-name = "ibb";
-			qcom,supply-min-voltage = <4600000>;
+			qcom,supply-min-voltage = <6000000>;
 			qcom,supply-max-voltage = <6000000>;
 			qcom,supply-enable-load = <100000>;
 			qcom,supply-disable-load = <100>;
-			qcom,supply-post-on-sleep = <20>;
+			qcom,supply-pre-off-sleep = <1>;
 		};
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Add for LCD bring up
+//#endif /* ODM_WT_EDIT */
 	};
 
 	dsi_panel_pwr_supply_no_labibb: dsi_panel_pwr_supply_no_labibb {
@@ -137,16 +158,172 @@
 		qcom,dsi-panel = <&dsi_hx83112a_truly_video>;
 	};
 
-	dsi_nt36672_truly_vid_display: qcom,dsi-display@4 {
-		label = "dsi_nt36672_truly_vid_display";
+	//#ifdef VENDOR_EDIT
+	//guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
+	dsi_oppo19012_himax_83112a_vid_display: qcom,dsi-display@4 {
+		label = "dsi_oppo19012_himax_83112a_vid_display";
+		qcom,display-type = "primary";
+		//qcom,dsi-display-active;
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_oppo19012_himax_83112a_video>;
+	};
+    
+	dsi_oppo19631_ili9881_auo_vid_display: qcom,dsi-display@5 {
+		label = "dsi_oppo19631_ili9881_auo_vid_display";
+		qcom,display-type = "primary";
+		qcom,dsi-display-active;
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_oppo19631_ili9881_auo_video>;
+	};
+    
+	dsi_oppo19631_nt36525b_boe_vid_display: qcom,dsi-display@6 {
+		label = "dsi_oppo19631_nt36525b_boe_vid_display";
+		qcom,display-type = "primary";
+		//qcom,dsi-display-active;
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_oppo19631_nt36525b_boe_video>;
+	};
+    
+	dsi_oppo19631_ili9881_tm_vid_display: qcom,dsi-display@7 {
+		label = "dsi_oppo19631_ili9881_tm_vid_display";
+		qcom,display-type = "primary";
+		//qcom,dsi-display-active;
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_oppo19631_ili9881_tm_video>;
+	};
+
+	dsi_oppo19631_ili9881_inx_vid_display: qcom,dsi-display@8 {
+		label = "dsi_oppo19631_ili9881_inx_vid_display";
+		qcom,display-type = "primary";
+		//qcom,dsi-display-active;
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_oppo19631_ili9881_inx_video>;
+	};
+
+	dsi_oppo19631_nt36525b_hlt_vid_display: qcom,dsi-display@9 {
+		label = "dsi_oppo19631_nt36525b_hlt_vid_display";
+		qcom,display-type = "primary";
+		//qcom,dsi-display-active;
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_oppo19631_nt36525b_hlt_video>;
+	};
+       //#endif /* VENDOR_EDIT */
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Add for LCD bring up
+        dsi_ili9881h_truly_video_display: qcom,dsi-display@10 {
+		label = "dsi_ili9881h_truly_video_display";
 		qcom,display-type = "primary";
 
 		qcom,dsi-ctrl-num = <0>;
 		qcom,dsi-phy-num = <0>;
 		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
 
-		qcom,dsi-panel = <&dsi_nt36672_truly_video>;
+		qcom,dsi-panel = <&dsi_ili9881h_truly_video>;
 	};
+
+	dsi_hx83102d_auo_video_display: qcom,dsi-display@11 {
+		label = "dsi_hx83102d_auo_video_display";
+		qcom,display-type = "primary";
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_hx83102d_auo_video>;
+	};
+
+	dsi_ili9881h_truly_auo_video_display: qcom,dsi-display@12 {
+		label = "dsi_ili9881h_truly_auo_video_display";
+		qcom,display-type = "primary";
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_ili9881h_truly_auo_video>;
+	};
+
+	dsi_ili9881h_innolux_inx_video_display: qcom,dsi-display@13 {
+		label = "dsi_ili9881h_innolux_inx_video_display";
+		qcom,display-type = "primary";
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_ili9881h_innolux_inx_video>;
+	};
+
+	dsi_nt36525b_hlt_boe_video_display: qcom,dsi-display@14 {
+		label = "dsi_nt36525b_hlt_boe_video_display";
+		qcom,display-type = "primary";
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_nt36525b_hlt_boe_video>;
+	};
+
+	dsi_nt36525b_hlt_boe_gg3_video_display: qcom,dsi-display@15 {
+		label = "dsi_nt36525b_hlt_boe_gg3_video_display";
+		qcom,display-type = "primary";
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_nt36525b_hlt_boe_gg3_video>;
+	};
+
+	dsi_ili9881h_truly_auo_gg3_video_display: qcom,dsi-display@16 {
+		label = "dsi_ili9881h_truly_auo_gg3_video_display";
+		qcom,display-type = "primary";
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0";
+
+		qcom,dsi-panel = <&dsi_ili9881h_truly_auo_gg3_video>;
+	};
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Add for LCD bring up
+//#endif /* ODM_WT_EDIT */
 
 	sde_dsi: qcom,dsi-display {
 		compatible = "qcom,dsi-display";
@@ -173,12 +350,28 @@
 		lab-supply = <&lcdb_ldo_vreg>;
 		ibb-supply = <&lcdb_ncp_vreg>;
 
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Add for LCD bring up
 		qcom,dsi-display-list =
 			<&dsi_td4330_truly_vid_display
 			&dsi_td4330_truly_cmd_display
 			&dsi_sim_vid_display
 			&dsi_hx83112a_truly_vid_display
-			&dsi_nt36672_truly_vid_display>;
+			&dsi_oppo19012_himax_83112a_vid_display
+			&dsi_oppo19631_ili9881_auo_vid_display
+			&dsi_oppo19631_nt36525b_boe_vid_display
+			&dsi_oppo19631_ili9881_tm_vid_display
+			&dsi_oppo19631_ili9881_inx_vid_display
+			&dsi_oppo19631_nt36525b_hlt_vid_display
+			&dsi_ili9881h_truly_video_display
+			&dsi_hx83102d_auo_video_display
+			&dsi_ili9881h_truly_auo_video_display
+			&dsi_ili9881h_innolux_inx_video_display
+			&dsi_nt36525b_hlt_boe_video_display
+			&dsi_nt36525b_hlt_boe_gg3_video_display
+			&dsi_ili9881h_truly_auo_gg3_video_display>;
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Add for LCD bring up
+//#endif /* ODM_WT_EDIT */
 	};
 
 	sde_wb: qcom,wb-display@0 {
@@ -887,9 +1080,30 @@
 	};
 };
 
-&dsi_nt36672_truly_video {
-	qcom,mdss-dsi-t-clk-post = <0x0D>;
-	qcom,mdss-dsi-t-clk-pre = <0x30>;
+//#ifdef VENDOR_EDIT
+//guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
+&dsi_oppo19012_himax_83112a_video {
+    qcom,mdss-dsi-t-clk-post = <0x0f>;
+	qcom,mdss-dsi-t-clk-pre = <0x38>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[26 20 0a 0b 06 02 04 a0
+				26 20 0a 0b 06 02 04 a0
+				26 20 0a 0b 06 02 04 a0
+				26 20 0a 0b 06 02 04 a0
+				26 21 0a 0b 06 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+
+&dsi_oppo19631_ili9881_auo_video {
+    qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
 	qcom,esd-check-enabled;
 	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
 	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
@@ -900,14 +1114,245 @@
 	qcom,mdss-dsi-display-timings {
 		timing@0{
 			qcom,mdss-dsi-panel-phy-timings =
-				[24 1F 08 09 05 02 04 a0
-				24 1F 08 09 05 02 04 a0
-				24 1F 08 09 05 02 04 a0
-				24 1F 08 09 05 02 04 a0
-				24 1B 08 09 05 02 04 a0];
+				[21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
 
 			qcom,display-topology = <1 0 1>;
 			qcom,default-topology-index = <0>;
 		};
 	};
 };
+
+&dsi_oppo19631_nt36525b_boe_video {
+    qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_hs_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9c>;
+	qcom,mdss-dsi-panel-on-check-value = <0x9c>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_oppo19631_ili9881_tm_video {
+    qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_hs_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9c>;
+	qcom,mdss-dsi-panel-on-check-value = <0x9c>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_oppo19631_ili9881_inx_video {
+    qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_hs_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9c>;
+	qcom,mdss-dsi-panel-on-check-value = <0x9c>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_oppo19631_nt36525b_hlt_video {
+    qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_hs_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9c>;
+	qcom,mdss-dsi-panel-on-check-value = <0x9c>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 1d 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+//#endif /* VENDOR_EDIT */
+
+//#ifdef ODM_WT_EDIT
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Add for LCD bring up
+&dsi_ili9881h_truly_video {
+	qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[22 1D 07 08 04 02 04 a0
+				22 1D 07 08 04 02 04 a0
+				22 1D 07 08 04 02 04 a0
+				22 1D 07 08 04 02 04 a0
+				22 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_hx83102d_auo_video {
+	qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x27>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1E 06 07 04 02 04 a0
+				21 1E 06 07 04 02 04 a0
+				21 1E 06 07 04 02 04 a0
+				21 1E 06 07 04 02 04 a0
+				21 14 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_ili9881h_truly_auo_video {
+	qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x27>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1D 06 07 04 02 04 a0
+				21 1D 06 07 04 02 04 a0
+				21 1D 06 07 04 02 04 a0
+				21 1D 06 07 04 02 04 a0
+				21 14 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_ili9881h_innolux_inx_video {
+	qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_nt36525b_hlt_boe_video {
+	qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_nt36525b_hlt_boe_gg3_video {
+	qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_ili9881h_truly_auo_gg3_video {
+	qcom,mdss-dsi-t-clk-post = <0x0c>;
+	qcom,mdss-dsi-t-clk-pre = <0x29>;
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings =
+				[21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 1D 07 08 04 02 04 a0
+				21 16 06 07 04 02 04 a0];
+
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+//Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Add for LCD bring up
+//#endif /* ODM_WT_EDIT */

@@ -19,11 +19,11 @@
 #include "trinket-audio-overlay.dtsi"
 
 / {
-	model = "IDP";
+	model = "Qualcomm Technologies, Inc. TRINKET IDP";
 	compatible = "qcom,trinket-idp", "qcom,trinket", "qcom,idp";
 	qcom,msm-id = <394 0x10000>;
 	qcom,board-id = <34 0>;
-	oppo,prjversion = <1 19631>;
+	oppo,dtsi_no = <19632>;
 };
 
 //#ifdef VENDOR_EDIT
