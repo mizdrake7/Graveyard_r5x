@@ -196,10 +196,10 @@ static int __fw_state_check(struct fw_state *fw_st, enum fw_status status)
 #define FW_OPT_NO_WARN	(1U << 3)
 #define FW_OPT_NOCACHE	(1U << 4)
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2019-06-03 Add interface to get proper fw
 #define FW_OPT_COMPARE (1U << 5)
-//#endif/*ODM_WT_EDIT*/
+//#endif/*CONFIG_ODM_WT_EDIT*/
 struct firmware_cache {
 	/* firmware_buf instance will be added into the below list */
 	spinlock_t lock;
@@ -386,21 +386,21 @@ static void fw_free_buf(struct firmware_buf *buf)
 static char fw_path_para[256];
 static const char * const fw_path[] = {
 	fw_path_para,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //HanHuiqun@PSW.MM.AudioDriver.Machine,2019/04/03, Add for aw87339
 	"/vendor/firmware",
 //He.Lu@PSW.MM.AudioDriver, 2019/12/07, Add for content for aw87339's bin files
 	"/system/vendor/firmware",
 	"/system/etc/firmware",
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	"/lib/firmware/updates/" UTS_RELEASE,
 	"/lib/firmware/updates",
 	"/lib/firmware/" UTS_RELEASE,
 	"/lib/firmware"
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2020-03-04 Add fw path
 	"/vendor/firmware/" UTS_RELEASE,
-//#endif/*ODM_WT_EDIT*/
+//#endif/*CONFIG_ODM_WT_EDIT*/
 	"/vendor/firmware"
 };
 
@@ -411,7 +411,7 @@ static const char * const fw_path[] = {
  */
 module_param_string(path, fw_path_para, sizeof(fw_path_para), 0644);
 MODULE_PARM_DESC(path, "customized firmware image search path with a higher priority than default path");
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Bo.Zhang@ODM_WT.BSP.TP, 2020-04-15, add to avoid direct pass encrypt tp firmware to driver
 static int fw_get_filesystem_firmware(struct device *device,
 					struct firmware_buf *buf,
@@ -419,7 +419,7 @@ static int fw_get_filesystem_firmware(struct device *device,
 #else
 static int
 fw_get_filesystem_firmware(struct device *device, struct firmware_buf *buf)
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 {
 	loff_t size;
 	int i, len;
@@ -427,13 +427,13 @@ fw_get_filesystem_firmware(struct device *device, struct firmware_buf *buf)
 	char *path;
 	enum kernel_read_file_id id = READING_FIRMWARE;
 	size_t msize = INT_MAX;
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Bo.Zhang@ODM_WT.BSP.TP, 2020-04-15, Add to avoid direct pass encrypt tp firmware to driver
 	if(opt_flags & FW_OPT_COMPARE) {
 		pr_err("%s opt_flags get FW_OPT_COMPARE!\n", __func__);
 		return rc;
 	}
-	#endif/*VENDOR_EDIT*/
+	#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 	/* Already populated data member means we're loading into a buffer */
 	if (buf->data) {
 		id = READING_FIRMWARE_PREALLOC_BUFFER;
@@ -1067,11 +1067,11 @@ static int _request_firmware_load(struct firmware_priv *fw_priv,
 	struct device *f_dev = &fw_priv->dev;
 	struct firmware_buf *buf = fw_priv->buf;
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 	//Bo.Zhang@ODM_WT.BSP.TP,2020-03-04 Add interface to get proper fw
 	char *envp[2]={"FwUp=compare", NULL};
         dev_dbg(f_dev, "temp printk %s\n", envp[1]);
-//#endif/*ODM_WT_EDIT*/
+//#endif/*CONFIG_ODM_WT_EDIT*/
 
 	/* fall back on userspace loading */
 	if (!buf->data)
@@ -1093,7 +1093,7 @@ static int _request_firmware_load(struct firmware_priv *fw_priv,
 		buf->need_uevent = true;
 		dev_set_uevent_suppress(f_dev, false);
 		dev_dbg(f_dev, "firmware: requesting %s\n", buf->fw_id);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		//Bo.Zhang@ODM_WT.BSP.TP, 2020-04-15, Add interface to get proper fw
 		if (opt_flags & FW_OPT_COMPARE) {
 			kobject_uevent_env(&fw_priv->dev.kobj, KOBJ_CHANGE,envp);
@@ -1102,7 +1102,7 @@ static int _request_firmware_load(struct firmware_priv *fw_priv,
 		}
 #else
 		kobject_uevent(&fw_priv->dev.kobj, KOBJ_ADD);
-#endif/*VENDOR_EDIT*/
+#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	} else {
 		timeout = MAX_JIFFY_OFFSET;
@@ -1276,12 +1276,12 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
 					opt_flags);
 	if (ret <= 0) /* error or already assigned */
 		goto out;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Bo.Zhang@ODM_WT.BSP.TP, 2020-04-15, Add to avoid direct pass encrypt tp firmware to driver
 	ret = fw_get_filesystem_firmware(device, fw->priv, opt_flags);
 #else
 	ret = fw_get_filesystem_firmware(device, fw->priv);
-#endif/*VENDOR_EDIT*/
+#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 	if (ret) {
 		if (!(opt_flags & FW_OPT_NO_WARN))
 			dev_dbg(device,
@@ -1341,7 +1341,7 @@ request_firmware(const struct firmware **firmware_p, const char *name,
 }
 EXPORT_SYMBOL(request_firmware);
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2020-03-04  Add interface to get proper fw
 int request_firmware_select(const struct firmware **firmware_p, const char *name,
 		 struct device *device)
@@ -1356,7 +1356,7 @@ int request_firmware_select(const struct firmware **firmware_p, const char *name
 	return ret;
 }
 EXPORT_SYMBOL(request_firmware_select);
-//#endif/*ODM_WT_EDIT*/
+//#endif/*CONFIG_ODM_WT_EDIT*/
 
 /**
  * request_firmware_direct: - load firmware directly without usermode helper

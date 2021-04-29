@@ -30,7 +30,7 @@
 #include "adsp_err.h"
 #include "q6afecal-hwdep.h"
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Add for tfa98xx vi feedback*/
 //#define CONFIG_SND_SOC_TFA9874
 
@@ -47,7 +47,7 @@
 //#define AFE_PORT_ID_TFADSP_RX	  AFE_PORT_ID_PRIMARY_MI2S_RX
 //#define AFE_PORT_ID_TFADSP_TX	  AFE_PORT_ID_PRIMARY_MI2S_TX
 //#endif /* CONFIG_SND_SOC_TFA9874 */
-//#endif /* VENDOR_EDIT */
+//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #define WAKELOCK_TIMEOUT	5000
 enum {
@@ -182,13 +182,13 @@ struct afe_ctl {
 	/* FTM spk params */
 	uint32_t initial_cal;
 	uint32_t v_vali_flag;
-	//#ifdef VENDOR_EDIT
+	//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Add for tfa98xx vi feedback*/
 	//#ifdef CONFIG_SND_SOC_TFA9874
 	//struct rtac_cal_block_data tfa_cal;
 	//atomic_t tfa_state;
 	//#endif /* CONFIG_SND_SOC_TFA9874 */
-	//#endif /* VENDOR_EDIT */
+	//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 };
 
 static atomic_t afe_ports_mad_type[SLIMBUS_PORT_LAST - SLIMBUS_0_RX];
@@ -587,14 +587,14 @@ static int32_t afe_callback(struct apr_client_data *data, void *priv)
 	    data->opcode == AFE_PORT_CMDRSP_GET_PARAM_V3) {
 		uint32_t *payload = data->payload;
 		uint32_t param_id;
-		//#ifndef VENDOR_EDIT
+		//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Modify for tfa98xx vi feedback*/
 		uint32_t param_id_pos = 0;
-		//#else /* VENDOR_EDIT */
+		//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 		//#ifndef CONFIG_SND_SOC_TFA9874
 		//uint32_t param_id_pos = 0;
 		//#endif /*CONFIG_SND_SOC_TFA9874*/
-		//#endif /* VENDOR_EDIT */
+		//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 		if (!payload || (data->token >= AFE_MAX_PORTS)) {
 			pr_err("%s: Error: size %d payload %pK token %d\n",
@@ -607,7 +607,7 @@ static int32_t afe_callback(struct apr_client_data *data, void *priv)
 					   data->payload_size))
 			return 0;
 
-		//#ifndef VENDOR_EDIT
+		//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Modify for tfa98xx vi feedback*/
 		if (data->opcode == AFE_PORT_CMDRSP_GET_PARAM_V3)
 			param_id_pos = 4;
@@ -621,7 +621,7 @@ static int32_t afe_callback(struct apr_client_data *data, void *priv)
 				__func__, data->payload_size);
 			return -EINVAL;
 		}
-		//#else /* VENDOR_EDIT */
+		//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 		//#ifdef CONFIG_SND_SOC_TFA9874
 		//param_id = (data->opcode == AFE_PORT_CMDRSP_GET_PARAM_V3) ?
 		//                   payload[3] :
@@ -640,12 +640,12 @@ static int32_t afe_callback(struct apr_client_data *data, void *priv)
 		//	return -EINVAL;
 		//}
 		//#endif /*CONFIG_SND_SOC_TFA9874*/
-		//#endif /* VENDOR_EDIT */
+		//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 		if (param_id == AFE_PARAM_ID_DEV_TIMING_STATS) {
 			av_dev_drift_afe_cb_handler(data->opcode, data->payload,
 						    data->payload_size);
 		} else {
-		//	#ifdef VENDOR_EDIT
+		//	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 			/*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Add for tfa98xx vi feedback*/
 		//	#ifdef CONFIG_SND_SOC_TFA9874
 		//	if (atomic_read(&this_afe.tfa_state) == 1 &&
@@ -663,7 +663,7 @@ static int32_t afe_callback(struct apr_client_data *data, void *priv)
 		//		return 0;
 		//	}
 		//	#endif /* CONFIG_SND_SOC_TFA9874 */
-		//	#endif /* VENDOR_EDIT */
+		//	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 			if (sp_make_afe_callback(data->opcode, data->payload,
 						 data->payload_size))
@@ -1747,7 +1747,7 @@ static int afe_spk_prot_prepare(int src_port, int dst_port, int param_id,
 		param_info.module_id = AFE_MODULE_SPEAKER_PROTECTION_V2_EX_VI;
 		break;
 
-	//#ifdef VENDOR_EDIT
+	//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Add for tfa98xx vi feedback*/
 	//#ifdef CONFIG_SND_SOC_TFA9874
 	//case AFE_PARAM_ID_TFADSP_RX_CFG:
@@ -1760,7 +1760,7 @@ static int afe_spk_prot_prepare(int src_port, int dst_port, int param_id,
 	//	param_info.module_id = AFE_MODULE_ID_TFADSP_TX;
 	//	break;
 	//#endif	/* CONFIG_SND_SOC_TFA9874 */
-	//#endif /* VENDOR_EDIT */
+	//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	default:
 		pr_err("%s: default case 0x%x\n", __func__, param_id);
@@ -8591,7 +8591,7 @@ static void afe_release_uevent_data(struct kobject *kobj)
 	kfree(data);
 }
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Add for tfa98xx vi feedback*/
 /*#ifdef CONFIG_SND_SOC_TFA9874
 int send_tfa_cal_apr(void *buf, int cmd_size, bool bRead)
@@ -8796,7 +8796,7 @@ int send_tfa_cal_set_tx_enable(void *buf, int cmd_size)
 }
 EXPORT_SYMBOL(send_tfa_cal_set_tx_enable);*/
 //#endif /* CONFIG_SND_SOC_TFA9874 */
-//#endif /* VENDOR_EDIT */
+//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 int __init afe_init(void)
 {
@@ -8856,12 +8856,12 @@ int __init afe_init(void)
 
 void afe_exit(void)
 {
-	//#ifdef VENDOR_EDIT
+	//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Jianfeng.Qiu@PSW.MM.AudioDriver.SmartPA, 2019/07/20, Add for tfa98xx vi feedback*/
 	//#ifdef CONFIG_SND_SOC_TFA9874
 	//afe_unmap_rtac_block(&this_afe.tfa_cal.map_data.map_handle);
 	//#endif /* CONFIG_SND_SOC_TFA9874 */
-	//#endif /* VENDOR_EDIT */
+	//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	if (this_afe.apr) {
 		apr_reset(this_afe.apr);

@@ -56,7 +56,7 @@ static struct thermal_governor *def_governor;
 
 static struct workqueue_struct *thermal_passive_wq;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #define TZ_MAX		10
 #define TP_MAX		10
 static int raw_temp[TZ_MAX][TP_MAX];
@@ -1708,7 +1708,7 @@ static int __init thermal_init(void)
 	if (result)
 		goto exit_zone_parse;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	thermal_update_trip_dynamic(MODE_INIT, 0);
 #endif
 	result = register_pm_notifier(&thermal_pm_nb);

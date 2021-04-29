@@ -41,10 +41,10 @@
 #include <linux/pm_runtime.h>
 #include <trace/events/mmc.h>
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoxiang.Xiong@ODM_WT.BSP.Storage.sdcard, 2020/03/24, Add for check card tray status
 #include <linux/proc_fs.h>
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 #include "sdhci-msm.h"
 #include "sdhci-msm-ice.h"
@@ -451,7 +451,7 @@ out:
 	return rc;
 }
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoxiang.Xiong@ODM_WT.BSP.Storage.sdcard, 2020/03/24, Add for check card tray status
 static int sdhci_irq_gpio = 0;
 
@@ -491,7 +491,7 @@ static void card_tray_detect_remove_proc(void)
 {
 	remove_proc_entry("sd_tray_gpio_value", NULL);
 }
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 static ssize_t store_auto_cmd21(struct device *dev, struct device_attribute
 				*attr, const char *buf, size_t count)
@@ -2063,10 +2063,10 @@ struct sdhci_msm_pltfm_data *sdhci_msm_populate_pdata(struct device *dev,
                                 &msm_host->mmc->ios.power_delay_ms);
 
 	pdata->status_gpio = of_get_named_gpio_flags(np, "cd-gpios", 0, &flags);
-	//#ifdef ODM_WT_EDIT
+	//#ifdef CONFIG_ODM_WT_EDIT
 	//Xiaoxiang.Xiong@ODM_WT.BSP.Storage.sdcard, 2020/03/24, Add for check card tray status
     sdhci_irq_gpio = pdata->status_gpio;
-	//#endif /* ODM_WT_EDIT */
+	//#endif /* CONFIG_ODM_WT_EDIT */
 	if (gpio_is_valid(pdata->status_gpio) && !(flags & OF_GPIO_ACTIVE_LOW))
 		pdata->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
 
@@ -5310,7 +5310,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
 	if (sdhci_msm_is_bootdevice(&pdev->dev))
 		mmc_flush_detect_work(host->mmc);
 
-	//#ifdef ODM_WT_EDIT
+	//#ifdef CONFIG_ODM_WT_EDIT
 	//Xiaoxiang.Xiong@ODM_WT.BSP.Storage.sdcard, 2020/03/24, Add for check card tray status
 	if (!strcmp(mmc_hostname(host->mmc), "mmc1")) {
 		ret = card_tray_detect_create_proc();
@@ -5319,7 +5319,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
 				mmc_hostname(host->mmc), __func__, ret);
 		}
 	}
-	//#endif /* ODM_WT_EDIT */
+	//#endif /* CONFIG_ODM_WT_EDIT */
 		
 	/* Successful initialization */
 	goto out;
@@ -5425,7 +5425,7 @@ static int sdhci_msm_remove(struct platform_device *pdev)
 	}
 
 	sdhci_pltfm_free(pdev);
-	//#ifdef ODM_WT_EDIT
+	//#ifdef CONFIG_ODM_WT_EDIT
 	//Xiaoxiang.Xiong@ODM_WT.BSP.Storage.sdcard, 2020/03/24, Add for check card tray status
 	if (!strcmp(mmc_hostname(host->mmc), "mmc1")) {
 		card_tray_detect_remove_proc();

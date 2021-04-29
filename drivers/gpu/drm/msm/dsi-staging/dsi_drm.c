@@ -31,7 +31,7 @@
 #define DEFAULT_PANEL_JITTER_ARRAY_SIZE		2
 #define DEFAULT_PANEL_PREFILL_LINES	25
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //liwei.a@PSW.MM.Display.Stability, 2019/07/12, add interface for tp to get lcd status resumed or not
 int lcd_running_tag = -1;
 
@@ -210,7 +210,7 @@ static void dsi_bridge_pre_enable(struct drm_bridge *bridge)
 		return;
 	}
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//liwei.a@PSW.MM.Display.Stability, 2019/07/12, add interface for tp to get lcd status resumed or not
 	lcd_running_tag = 1;
 	#endif
@@ -270,7 +270,7 @@ static void dsi_bridge_enable(struct drm_bridge *bridge)
 			sde_connector_schedule_status_work(display->drm_conn,
 				true);
 	}
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//liwei.a@PSW.MM.Display.Stability, 2019/07/12, add interface for tp to get lcd status resumed or not
 	lcd_running_tag = 0;
 	#endif
@@ -462,7 +462,7 @@ static bool dsi_bridge_mode_fixup(struct drm_bridge *bridge,
 			 display->is_cont_splash_enabled))
 			dsi_mode.dsi_mode_flags |= DSI_MODE_FLAG_DMS;
 
-		#ifdef VENDOR_EDIT
+		#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/*Mark.Yao@PSW.MM.Display.LCD.Stable,2019-12-09 skip dms switch if cont_splash not ready */
 		if (display->is_cont_splash_enabled)
 			dsi_mode.dsi_mode_flags &= ~DSI_MODE_FLAG_DMS;
@@ -476,7 +476,7 @@ static bool dsi_bridge_mode_fixup(struct drm_bridge *bridge,
 		if (dsi_mode.dsi_mode_flags & DSI_MODE_FLAG_DMS)
 			dsi_mode.dsi_mode_flags |= DSI_MODE_FLAG_SEAMLESS;
 		}
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 		/* Reject seemless transition when active/connectors changed.*/
 		if ((crtc_state->active_changed ||

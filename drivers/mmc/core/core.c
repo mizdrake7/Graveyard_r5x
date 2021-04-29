@@ -4429,7 +4429,7 @@ void mmc_stop_host(struct mmc_host *host)
 
 	host->rescan_disable = 1;
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019-11-30 modify for system_server may be blocked for T card is not working.
 	cancel_delayed_work_sync(&host->detect);
 #else

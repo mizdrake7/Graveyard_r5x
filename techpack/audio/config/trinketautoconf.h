@@ -62,14 +62,14 @@
 #define CONFIG_SND_SOC_WCD937X 1
 #define CONFIG_SND_SOC_WCD937X_SLAVE 1
 #define CONFIG_SND_EVENT 1
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*huanli.chang@PSW.MM.AudioDriver.Machine,2019/04/03, Add for audio bringup*/
-#define VENDOR_EDIT
-#endif /* VENDOR_EDIT */
+#define CONFIG_PRODUCT_REALME_TRINKET
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* huanli.chang@PSW.MM.AudioDriver.SmartPA, 2019/10/16, Add for tfa98xx */
 //#define CONFIG_SND_SOC_TFA9874 1
 /* He.Lu@PSW.MM.AudioDriver, 2019/12/18, Add for homer */
 //#define CONFIG_SND_SOC_SIA81XX 1
-//#endif /* VENDOR_EDIT */
+//#endif /* CONFIG_PRODUCT_REALME_TRINKET */

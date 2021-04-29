@@ -1,6 +1,6 @@
 /***********************************************************
  * ** Copyright (C), 2008-2016, OPPO Mobile Comm Corp., Ltd.
- * ** ODM_WT_EDIT
+ * ** CONFIG_ODM_WT_EDIT
  * ** File: - secboot_fuse.c
  * ** Description: Source file for /proc/secboot_fuse_reg
  * ** Version: 1.0

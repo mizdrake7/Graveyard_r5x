@@ -1,6 +1,6 @@
 /***************************************************************
 ** Copyright (C),  2018,  OPPO Mobile Comm Corp.,  Ltd
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** File : dsi_oppo_support.c
 ** Description : display driver private management
 ** Version : 1.0
@@ -85,7 +85,7 @@ int set_oppo_display_vendor(const char * display_name) {
 	 } else if (!strcmp(display_name,"dsi_nt36672a_tm_vid_display")) {
 		oppo_display_vendor = OPPO_TM_NT36672A_DISPALY_FHD_PLUS_VIDEO_PANEL;
 		register_device_proc("lcd", "NT36672A", "tm1024");
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC cmd used for power saving
 	 } else if ((!strcmp(display_name,"dsi_ili9881h_truly_auo_video_display")) || \
 			    (!strcmp(display_name, "dsi_ili9881h_truly_auo_gg3_video_display"))) {
@@ -100,7 +100,7 @@ int set_oppo_display_vendor(const char * display_name) {
 		oppo_display_vendor = INNOLUX_INX_ILI9881H_DISPALY_HDP_VIDEO_PANEL;
 		register_device_proc("lcd", "ILI9881H", "innolux inx");
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	} else {
 		oppo_display_vendor = OPPO_DISPLAY_UNKNOW;
 		pr_err("%s panel vendor info set failed!", __func__);

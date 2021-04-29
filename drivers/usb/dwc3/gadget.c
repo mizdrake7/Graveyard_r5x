@@ -918,14 +918,14 @@ static void dwc3_stop_active_transfers(struct dwc3 *dwc)
 				dbg_event(dep->number, "Clr_TRB", 0);
 			}
 		}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Achang.Zhang@ODM.BSP.USB, 2020/02/19, Add for qcom usb patch
 		if (dep->trb_pool) {
 				memset(&dep->trb_pool[0], 0,
 								sizeof(struct dwc3_trb) * dep->num_trbs);
 				dbg_event(dep->number, "Clr_TRB", 0);
 		}
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	}
 	dbg_log_string("DONE");
 }
@@ -2147,7 +2147,7 @@ done:
 }
 #define MIN_RUN_STOP_DELAY_MS 50
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
 #define DWC3_SOFT_RESET_TIMEOUT 10
 #endif
@@ -2156,7 +2156,7 @@ static int dwc3_gadget_run_stop(struct dwc3 *dwc, int is_on, int suspend)
 {
 	u32			reg, reg1;
 	u32			timeout = 1500;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
 	ktime_t			start, diff;
 #endif
@@ -2172,7 +2172,7 @@ static int dwc3_gadget_run_stop(struct dwc3 *dwc, int is_on, int suspend)
 		if (dwc->revision >= DWC3_REVISION_194A)
 			reg &= ~DWC3_DCTL_KEEP_CONNECT;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
 		if(reg & DWC3_DCTL_RUN_STOP)/*only restart core if run bit already been set*/
 		{
@@ -3142,10 +3142,10 @@ static void dwc3_endpoint_interrupt(struct dwc3 *dwc,
 
 		if (cmd == DWC3_DEPCMD_ENDTRANSFER) {
 			dep->flags &= ~DWC3_EP_END_TRANSFER_PENDING;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Achang.Zhang@ODM.BSP.USB, 2020/02/19, Add for qcom usb patch
 			dbg_event(0xFF, "DWC3_DEPEVT_EPCMDCMPLT", dep->number);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 			wake_up(&dep->wait_end_transfer);
 		}
 		break;
@@ -3922,7 +3922,7 @@ static irqreturn_t dwc3_thread_interrupt(int irq, void *_evt)
 
 static irqreturn_t dwc3_check_event_buf(struct dwc3_event_buffer *evt)
 {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
 	struct dwc3 *dwc;
 #else
@@ -3933,7 +3933,7 @@ static irqreturn_t dwc3_check_event_buf(struct dwc3_event_buffer *evt)
 	u32 reg;
 	ktime_t start_time;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/08/14, add for support cdp charging*/
 	if (!evt)
 		return IRQ_NONE;

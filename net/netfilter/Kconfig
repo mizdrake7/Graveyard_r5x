@@ -881,7 +881,7 @@ config NETFILTER_XT_TARGET_LOG
 
 	  To compile it as a module, choose M here.  If unsure, say N.
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #Junyuan.Huang@PSW.CN.WiFi.Network.1471780, 2018/06/26,
 #Add for limit speed function
 config NETFILTER_XT_TARGET_IMQ
@@ -895,7 +895,7 @@ config NETFILTER_XT_TARGET_IMQ
           to which imq device packets should get enqueued/dequeued.
 
           To compile it as a module, choose M here.  If unsure, say N.
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 config NETFILTER_XT_TARGET_MARK
 	tristate '"MARK" target support'

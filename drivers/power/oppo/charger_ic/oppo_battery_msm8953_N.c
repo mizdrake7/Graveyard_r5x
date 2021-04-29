@@ -283,7 +283,7 @@ module_param_named(
 	} while (0)	
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Xing.Xiong@BSP.TP, 2017/11/17, Add for notify charger state to TP*/
 void __attribute__((weak)) switch_usb_state(int usb_state) {return;}
 #endif
@@ -1528,7 +1528,7 @@ static int smbchg_charging_en(struct oppo_chg_chip *chip, bool en)
 			EN_BAT_CHG_BIT, en ? 0 : EN_BAT_CHG_BIT);
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 static int smbchg_charging_enble(struct oppo_chg_chip *chip)
 {
 	return smbchg_charging_en(chip, true);
@@ -1576,7 +1576,7 @@ int qpnp_fg_set_charge_enble(bool enable)	// wenbin.liu@SW.Bsp.Driver, 2016/08/1
 #define SUSPEND_CURRENT_MA	2
 #define ICL_OVERRIDE_BIT	BIT(2)
 
-#ifndef VENDOR_EDIT	//Fuchun.Liao 2016/06/17 modify
+#ifndef CONFIG_PRODUCT_REALME_TRINKET	//Fuchun.Liao 2016/06/17 modify
 static int smbchg_usb_suspend(struct oppo_chg_chip *chip, bool suspend)
 {
 	int rc;
@@ -1606,7 +1606,7 @@ static int smbchg_usb_suspend(struct oppo_chg_chip *chip, bool suspend)
 		dev_err(chip->dev, "Couldn't set usb suspend rc = %d\n", rc);
 	return rc;
 }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static int smbchg_usb_suspend_enable(struct oppo_chg_chip *chip)
 {
@@ -2056,7 +2056,7 @@ static int smbchg_set_usb_current_max(struct oppo_chg_chip *chip,
 			chip->pmic_spmi.usb_max_current_ma = 150;
 		}
 		if (current_ma == CURRENT_500_MA) {	
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 // wenbin.liu@BSP.CHG.Vooc/Basic/Gauge, 2017/04/27
 // Add for USB current
 			rc = smbchg_sec_masked_write(chip,
@@ -2095,7 +2095,7 @@ static int smbchg_set_usb_current_max(struct oppo_chg_chip *chip,
 	
 			chg_err("override_usb_current=%d current_ma set to %d\n",
 				chip->pmic_spmi.cfg_override_usb_current, current_ma);
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 			chip->pmic_spmi.usb_max_current_ma = 500;
 		}
 		if (current_ma == CURRENT_900_MA) {
@@ -6883,10 +6883,10 @@ static irqreturn_t src_detect_handler(int irq, void *_chip)
 	bool src_detect = is_src_detect_high(chip);
 	int rc;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Xing.Xiong@BSP.TP, 2017/11/17, Add for notify charger state to TP*/
 	switch_usb_state(usb_present);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	if(chip->pmic_spmi.hvdcp_3_det_ignore_uv == false) {
 		if(chip->pmic_spmi.usb_present && !usb_present) {
 			oppo_vooc_reset_fastchg_after_usbout();
@@ -7215,11 +7215,11 @@ static inline int get_bpd(const char *name)
 #define OTG_PIN_CTRL_RID_DIS		0x04
 #define OTG_CMD_CTRL_RID_EN		0x08
 #define AICL_ADC_BIT			BIT(6)
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 // wenbin.liu@BSP.CHG.Vooc/Basic/Gauge, 2017/04/14
 // Add for otg id value
 #define OTG_CMD_CTRL_RID_DIS	0x00
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 static void batt_ov_wa_check(struct oppo_chg_chip *chip)
 {
 	int rc;
@@ -7668,7 +7668,7 @@ static int smbchg_hw_init(struct oppo_chg_chip *chip)
 			return rc;
 		}
 	}
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 // wenbin.liu@BSP.CHG.Vooc/Basic/Gauge, 2017/04/14
 // Add for disable otg RID EN
 		/* configure OTG enable to register command control*/
@@ -7686,7 +7686,7 @@ static int smbchg_hw_init(struct oppo_chg_chip *chip)
 		dev_err(chip->dev, "Couldn't set OTG CMD CTRL config rc = %d\n",rc);
 		return rc;
 	}
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	if (chip->pmic_spmi.wa_flags & SMBCHG_BATT_OV_WA)
 		batt_ov_wa_check(chip);
@@ -8608,13 +8608,13 @@ static int smbchg_check_chg_version(struct oppo_chg_chip *chip)
 			ARRAY_SIZE(aicl_rerun_period_schg_lite);
 
 		chip->pmic_spmi.schg_version = QPNP_SCHG_LITE;
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 //Fuchun.Liao@Mobile.BSP.CHG 2016/06/23 modify for not support hvdcp
 		if (pmic_rev_id->pmic_subtype == PMI8937)
 			chip->pmic_spmi.hvdcp_not_supported = true;
 #else
 		chip->pmic_spmi.hvdcp_not_supported = true;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 		break;
 	case PMI8996:
 		chip->pmic_spmi.wa_flags |= SMBCHG_CC_ESR_WA
@@ -8642,12 +8642,12 @@ static void rerun_hvdcp_det_if_necessary(struct oppo_chg_chip *chip)
 	char *usb_type_name;
 	int rc;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 // wenbin.liu@BSP.CHG.Basic, 2016/12/06
 // Add for dead battery  charging if sometimes jump into kernel may lead APSD abnormal status
 	if(chip->pmic_spmi.hvdcp_not_supported)
 		return;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	if (!(chip->pmic_spmi.wa_flags & SMBCHG_RESTART_WA))
 		return;
@@ -9279,7 +9279,7 @@ static int smbchg_probe(struct spmi_device *spmi)
 			goto unregister_led_class;
 		}
 	}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	oppo_chg_parse_dt(chip);
 	oppo_chg_init(chip);
 #endif

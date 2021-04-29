@@ -21,7 +21,7 @@
  */
 
 #include "ilitek.h"
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 #include <linux/firmware.h>
 #endif
@@ -39,7 +39,7 @@ bool is_first_boot = true;
 extern int ili_ctpmodule ;
 extern unsigned char* CTPM_FW;
 extern struct upgrade_ili_fw_info *ili_fw;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 extern int sign_firmware;
 #endif
@@ -1106,7 +1106,7 @@ static int ilitek_tdd_fw_hex_open(u8 open_file_method, u8 *pfw)
 	mm_segment_t old_fs;
 	loff_t pos = 0;
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 	if (sign_firmware == 0) {
 		ipio_info("Open file method = %s,sign_firmware = %d,ili_fw->oppo_bin = %s\n",
@@ -1117,7 +1117,7 @@ static int ilitek_tdd_fw_hex_open(u8 open_file_method, u8 *pfw)
 	}
 	switch (open_file_method) {
 	case REQUEST_FIRMWARE:
-	#ifdef ODM_WT_EDIT
+	#ifdef CONFIG_ODM_WT_EDIT
 	//liuhao1@ODM_WT.BSP.Tp.Init,temp,2019/4/17,Add for compatible old and new module
 		if(idev->need_request_fw) {
 			if(sign_firmware){

@@ -1791,7 +1791,7 @@ static int msm_ispif_init(struct ispif_device *ispif,
 		return rc;
 	}
 // songliangliang@camera add for  isp init fai 20200212 -----start
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	rc = msm_ispif_reset_hw(ispif);
 	pr_err("%s:msm_ispif_reset_hw %d \n", __func__,rc);
 

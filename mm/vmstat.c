@@ -1061,10 +1061,10 @@ const char * const vmstat_text[] = {
 	"numa_local",
 	"numa_other",
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Huacai.Zhou@PSW.BSP.Kernel.MM, 2018-09-25, add ion cached account*/
         "nr_ioncache_pages",
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	/* Node-based counters */
 	"nr_inactive_anon",
 	"nr_active_anon",

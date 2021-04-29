@@ -170,7 +170,7 @@ struct mmc_request {
 	struct mmc_host		*host;
 	struct mmc_cmdq_req	*cmdq_req;
 	struct request *req;
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 //yh@PSW.BSP.Storage.Emmc, 2018-09-30, Add for monitor cmdq driver wait time
 	ktime_t cmdq_request_time_start;
 #endif

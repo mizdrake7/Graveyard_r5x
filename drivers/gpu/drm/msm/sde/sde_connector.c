@@ -67,7 +67,7 @@ static const struct drm_prop_enum_list e_qsync_mode[] = {
 	{SDE_RM_QSYNC_ONE_SHOT_MODE,	"one_shot"},
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-11-04 add for global hbm */
 #if 0
 static int interpolate(int x, int xa, int xb, int ya, int yb)
@@ -83,7 +83,7 @@ static int interpolate(int x, int xa, int xb, int ya, int yb)
 #endif
 #endif
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09,Add blmap for BL
 static int backlight_remapping_into_tddic_reg(int level_brightness, struct dsi_display *display)
 {
@@ -132,7 +132,7 @@ static int backlight_remapping_into_tddic_reg(int level_brightness, struct dsi_d
 	}
 }
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09,Add blmap for BL
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 static int sde_backlight_device_update_status(struct backlight_device *bd)
 {
@@ -155,7 +155,7 @@ static int sde_backlight_device_update_status(struct backlight_device *bd)
 	if (brightness > display->panel->bl_config.bl_max_level)
 		brightness = display->panel->bl_config.bl_max_level;
 #if 0
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-11-04 add for global hbm */
 	/* map UI brightness into driver backlight level with rounding */
 	bl_lvl = mult_frac(brightness, display->panel->bl_config.bl_max_level,
@@ -174,15 +174,15 @@ static int sde_backlight_device_update_status(struct backlight_device *bd)
 #endif
 #endif
 
-//#ifndef ODM_WT_EDIT
+//#ifndef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09,Add blmap for BL
 	//bl_lvl = mult_frac(brightness, display->panel->bl_config.bl_max_level,
 	//		display->panel->bl_config.brightness_max_level);
-//#else /* ODM_WT_EDIT */
+//#else /* CONFIG_ODM_WT_EDIT */
 	bl_lvl=backlight_remapping_into_tddic_reg(brightness, display);
 	pr_info("LCD_LOG0 %s  level after %lld \n", __func__, bl_lvl);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09,Add blmap for BL
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 
 	if (!bl_lvl && brightness)
@@ -561,10 +561,10 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 	struct dsi_backlight_config *bl_config;
 	int rc = 0;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
 	struct backlight_device *bd;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	if (!c_conn) {
 		SDE_ERROR("Invalid params sde_connector null\n");
@@ -579,7 +579,7 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 		return -EINVAL;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
 	bd = c_conn->bl_device;
 	if (!bd) {
@@ -588,17 +588,17 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 	}
 
 	mutex_lock(&bd->update_lock);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	bl_config = &dsi_display->panel->bl_config;
 
 	if (dsi_display->panel->bl_config.bl_update ==
 		BL_UPDATE_DELAY_UNTIL_FIRST_FRAME && !c_conn->allow_bl_update) {
 		c_conn->unset_bl_level = bl_config->bl_level;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
 		mutex_unlock(&bd->update_lock);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 		return 0;
 	}
 
@@ -622,10 +622,10 @@ static int _sde_connector_update_bl_scale(struct sde_connector *c_conn)
 			dsi_display, bl_config->bl_level);
 	c_conn->unset_bl_level = 0;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Gou shengjun@PSW.MM.Display.LCD.Stable,2019-03-7 fix backlight race problem */
 	mutex_unlock(&bd->update_lock);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	return rc;
 }
@@ -659,7 +659,7 @@ void sde_connector_set_qsync_params(struct drm_connector *connector)
 	}
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.Service.Feature,2018/11/21
  * For OnScreenFingerprint feature
 */
@@ -1004,11 +1004,11 @@ void sde_connector_helper_bridge_enable(struct drm_connector *connector)
 				BL_UPDATE_DELAY_UNTIL_FIRST_FRAME)
 		sde_encoder_wait_for_event(c_conn->encoder,
 				MSM_ENC_TX_COMPLETE);
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Adjust LCD timing t7 more than 50ms to satisfy spec
 		msleep(15);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Adjust LCD timing t7 more than 50ms to satisfy spec
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	c_conn->allow_bl_update = true;
 
 	if (c_conn->bl_device) {
@@ -2627,7 +2627,7 @@ struct drm_connector *sde_connector_init(struct drm_device *dev,
 	msm_property_install_range(&c_conn->property_info, "ad_bl_scale",
 		0x0, 0, MAX_AD_BL_SCALE_LEVEL, MAX_AD_BL_SCALE_LEVEL,
 		CONNECTOR_PROP_AD_BL_SCALE);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.LCD.Feature,2018-11-21
  * Support custom propertys
 */

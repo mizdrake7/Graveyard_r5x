@@ -474,7 +474,7 @@ obj-$(CONFIG_SND_SOC_DIO2125)	+= snd-soc-dio2125.o
 obj-$(CONFIG_SND_SOC_MAX9877)	+= snd-soc-max9877.o
 obj-$(CONFIG_SND_SOC_MAX98504)	+= snd-soc-max98504.o
 obj-$(CONFIG_SND_SOC_TPA6130A2)	+= snd-soc-tpa6130a2.o
-#ifeq ($(VENDOR_EDIT), yes)
+#ifeq ($(CONFIG_PRODUCT_REALME_TRINKET), yes)
 #Feng.Zhou@Mutilmedia.AudioDriver, 2019/11/23, Add for makefile messagers of spk/rcv
 #obj-$(CONFIG_SND_SOC_AW87339) += aw87339.o
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */

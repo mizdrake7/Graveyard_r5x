@@ -306,11 +306,11 @@
 			regulator-min-microvolt = <1200000>;
 			regulator-max-microvolt = <1264000>;
 			qcom,init-voltage = <1200000>;
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, Add to solve L18 power supply abnormally cause mipi data signal abnormal along with lcd ic 2ma power consuming question
 			regulator-always-on;
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, Add to solve L18 power supply abnormally cause mipi data signal abnormal along with lcd ic 2ma power consuming question
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 			status = "okay";
 		};
 	};

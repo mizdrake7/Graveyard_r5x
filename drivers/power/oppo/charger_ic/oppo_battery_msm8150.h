@@ -21,7 +21,7 @@
 #include <linux/regulator/consumer.h>
 #include <linux/extcon.h>
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* zhangkun@BSP.CHG.Basic, 2019/03/25, Add for charging */
 #include "../../../../kernel/msm-4.14/drivers/power/supply/qcom/storm-watch.h"
 #endif
@@ -66,18 +66,18 @@ enum print_reason {
 #define PL_FCC_LOW_VOTER		"PL_FCC_LOW_VOTER"
 #define WBC_VOTER			"WBC_VOTER"
 #define HW_LIMIT_VOTER			"HW_LIMIT_VOTER"
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/01/30, sjc Add for using gpio as CC detect */
 #define CCDETECT_VOTER			"CCDETECT_VOTER"
 #define DIVIDER_SET_VOTER			"DIVIDER_SET_VOTER"
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/02/13, sjc Add for charging */
 #define PD_DIS_VOTER			"PD_DIS_VOTER"
 #endif
-#ifdef VENDOR_EDIT//Fanhong.Kong@ProDrv.CHG,add 2018/06/02 for SVOOC OTG
+#ifdef CONFIG_PRODUCT_REALME_TRINKET//Fanhong.Kong@ProDrv.CHG,add 2018/06/02 for SVOOC OTG
 #define SVOOC_OTG_VOTER		"SVOOC_OTG_VOTER"
-#endif/*VENDOR_EDIT*/
+#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 #define PL_SMB_EN_VOTER			"PL_SMB_EN_VOTER"
 #define FORCE_RECHARGE_VOTER		"FORCE_RECHARGE_VOTER"
 #define LPD_VOTER			"LPD_VOTER"
@@ -92,7 +92,7 @@ enum print_reason {
 #define THERMAL_THROTTLE_VOTER		"THERMAL_THROTTLE_VOTER"
 
 #define BOOST_BACK_STORM_COUNT	3
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* ZhiJie.Li@BSP.CHG.Basic, 2019/03/04, lzj Add for change storm count in aicl */
 #define WEAK_CHG_STORM_COUNT	3
 #else
@@ -106,7 +106,7 @@ enum print_reason {
 #define ADC_CHG_ITERM_MASK		32767
 
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/02/13, sjc Add for charging */
 #define USB_TEMP_HIGH	0x01//bit0
 #define USB_WATER_DETECT	0x02//bit1
@@ -119,7 +119,7 @@ enum print_reason {
 #define SDP_100_MA			100000
 #define SDP_CURRENT_UA			500000
 #define CDP_CURRENT_UA			1500000
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/01/19, sjc Modify for charging */
 #define DCP_CURRENT_UA			1500000
 #else
@@ -377,7 +377,7 @@ struct smb_iio {
 	struct iio_channel	*connector_temp_chan;
 	struct iio_channel	*sbux_chan;
 	struct iio_channel	*vph_v_chan;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* tongfeng.Huang@BSP.CHG.Basic, 2018/11/02,  Add for charging chargerid adc*/
 	struct iio_channel	*chgid_v_chan;
 	struct iio_channel	*usbtemp_v_chan;
@@ -413,7 +413,7 @@ struct smb_charger {
 	struct power_supply		*dc_psy;
 	struct power_supply		*bms_psy;
 	struct power_supply		*usb_main_psy;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/07, sjc Add for charging*/
 	struct power_supply		*ac_psy;
 #endif
@@ -472,11 +472,11 @@ struct smb_charger {
 	bool			sec_cp_present;
 	int			sec_chg_selected;
 	int			cp_reason;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/25, sjc Add for charging */
 	struct delayed_work chg_monitor_work;
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/04/13, sjc Add for charging */
 	struct delayed_work typec_disable_cmd_work;
 #endif
@@ -562,7 +562,7 @@ struct smb_charger {
 	enum qc2_non_comp_voltage qc2_unsupported_voltage;
 	bool			dbc_usbov;
     bool			fake_usb_insertion;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/07/13, sjc Add for fake typec */
 	bool			fake_typec_insertion;
 #endif
@@ -589,14 +589,14 @@ struct smb_charger {
 
 	/* wireless */
 	int			wireless_vout;
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/08/10, sjc Add for charging */
 	int			pre_current_ma;
 	bool		is_dpdm_on_usb;
 	struct delayed_work	divider_set_work;
 	struct work_struct	dpdm_set_work;
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/01/30, sjc Add for using gpio as CC detect */
 	struct work_struct	chargerid_switch_work;
 	struct mutex pinctrl_mutex;
@@ -610,7 +610,7 @@ struct smb_charger {
 	struct pinctrl_state	*usbtemp_gpio1_default;
 	struct delayed_work	ccdetect_work;
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* tongfeng.Huang@BSP.CHG.Basic, 2018/09/27, sjc Add for set uart pinctrl to read chargerID */
 	struct pinctrl		*chg_2uart_pinctrl;
 	struct pinctrl_state	*chg_2uart_default;

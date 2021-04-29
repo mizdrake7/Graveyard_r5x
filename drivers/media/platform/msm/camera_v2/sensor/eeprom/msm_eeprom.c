@@ -27,7 +27,7 @@ DEFINE_MSM_MUTEX(msm_eeprom_mutex);
 static struct v4l2_file_operations msm_eeprom_v4l2_subdev_fops;
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*oppo hongbo.dai 20170418 add for alps VCM info*/
 struct vcm_id_info eeprom_alps_info[] = {
 	{0x58, 0x01, "ALPS-961B"},
@@ -681,7 +681,7 @@ static int eeprom_config_read_cal_data(struct msm_eeprom_ctrl_t *e_ctrl,
 	return rc;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*add by hongbo.dai@camera 20190820 for get eeprom data*/
 static int eeprom_write_data(struct msm_eeprom_ctrl_t *e_ctrl,
 	void *argp)
@@ -901,7 +901,7 @@ static long msm_eeprom_subdev_ioctl(struct v4l2_subdev *sd,
 		return msm_eeprom_get_subdev_id(e_ctrl, argp);
 	case VIDIOC_MSM_EEPROM_CFG:
 		return msm_eeprom_config(e_ctrl, argp);
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*add by hongbo.dai@camera, 20190820 for write eeprom data*/
 	case VIDIOC_MSM_EEPROM_WRITE_CALIB:
 		return eeprom_write_data(e_ctrl, argp);
@@ -1862,7 +1862,7 @@ static long msm_eeprom_subdev_ioctl32(struct v4l2_subdev *sd,
 		return msm_eeprom_get_subdev_id(e_ctrl, argp);
 	case VIDIOC_MSM_EEPROM_CFG32:
 		return msm_eeprom_config32(e_ctrl, argp);
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*add by hongbo.dai@camera, 20190820 for write eeprom data*/
 	case VIDIOC_MSM_EEPROM_WRITE_CALIB:
 		return eeprom_write_data(e_ctrl, argp);

@@ -67,7 +67,7 @@
 #define LM3697_LINEAR           0
 #define LM3697_LEVEL_2048_SUPPROT    1
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //YongPeng.Yi@SWDP.MultiMedia, 2016/09/01,  Add for cabc
 #define REG_PWM     0x1C
 //YongPeng.Yi@SWDP.MultiMedia, 2016/09/19,  Add for close cabc when bl <=160
@@ -81,7 +81,7 @@ static bool pwm_flag = false;
 
 extern int cabc_mode;
 int set_backlight_pwm(int state);
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 
 enum lm3697_bl_ctrl_mode {
@@ -310,7 +310,7 @@ static int lm3697_dt(struct device *dev, struct lm3697_platform_data *pdata)
     return 0;
 }
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //YongPeng.Yi@SWDP.MultiMedia, 2016/08/20,  Add for lm3697 power set
 //YongPeng.Yi@MultiMedia.Display.LCD.Stability,2016/09/21,
 //add for lm3697 reg init
@@ -397,7 +397,7 @@ int set_backlight_pwm(int state)
     */
 }
 EXPORT_SYMBOL(set_backlight_pwm);
-//#endif /*VENDOR_EDIT*/
+//#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static int lm3697_chip_init(struct lm3697_bl_chip *pchip){
 	int ret = 0;

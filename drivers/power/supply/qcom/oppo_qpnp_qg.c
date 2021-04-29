@@ -41,7 +41,7 @@
 #include "qg-soc.h"
 #include "qg-battery-profile.h"
 #include "qg-defs.h"
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2019/12/6, Add for oppo_gauge*/
 #include <linux/rtc.h>
 #include "../../../../kernel/msm-4.14/drivers/power/oppo/oppo_gauge.h"
@@ -66,7 +66,7 @@ module_param_named(
 
 static struct qpnp_qg *qpnp_gauge_ic = NULL;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2020/1/19, Add for batt ID check*/
 static bool is_batt_id_valid(struct qpnp_qg *chip);
 #endif
@@ -399,7 +399,7 @@ int qg_write_monotonic_soc(struct qpnp_qg *chip, int msoc)
 	return rc;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2020/2/21, Add for Batt_NTC ADC compensation */
 int g_oppo_qg_ibta;
 struct asic_vadc_map_pt {
@@ -627,14 +627,14 @@ int qg_get_battery_temp(struct qpnp_qg *chip, int *temp)
 {
 	int rc = 0;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2020/2/21, Add for Batt_NTC ADC compensation */
 	int pre_result = 0 , result = 0;
 	int pre_voltage = 0, voltage = 0;
 #endif
 
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2020/2/18, While batt_NTC & batt_ID both invalid return -40C */
 	if (chip->battery_missing) {
 		*temp = 250;
@@ -651,7 +651,7 @@ int qg_get_battery_temp(struct qpnp_qg *chip, int *temp)
 	}
 #endif
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2020/2/21, Add for Batt_NTC ADC compensation */
 	rc = iio_read_channel_processed(chip->batt_therm_chan, temp);
 	if (rc < 0) {
@@ -717,7 +717,7 @@ int qg_get_battery_current(struct qpnp_qg *chip, int *ibat_ua)
     pr_info("last_ibat: %d\n", last_ibat);
 	last_ibat = sign_extend32(last_ibat, 15);
 	*ibat_ua = qg_iraw_to_ua(chip, last_ibat);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* wangchao@ODM.BSP.charge, 2020/2/21, Add for Batt_NTC ADC compensation */
 	g_oppo_qg_ibta = *ibat_ua / 1000;
 	//pr_err("qg ibat_ua=%d\n", *ibat_ua);
@@ -803,7 +803,7 @@ static bool is_battery_present(struct qpnp_qg *chip)
 	return !!(reg & BATTERY_PRESENT_BIT);
 }
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2019/12/24, Modify Fake battery ID range */
 #define DEBUG_BATT_ID_LOW	6000
 #define DEBUG_BATT_ID_HIGH	8500
@@ -2052,7 +2052,7 @@ static irqreturn_t qg_vbat_empty_handler(int irq, void *data)
 			chip->battery_missing)
 		return IRQ_HANDLED;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2020/1/4, Add to fix BUG 2745009 */
     pr_warn("VBATT EMPTY, do nothing, do not set SOC to 0\n");
     return IRQ_HANDLED;
@@ -3218,7 +3218,7 @@ static int qg_battery_status_update(struct qpnp_qg *chip)
 		goto done;
 	}
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* wangchao@ODM.BSP.charge, 2020/1/19, Add for batt ID check*/
 	if (prop.intval) //battery present
 	{
@@ -3626,7 +3626,7 @@ static int get_batt_id_ohm(struct qpnp_qg *chip, u32 *batt_id_ohm)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2020/1/19, Add for batt ID check*/
 static int get_batt_id_voltage(struct qpnp_qg *chip)
 {
@@ -4632,7 +4632,7 @@ static int qg_parse_dt(struct qpnp_qg *chip)
 		pr_err("Missing qcom,pmic-revid property - driver failed\n");
 		return -EINVAL;
 	}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* wangchao@ODM.BSP.charge, 2019/12/10, Add for oppo gauge*/
 	chip->enable_qpnp_qg= of_property_read_bool(node,"qcom,enable-qpnp-qg");
 	pr_debug("qg_parse_dt enable_qpnp_qg = %d\n",chip->enable_qpnp_qg);
@@ -5262,7 +5262,7 @@ static const struct dev_pm_ops qpnp_qg_pm_ops = {
 	.resume		= qpnp_qg_resume,
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2019/12/6, Add for oppo_gauge*/
 static int oppo_get_battery_voltage(void)
 {
@@ -5394,7 +5394,7 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 {
 	int rc = 0, soc = 0, nom_cap_uah;
 	struct qpnp_qg *chip;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2019/12/6, Add for oppo_gauge*/
 	struct oppo_gauge_chip	*oppo_chip;
 #endif
@@ -5584,7 +5584,7 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 	pr_info("QG initialized! battery_profile=%s SOC=%d QG_subtype=%d\n",
 			qg_get_battery_type(chip), soc, chip->qg_subtype);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* wangchao@ODM.BSP.charge, 2019/12/6, Add for oppo_gauge*/
 	if(chip->enable_qpnp_qg){
 		oppo_chip = devm_kzalloc(&pdev->dev,

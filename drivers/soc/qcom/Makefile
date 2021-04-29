@@ -104,7 +104,7 @@ obj-$(CONFIG_MSM_HAB) += hab/
 obj-$(CONFIG_QCOM_HYP_CORE_CTL) += hyp_core_ctl.o
 obj-$(CONFIG_QCOM_AOP_DDRSS_COMMANDS) += aop_ddrss_cmds.o
 obj-$(CONFIG_RMNET_CTL) += rmnet_ctl/
-ifeq ($(ODM_WT_EDIT),yes)
+ifeq ($(CONFIG_ODM_WT_EDIT),y)
 #Lijie.Yang@ODM_WT.BSP.Kernel.Security.1941873, 2020/03/20, add for add secboot_fuse_reg & serial_num node in /proc to get fuse status and cpuid
 obj-y += serial_num.o
 obj-y += secboot_fuse.o

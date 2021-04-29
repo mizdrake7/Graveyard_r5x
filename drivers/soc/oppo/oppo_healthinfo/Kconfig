@@ -1,7 +1,7 @@
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #//wenbin.liu@PSW.Kernel.MM, 2018/05/23, Add for Healthinfo monitor
 config OPPO_HEALTHINFO
 bool "config oppo healthinfo"
 help
     define this config to init oppo healthinfo.
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */

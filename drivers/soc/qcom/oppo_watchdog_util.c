@@ -1,6 +1,6 @@
 /**********************************************************************************
 * Copyright (c)  2008-2016  Guangdong OPPO Mobile Comm Corp., Ltd
-* VENDOR_EDIT
+* CONFIG_PRODUCT_REALME_TRINKET
 * Description: Provide some utils for watchdog to enhance log and action after wdt
 * Version   : 1.0
 * Date      : 2016-06-22

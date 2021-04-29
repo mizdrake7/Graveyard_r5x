@@ -20,11 +20,11 @@
 #include <linux/mmc/card.h>
 #include <linux/mmc/mmc.h>
 #include <linux/mmc/sd.h>
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Chunyi.Mei@PSW.BSP.Storage.Sdcard, 2018-12-10, Add for SD Card device information
 #include <linux/string_helpers.h>
 #include <soc/oppo/oppo_project.h>
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #include "core.h"
 #include "card.h"
@@ -39,7 +39,7 @@
 #define UHS_SDR50_MIN_DTR	(50 * 1000 * 1000)
 #define UHS_SDR25_MIN_DTR	(25 * 1000 * 1000)
 #define UHS_SDR12_MIN_DTR	(12.5 * 1000 * 1000)
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Chunyi.Mei@PSW.BSP.Storage.Sdcard, 2018-12-10, Add for SD Card device information
 struct menfinfo {
 	unsigned int manfid;
@@ -77,7 +77,7 @@ struct card_blk_data {
 #define STR_SPEED_UHS	"ultra high speed "
 #define STR_SPEED_HS	"high speed "
 
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static const unsigned int tran_exp[] = {
 	10000,		100000,		1000000,	10000000,
@@ -144,7 +144,7 @@ void mmc_decode_cid(struct mmc_card *card)
 	card->cid.month			= UNSTUFF_BITS(resp, 8, 4);
 
 	card->cid.year += 2000; /* SD cards year offset */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@PhoneSW.BSP, 2016-09-18, add print cid info for possible quick use
 	pr_info("name:%s,manfid:%x,oemid:%x\n", card->cid.prod_name, card->cid.manfid, card->cid.oemid);
 #endif
@@ -322,10 +322,10 @@ static int mmc_read_ssr(struct mmc_card *card)
 			card->ssr.au = sd_au_size[au];
 			es = UNSTUFF_BITS(card->raw_ssr, 408 - 384, 16);
 			et = UNSTUFF_BITS(card->raw_ssr, 402 - 384, 6);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Chunyi.Mei@PSW.BSP.Storage.Sdcard, 2018-12-10, Add for SD Card device information
 			card->ssr.speed_class = UNSTUFF_BITS(card->raw_ssr, 440 - 384, 8);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 			if (es && et) {
 				eo = UNSTUFF_BITS(card->raw_ssr, 400 - 384, 2);
 				card->ssr.erase_timeout = (et * 1000) / es;
@@ -782,7 +782,7 @@ out:
 
 	return err;
 }
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Chunyi.Mei@PSW.BSP.Storage.Sdcard, 2018-12-10, Add for SD Card device information
 const char *manfinfo_string(struct mmc_card *card) {
 	int i = 0;
@@ -821,7 +821,7 @@ const char *speed_class_string(struct mmc_card *card){
 
 MMC_DEV_ATTR(devinfo, " manufacturer: %s\n size: %s\n type: %s\n speed: %s\n class: %s\n",
 	manfinfo_string(card), capacity_string(card), type_string(card), uhs_string(card), speed_class_string(card));
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 MMC_DEV_ATTR(cid, "%08x%08x%08x%08x\n", card->raw_cid[0], card->raw_cid[1],
 	card->raw_cid[2], card->raw_cid[3]);
 MMC_DEV_ATTR(csd, "%08x%08x%08x%08x\n", card->raw_csd[0], card->raw_csd[1],
@@ -864,10 +864,10 @@ static ssize_t mmc_dsr_show(struct device *dev,
 static DEVICE_ATTR(dsr, S_IRUGO, mmc_dsr_show, NULL);
 
 static struct attribute *sd_std_attrs[] = {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Chunyi.Mei@PSW.BSP.Storage.Sdcard, 2018-12-10, Add for SD Card device information
 	&dev_attr_devinfo.attr,
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	&dev_attr_cid.attr,
 	&dev_attr_csd.attr,
 	&dev_attr_scr.attr,
@@ -1535,13 +1535,13 @@ int mmc_attach_sd(struct mmc_host *host)
 
 	WARN_ON(!host->claimed);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019-11-30 Add for retry 5 times when new sdcard init error
 	if (!host->detect_change_retry) {
 		pr_err("%s have init error 5 times\n", __func__);
 		return -ETIMEDOUT;
 	}
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	err = mmc_send_app_op_cond(host, 0, &ocr);
 	if (err)
@@ -1582,15 +1582,15 @@ int mmc_attach_sd(struct mmc_host *host)
 	 * Detect and init the card.
 	 */
 #ifdef CONFIG_MMC_PARANOID_SD_INIT
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019-11-30 Modify for init retry only once when have init error before
 	retries = 5;
-#else /* VENDOR_EDIT */
+#else /* CONFIG_PRODUCT_REALME_TRINKET */
 	if (host->detect_change_retry < 5)
 		retries = 1;
 	else
 		retries = 5;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	while (retries) {
 		err = mmc_sd_init_card(host, rocr, NULL);
@@ -1629,10 +1629,10 @@ int mmc_attach_sd(struct mmc_host *host)
 		goto remove_card;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019-11-30 Add for retry 5 times when new sdcard init error
 	host->detect_change_retry = 5;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	return 0;
 
@@ -1643,13 +1643,13 @@ remove_card:
 err:
 	mmc_detach_bus(host);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019-11-30 Add for retry 5 times when new sdcard init error
 //yh@bsp, 2016-03-17, this err could be caused by rescan disable, here reserve this aborted retry oppotunity
 	if (err)
 		host->detect_change_retry--;
 	pr_err("detect_change_retry = %d !!!,err = %d\n", host->detect_change_retry,err);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	pr_err("%s: error %d whilst initialising SD card\n",
 		mmc_hostname(host), err);

@@ -1,6 +1,6 @@
 /************************************************************************************
 ** File:  \\192.168.144.3\Linux_Share\12015\ics2\development\mediatek\custom\oppo77_12015\kernel\battery\battery
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** Copyright (C), 2008-2012, OPPO Mobile Comm Corp., Ltd
 ** 
 ** Description: 
@@ -28,7 +28,7 @@
 #include <linux/qpnp/qpnp-adc.h>
 #include <linux/alarmtimer.h>
 #include <linux/bitops.h>
-#ifdef VENDOR_EDIT	//Fuchun.Liao 2014-09-19 add
+#ifdef CONFIG_PRODUCT_REALME_TRINKET	//Fuchun.Liao 2014-09-19 add
 #include <mach/oppo_project.h>
 #endif
 #include "../oppo_vooc.h"
@@ -129,10 +129,10 @@
 
 #define QPNP_CHARGER_DEV_NAME	"qcom,qpnp-linear-charger"
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Fuchun.Liao@Mobile.BSP.CHG 2015-04-26 add to use pmic-irq for external charge-ic
 struct qpnp_lbc_chip *qpnp_chip = NULL;
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 
 /* usb_interrupts */
 
@@ -488,7 +488,7 @@ bool qpnp_lbc_is_usb_chg_plugged_in(void)
 	u8 usbin_valid_rt_sts;
 	int rc;
 	struct qpnp_lbc_chip *chip = qpnp_chip;
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* dengnw@bsp.drv	add QCM case02048492  patch 20150611*/
 	rc = qpnp_lbc_read(chip, chip->usb_chgpth_base + USB_PTH_STS_REG,
 				&usbin_valid_rt_sts, 1);
@@ -875,7 +875,7 @@ static int qpnp_charger_read_dt_props(struct qpnp_lbc_chip *chip)
 	return rc;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Fuchun.Liao@Mobile.BSP.CHG 2015-04-26 add to use pmic-irq for external charge-ic
 void opchg_usbin_valid_irq_handler(void)
 {
@@ -895,7 +895,7 @@ void opchg_usbin_valid_irq_handler(void)
 	//oppo_charger_detect_check();
 	//oppo_chg_wake_update_work();
 }
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 
 static irqreturn_t qpnp_lbc_usbin_valid_irq_handler(int irq, void *_chip)
 {
@@ -1029,7 +1029,7 @@ static int qpnp_lbc_request_irqs(struct qpnp_lbc_chip *chip)
 */
 
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Fuchun.Liao@Mobile.BSP.CHG 2015-04-26 add to use pmic-irq for external charge-ic
 static int qpnp_lbc_request_usbin_valid_irq(struct qpnp_lbc_chip *chip)
 {
@@ -1039,7 +1039,7 @@ static int qpnp_lbc_request_usbin_valid_irq(struct qpnp_lbc_chip *chip)
 			IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING, 1);
 	return 0;
 }
-#endif	//VENDOR_EDIT
+#endif	//CONFIG_PRODUCT_REALME_TRINKET
 static int qpnp_lbc_get_irqs(struct qpnp_lbc_chip *chip, u8 subtype,
 					struct spmi_resource *spmi_resource)
 {
@@ -1087,7 +1087,7 @@ static void determine_initial_status(struct qpnp_lbc_chip *chip)
 
 }
 */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Fuchun.Liao@Mobile.BSP.CHG 2015-04-26 add to use pmic-irq for external charge-ic
 #define BMS_VM_BMS_DATA_REG_0			0x40B0
 int qpnp_set_pmic_soc_memory(int soc)
@@ -1129,7 +1129,7 @@ int opchg_get_charger_inout(void)
 	charger_in= qpnp_lbc_is_usb_chg_plugged_in();	
 	return charger_in;
 }
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 
 bool oppo_pmic_check_chip_is_null(void)
 {
@@ -1263,10 +1263,10 @@ static int qpnp_lbc_probe(struct spmi_device *spmi)
 	if (rc)
 		pr_err("Unable to disable charger rc=%d\n", rc);
 	
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Fuchun.Liao@Mobile.BSP.CHG 2015-04-26 add to use pmic-irq for external charge-ic
 	qpnp_chip = chip;
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 	pr_err("%s success\n",__func__);
 	
 	return 0;

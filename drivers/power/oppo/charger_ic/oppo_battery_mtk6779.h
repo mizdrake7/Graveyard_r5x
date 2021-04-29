@@ -1,5 +1,5 @@
 /************************************************************************************
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** Copyright (C), 2018-2019, OPPO Mobile Comm Corp., Ltd
 **
 ** Description:
@@ -516,7 +516,7 @@ struct charger_manager {
 	bool atm_enabled;
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/11/09, sjc Add for charging */
 
 struct mtk_pmic {
@@ -573,7 +573,7 @@ bool oppo_pmic_check_chip_is_null(void);
 extern int oppo_get_typec_sbu_voltage(void);
 extern void oppo_set_water_detect(bool enable);
 extern int oppo_get_water_detect(void);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 /* charger related module interface */
 extern int charger_manager_notifier(struct charger_manager *info, int event);

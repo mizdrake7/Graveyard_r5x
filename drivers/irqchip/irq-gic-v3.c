@@ -45,7 +45,7 @@
 #include <linux/notifier.h>
 
 #include "irq-gic-common.h"
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/06/14 add formodem irq, ,case03529649
 
 //add for modem wake up source
@@ -69,15 +69,15 @@ extern u64 wakeup_source_count_all;
 
 extern int modem_wakeup_src_count[MODEM_WAKEUP_SRC_NUM];
 extern char modem_wakeup_src_string[MODEM_WAKEUP_SRC_NUM][10];
-#endif /* VENDOR_EDIT */
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
 /* Kui.Zhang@PSW.TEC.Kernel.Performance, 2019/02/27
  * collect interrupt doing time during process reclaim, only effect in age test
  */
 #include <linux/sched/clock.h>
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //liuhd@PSW.CN.WiFi.Hardware.1202765,2017/12/10,add for the irq of wlan when system wakeuped by wlan
 #define WLAN_WAKEUP_IRQ_NUMBER	725
 #define WAKEUP_SOURCE_WIFI_1ST 123
@@ -86,7 +86,7 @@ extern char modem_wakeup_src_string[MODEM_WAKEUP_SRC_NUM][10];
 #define WAKEUP_SOURCE_WIFI_4TH 134
 
 extern u64 wakeup_source_count_wifi ;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 
 struct redist_region {
@@ -485,9 +485,9 @@ static void gic_show_resume_irq(struct gic_chip_data *gic)
 	u32 pending[32];
 	void __iomem *base = gic_data.dist_base;
 
-	#ifdef VENDOR_EDIT //yunqing.zeng@bsp.power.basic  2019-12-22 add for wakeup counter for all in sleep stage.
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET //yunqing.zeng@bsp.power.basic  2019-12-22 add for wakeup counter for all in sleep stage.
 	wakeup_source_count_all++;
-	#endif /*VENDOR_EDIT*/
+	#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	if (!msm_show_resume_irq_mask)
 		return;
 
@@ -511,7 +511,7 @@ static void gic_show_resume_irq(struct gic_chip_data *gic)
 
 		pr_warn("%s: %d triggered %s\n", __func__, irq, name);
 
-		#ifdef VENDOR_EDIT
+		#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		//liuhd@PSW.CN.WiFi.Hardware.1202765,2017/12/10,add for the irq of wlan when system wakeuped by wlan
 			if((irq  >= WAKEUP_SOURCE_WIFI_1ST && irq  <= WAKEUP_SOURCE_WIFI_2ND) ||
 				(irq  >= WAKEUP_SOURCE_WIFI_3RD && irq  <= WAKEUP_SOURCE_WIFI_4TH)) {
@@ -519,15 +519,15 @@ static void gic_show_resume_irq(struct gic_chip_data *gic)
 			}
 			if (irq == WLAN_WAKEUP_IRQ_NUMBER)
 		    {
-		    	#ifdef VENDOR_EDIT
+		    	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 				//Jiemin.Zhu@Swdp.Performance.Power, 2016/05/12, add for modem wake up source
 				// modem_wakeup_source = 0;
 				 //schedule_work(&wakeup_reason_work);
 			 	#endif
 			}
-		#endif //VENDOR_EDIT
+		#endif //CONFIG_PRODUCT_REALME_TRINKET
 
-		#ifdef VENDOR_EDIT
+		#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		//Yongyao.Song@PSW.NW.PWR.919039, 2017/01/20,add for modem wake up source
 			if ((WAKEUP_SOURCE_MODEM == irq ) || (WAKEUP_SOURCE_MODEM_IPA == irq))
 			{
@@ -537,7 +537,7 @@ static void gic_show_resume_irq(struct gic_chip_data *gic)
 					modem_wakeup_src_count[MODEM_QMI_WS_INDEX]++;
 				}else if (WAKEUP_SOURCE_MODEM_IPA == irq) {
 					modem_wakeup_src_count[MODEM_IPA_WS_INDEX]++;
-					#ifdef VENDOR_EDIT
+					#ifdef CONFIG_PRODUCT_REALME_TRINKET
 					//Jiemin.Zhu@Swdp.Performance.Power, 2016/05/12, add for modem wake up source
 				 	// modem_wakeup_source = 0;
 					//schedule_work(&wakeup_reason_work);
@@ -545,9 +545,9 @@ static void gic_show_resume_irq(struct gic_chip_data *gic)
 				}
 			}
 		//Yongyao.Song add end
-		#endif /*VENDOR_EDIT*/
+		#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
-		#ifdef VENDOR_EDIT
+		#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		//Nanwei.Deng@BSP.Power.Basic, 2018/04/28, add for analysis power coumption.
 	        if(WAKEUP_SOURCE_ADSP == irq) {
 				wakeup_source_count_adsp++;
@@ -640,7 +640,7 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
 static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
 {
 	u32 irqnr;
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
 	/* Kui.Zhang@PSW.TEC.Kernel.Performance, 2019/02/27
 	 * collect interrupt doing time during process reclaim, only effect in age test
 	 */
@@ -696,7 +696,7 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
 		}
 	} while (irqnr != ICC_IAR1_EL1_SPURIOUS);
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
 	/* Kui.Zhang@PSW.TEC.Kernel.Performance, 2019/02/27
 	 * collect interrupt doing time during process reclaim, only effect in age test
 	 */
@@ -798,7 +798,7 @@ static int __gic_populate_rdist(struct redist_region *region, void __iomem *ptr)
 		u64 offset = ptr - region->redist_base;
 		gic_data_rdist_rd_base() = ptr;
 		gic_data_rdist()->phys_base = region->phys_base + offset;
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		//Nanwei.Deng@BSP.power.Basic 2018/05/01
 		pr_info("CPU%d: found redistributor %lx region %d:%pa\n",
 			smp_processor_id(), mpidr,

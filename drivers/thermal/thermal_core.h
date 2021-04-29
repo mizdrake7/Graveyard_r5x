@@ -58,7 +58,7 @@ struct thermal_instance {
 	unsigned int weight; /* The weight of the cooling device */
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 struct __thermal_zone {
 	enum thermal_device_mode mode;
 	int passive_delay;

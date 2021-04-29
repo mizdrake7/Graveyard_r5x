@@ -213,7 +213,7 @@ source "drivers/input/misc/Kconfig"
 
 source "drivers/input/rmi4/Kconfig"
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #chenpan@BSP.Fingerprint.Basic, 2019/10/16, Add for fingerprint drivers
 source "drivers/input/oppo_fp_drivers/Kconfig"
 #endif

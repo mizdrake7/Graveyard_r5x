@@ -12,7 +12,7 @@
 #ifndef __QG_CORE_H__
 #define __QG_CORE_H__
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen PSW.BSP.CHG  2018-05-04  Add for debug */
 #define qg_debug(fmt, ...) \
         printk(KERN_NOTICE "[OPPO_CHG][%s]"fmt, __func__, ##__VA_ARGS__)
@@ -151,7 +151,7 @@ struct qpnp_qg {
 	bool			charge_full;
 	bool			force_soc;
 	bool			fvss_active;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* wangchao@ODM.BSP.charge, 2019/12/10, Add for oppo gauge*/
 	bool			enable_qpnp_qg;
 #endif
@@ -216,12 +216,12 @@ struct qpnp_qg {
 	/* ttf */
 	struct ttf		*ttf;
             
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
     /* Yichun.Chen  PSW.BSP.CHG  2018-06-13  avoid when reboot soc reduce 1% */
         int         skip_scale_soc_count;
 #endif
     
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-08-23  recognize SDI\ATL battery */
 	int			atl_4_45_battery_id_low;
 	int			atl_4_45_battery_id_high;
@@ -237,7 +237,7 @@ struct qpnp_qg {
 	int			cl_battery_id_high;
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ji.Xu PSW.BSP.CHG  2018-07-23  Save battery capacity to persist partition */
     int				batt_info[6];
     int				batt_info_id;

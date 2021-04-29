@@ -627,7 +627,7 @@ static void msm_isp_update_framedrop_reg(struct msm_vfe_axi_stream *stream_info,
 			stream_info->current_framedrop_period =
 				MSM_VFE_STREAM_STOP_PERIOD;
 	}
-#ifdef VENDOR_EDIT /* Camera@Drv 2019/07/22, Add for frame remap support on frame drop */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET /* Camera@Drv 2019/07/22, Add for frame remap support on frame drop */
 		if (stream_info->undelivered_request_cnt > 0)
 			stream_info->current_framedrop_period =
 				MSM_VFE_STREAM_STOP_PERIOD;

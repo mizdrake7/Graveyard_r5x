@@ -28,12 +28,12 @@
 #include "dsi_ctrl.h"
 #include "dsi_phy.h"
 #include "dsi_panel.h"
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21
  * Add for save select panel and give different feature
 */
 #include <linux/dsi_oppo_support.h>
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 #define DSI_CLIENT_NAME_SIZE		20
 #define MAX_CMDLINE_PARAM_LEN	 512
@@ -620,7 +620,7 @@ void dsi_display_enable_event(struct drm_connector *connector,
 int dsi_display_set_backlight(struct drm_connector *connector,
 		void *display, u32 bl_lvl);
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, add CABC cmd used for power saving
 int dsi_display_set_cabc_mode(struct drm_connector *connector,
 		void *display, u32 cabc_mode);
@@ -628,7 +628,7 @@ int dsi_display_set_cabc_mode(struct drm_connector *connector,
 int dsi_display_get_cabc_mode(struct drm_connector *connector,
 		void *display, unsigned int *cabc_mode);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, add CABC cmd used for power saving
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 /**
  * dsi_display_check_status() - check if panel is dead or alive
@@ -718,7 +718,7 @@ enum dsi_pixel_format dsi_display_get_dst_format(
  * Return: Zero on Success
  */
 int dsi_display_cont_splash_config(void *display);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/10/21
  * Add for support aod,hbm,seed
 */

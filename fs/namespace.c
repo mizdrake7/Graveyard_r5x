@@ -2862,7 +2862,7 @@ long do_mount(const char *dev_name, const char __user *dir_name,
 	int retval = 0;
 	
 
-#if defined(VENDOR_EDIT) && defined(OPPO_DISALLOW_KEY_INTERFACES)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(OPPO_DISALLOW_KEY_INTERFACES)
 /* Zhengkang.Ji@ROM.Frameworks.Security, 2018-04-05
  * System partition is not permitted to be mounted with "rw".
  */
@@ -2873,7 +2873,7 @@ long do_mount(const char *dev_name, const char __user *dir_name,
 			return -EPERM;
 		}
 	}
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 //[zhangyi14@oppo.com][Security][2020/01/10] Add for mount report(root defence)  [End]
 	/* Discard magic */
 	if ((flags & MS_MGC_MSK) == MS_MGC_VAL)

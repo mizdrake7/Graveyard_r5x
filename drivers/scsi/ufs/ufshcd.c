@@ -49,7 +49,7 @@
 #include "ufs-debugfs.h"
 #include "ufs-qcom.h"
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //zhenjian Jiang@PSW.BSP.Storage.UFS, 2018-05-04 add for ufs device in /proc/devinfo 
 #include <soc/oppo/device_info.h>
 unsigned long ufs_outstanding;
@@ -2259,7 +2259,7 @@ static void ufshcd_gate_work(struct work_struct *work)
 	unsigned long flags;
 
 	spin_lock_irqsave(hba->host->host_lock, flags);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@BSP.Storage.UFS, 2020-1-15 add for fix race condition during hrtimer active(ufshcd_release/ufshcd_gate_work)
 	if (hba->clk_gating.state == CLKS_OFF)
 	{
@@ -3889,7 +3889,7 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
 	ufshcd_vops_setup_xfer_req(hba, tag, (lrbp->cmd ? true : false));
 
 	err = ufshcd_send_command(hba, tag);
-#ifdef  VENDOR_EDIT
+#ifdef  CONFIG_PRODUCT_REALME_TRINKET
     //hank.liu@TECH.BSP.Storage.UFS, 2019-04-26, Add for monitor ufs driver io time
 	ufs_outstanding=hba->outstanding_reqs;
 	cmd->request->ufs_io_start = ktime_get();
@@ -4101,7 +4101,7 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
 {
 	struct ufshcd_lrb *lrbp;
 	int err;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Tong.Han@Bsp.Group.Tp,2018-6-4,Added for Dealth_healer
 	int tag = 0;
 #endif
@@ -4559,7 +4559,7 @@ int ufshcd_map_desc_id_to_length(struct ufs_hba *hba,
 	case QUERY_DESC_IDN_RFU_1:
 		*desc_len = 0;
 		break;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//xiaofan.yang@PSW.TECH.Stability, 2019/03/15,Add for check storage endurance
 	case QUERY_DESC_IDN_HEALTH:
 		*desc_len = hba->desc_size.hlth_desc;
@@ -5678,7 +5678,7 @@ static int ufshcd_complete_dev_init(struct ufs_hba *hba)
 	}
 
 	/* poll for max. 1000 iterations for fDeviceInit flag to clear */
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 //yh@BSP.Storage.UFS, 2019-12-27 add for ufs device can't complete init
 	for (i = 0; i < 1000 && !err && flag_res; i++)
 #else
@@ -5686,7 +5686,7 @@ static int ufshcd_complete_dev_init(struct ufs_hba *hba)
 #endif
 		err = ufshcd_query_flag_retry(hba, UPIU_QUERY_OPCODE_READ_FLAG,
 			QUERY_FLAG_IDN_FDEVICEINIT, &flag_res);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@BSP.Storage.UFS, 2019-12-27 add for ufs device can't complete init
 		usleep_range(1000, 1000); // 1ms sleep
 	}
@@ -6485,7 +6485,7 @@ static void __ufshcd_transfer_req_compl(struct ufs_hba *hba,
 					blk_update_latency_hist(&hba->io_lat_s,
 						(rq_data_dir(req) == READ),
 						delta_us);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@BSP.Storage.UFS, 2019-02-19 add for ufs io latency info calculate
 					if (delta_us > 2000) {
 						trace_printk("ufs_io_latency:%06lld us, io_type:%s, LBA:%08x, size:%d\n",
@@ -7601,7 +7601,7 @@ static int ufshcd_issue_tm_cmd(struct ufs_hba *hba, int lun_id, int task_id,
 	struct utp_upiu_task_req *task_req_upiup;
 	struct Scsi_Host *host;
 	unsigned long flags;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Tong.Han@Bsp.Group.Tp,2018-6-4,Added for Dealth_healer
 	int free_slot = 0;
 #endif
@@ -8313,7 +8313,7 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
 	struct scsi_device *sdev_boot = NULL;
 	bool is_bootable_dev = false;
 	bool is_embedded_dev = false;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@PSW.BSP.Storage.UFS, 2018-05-31 add for ufs device in /proc/devinfo
 	static char temp_version[5] = {0};
 	static char vendor[9] = {0};
@@ -8338,7 +8338,7 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
 		goto out;
 	}
 	scsi_device_put(hba->sdev_ufs_device);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@PSW.BSP.Storage.UFS, 2018-05-31 add for ufs device in /proc/devinfo
 	strncpy(temp_version, hba->sdev_ufs_device->rev, 4);
 	strncpy(vendor, hba->sdev_ufs_device->vendor, 8);
@@ -8659,7 +8659,7 @@ static void ufshcd_init_desc_sizes(struct ufs_hba *hba)
 	if (err)
 		hba->desc_size.geom_desc = QUERY_DESC_GEOMETRY_DEF_SIZE;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019/11/19,Add for check storage endurance
 	err = ufshcd_read_desc_length(hba, QUERY_DESC_IDN_HEALTH, 0,
 		&hba->desc_size.hlth_desc);
@@ -8676,7 +8676,7 @@ static void ufshcd_def_desc_sizes(struct ufs_hba *hba)
 	hba->desc_size.conf_desc = QUERY_DESC_CONFIGURATION_DEF_SIZE;
 	hba->desc_size.unit_desc = QUERY_DESC_UNIT_DEF_SIZE;
 	hba->desc_size.geom_desc = QUERY_DESC_GEOMETRY_DEF_SIZE;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019/11/19. Add for check storage endurance
 	hba->desc_size.hlth_desc = QUERY_DESC_HEALTH_MAX_SIZE;
 #endif
@@ -11037,7 +11037,7 @@ out_error:
 }
 EXPORT_SYMBOL(ufshcd_alloc_host);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019/11/19. Add for check storage endurance
 #include <asm/unaligned.h>
 static ssize_t ufs_sysfs_read_desc_param(struct ufs_hba *hba,
@@ -11337,7 +11337,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
 
 	async_schedule(ufshcd_async_scan, hba);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019/11/19. Add for check storage endurance
 	ufs_sysfs_add_nodes(hba->dev);
 #endif

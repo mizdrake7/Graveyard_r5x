@@ -1892,7 +1892,7 @@ void msm_vfe47_axi_clear_wm_xbar_reg(
 		vfe_dev->vfe_base + VFE47_XBAR_BASE(wm));
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*modify by hongbo.dai@camera, 20190626 for fix preview issue*/
 void msm_vfe47_cfg_axi_ub_equal_default(
 	struct vfe_device *vfe_dev,

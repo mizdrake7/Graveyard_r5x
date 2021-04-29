@@ -34,7 +34,7 @@
 #include "wcd-mbhc-adc.h"
 #include "wcd-mbhc-v2-api.h"
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ping.Zhang@BSP.TP.Init, 2019/04/24, Add for notify touchpanel status */
 //extern void switch_headset_state(int headset_state);
 //#endif
@@ -312,7 +312,7 @@ out_micb_en:
 			/* enable pullup and cs, disable mb */
 			wcd_enable_curr_micbias(mbhc, WCD_MBHC_EN_PULLUP);
 		else
-			#ifndef VENDOR_EDIT
+			#ifndef CONFIG_PRODUCT_REALME_TRINKET
 			/* Jianfeng.Qiu@PSW.MM.AudioDriver.HeadsetDet, 2017/04/10,
 			 * 1.Modify for some headset button not work after headset mic
 			 * stop use.(ex: stop recording, hangup voice call without plug
@@ -323,7 +323,7 @@ out_micb_en:
 			 */
 			/* enable current source and disable mb, pullup*/
 			wcd_enable_curr_micbias(mbhc, WCD_MBHC_EN_CS);
-			#else /* VENDOR_EDIT */
+			#else /* CONFIG_PRODUCT_REALME_TRINKET */
 			{
 				pr_info("%s: current_plug %d\n", __func__, mbhc->current_plug);
 				if (mbhc->current_plug == MBHC_PLUG_TYPE_HEADSET) {
@@ -332,7 +332,7 @@ out_micb_en:
 					wcd_enable_curr_micbias(mbhc, WCD_MBHC_EN_CS);
 				}
 			}
-			#endif /* VENDOR_EDIT */
+			#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 		/* configure cap settings properly when micbias is disabled */
 		if (mbhc->mbhc_cb->set_cap_mode)
@@ -762,7 +762,7 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 
 		mbhc->hph_status |= jack_type;
 
-		#ifndef VENDOR_EDIT
+		#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/*huanli.chang@Multimedia.AudioDriver.HeadsetDet, 2019/10/22, Modify for log*/
 		pr_debug("%s: Reporting insertion %d(%x)\n", __func__,
 			 jack_type, mbhc->hph_status);
@@ -775,16 +775,16 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 				    WCD_MBHC_JACK_MASK);
 		wcd_mbhc_clr_and_turnon_hph_padac(mbhc);
 	}
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ping.Zhang@BSP.TP.Init, 2019/04/24, Add for notify touchpanel status */
 	//switch_headset_state(insertion);
 //#endif
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP headset function begain
 	headset_notifier_call_chain(insertion,NULL);
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP headset function end
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	
 	pr_debug("%s: leave hph_status %x\n", __func__, mbhc->hph_status);
 }
@@ -974,7 +974,7 @@ static void wcd_mbhc_swch_irq_handler(struct wcd_mbhc *mbhc)
 
 	if ((mbhc->current_plug == MBHC_PLUG_TYPE_NONE) &&
 	    detection_type) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/*pangbin1@wingtech.com, 2019/8/16, add for plug and unplug frequently*/
 		if(!time_after(jiffies, mbhc->last_unplug_time + msecs_to_jiffies(1 * 1000)))
 			mbhc->delayed_time = 300;
@@ -1084,13 +1084,13 @@ static void wcd_mbhc_swch_irq_handler(struct wcd_mbhc *mbhc)
 				mbhc->mbhc_cb->mbhc_moisture_detect_en(mbhc,
 									false);
 		}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/*pangbin1@wingtech.com, 2019/8/16, add for plug and unplug frequently*/
 		mbhc->last_unplug_time = jiffies;
 #endif
 
 	} else if (!detection_type) {
-		#ifdef VENDOR_EDIT
+		#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/*Jianfeng.Qiu@PSW.MM.AudioDriver.HeadsetDet.2784831, 2020/01/20,
 		 *Add for disable micbias, when insert a HPH_HIGH device and detect as special
 		 *headset device(micbias_enable is true), then remove device before report
@@ -1112,7 +1112,7 @@ static void wcd_mbhc_swch_irq_handler(struct wcd_mbhc *mbhc)
 			}
 			mbhc->micbias_enable = false;
 		}
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 		/* Disable external voltage source to micbias if present */
 		if (mbhc->mbhc_cb->enable_mb_source)
@@ -1867,7 +1867,7 @@ int wcd_mbhc_init(struct wcd_mbhc *mbhc, struct snd_soc_codec *codec,
 	mbhc->hph_type = WCD_MBHC_HPH_NONE;
 	mbhc->wcd_mbhc_regs = wcd_mbhc_regs;
 	mbhc->swap_thr = GND_MIC_SWAP_THRESHOLD;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*pangbin1@wingtech.com, 2019/8/16, add for plug and unplug frequently*/
 	mbhc->delayed_time = 0;
 	mbhc->last_unplug_time = 0;

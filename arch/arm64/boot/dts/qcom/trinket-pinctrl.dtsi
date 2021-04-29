@@ -475,7 +475,7 @@
 				config {
 						pins = "gpio16", "gpio17";
 						drive-strength = <2>;
-						//#ifdef VENDOR_EDIT /* tongfeng.Huang@BSP.CHG.Basic, 2018/06/26, sjc Add for charging */
+						//#ifdef CONFIG_PRODUCT_REALME_TRINKET /* tongfeng.Huang@BSP.CHG.Basic, 2018/06/26, sjc Add for charging */
 						input-enable;
 						//#endif
 						bias-pull-down;
@@ -1984,7 +1984,7 @@
 				drive-strength = <4>; /* 4 MA */
 			};
 		};
-/*#ifdef ODM_WT_EDIT*/
+/*#ifdef CONFIG_ODM_WT_EDIT*/
 /*Danfeng.Zhang@ODM_WT.Camera.Driver.1941873, 20190408, Add for brinup camera back aux camera*/
 		cam_sensor_front2_active: cam_sensor_front2_active {
 			/*PWDN RESET*/
@@ -2042,11 +2042,11 @@
 				drive-strength = <4>; /* 4 MA */
 			};
 		};
-/*#endif ODM_WT_EDIT*/
+/*#endif CONFIG_ODM_WT_EDIT*/
 
 
 /* 20190424, Added pin settings for camera (ov12a10, s5k4h7, hi846, sp2509v and gc2375h) */
-//#ifdef VENDOR_EDIT /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/22, sjc Add for charging */
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/22, sjc Add for charging */
 		charger: charger {
 			usbid_active: usbid_active {
 				mux {
@@ -2093,7 +2093,7 @@
 	};
 };
 
-/* #ifdef VENDOR_EDIT */
+/* #ifdef CONFIG_PRODUCT_REALME_TRINKET */
 /* Cong.dai@psw.bsp.tp, 2019/05/11, add for submainboard select */
 &pmi632_gpios {
 	submainboard {
@@ -2104,7 +2104,7 @@
 			bias-disable;
 		};
 	};
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/07/04, add for usb connector temperature check*/
 	gpio1_adc {
 		gpio1_adc_default: gpio1_adc_default {
@@ -2122,7 +2122,7 @@
 			};
 	};
 //#endif
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* LiYue@BSP.CHG.Basic, 2019/07/04, add for charging USB vbus short*/
 	charger {
 		dischg_enable: dischg_enable{
@@ -2145,7 +2145,7 @@
 	};
 //#endif
 };
-/* #endif VENDOR_EDIT */
+/* #endif CONFIG_PRODUCT_REALME_TRINKET */
 &tlmm {
         gpio_id1_default: gpio_id1_default {
             mux {

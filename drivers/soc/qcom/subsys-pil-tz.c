@@ -706,7 +706,7 @@ static int pil_shutdown_trusted(struct pil_desc *pil)
 	u32 proc, scm_ret = 0;
 	int rc;
 	struct scm_desc desc = {0};
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Wentiam.Mai@PSW.NW.EM.1389836, 2019/04/27
 	//Add for skip mini dump encryption
 	int i = 0;
@@ -740,7 +740,7 @@ static int pil_shutdown_trusted(struct pil_desc *pil)
 	if (rc)
 		goto err_clks;
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Wentiam.Mai@PSW.NW.EM.1389836, 2019/04/27
 	//Add for skip mini dump encryption
 	//disable for TZ don't encryption
@@ -760,7 +760,7 @@ static int pil_shutdown_trusted(struct pil_desc *pil)
 		       &desc);
 	scm_ret = desc.ret[0];
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Wentiam.Mai@PSW.NW.EM.1389836, 2019/04/27
 	//Add for skip mini dump encryption
 	//disable for TZ don't encryption
@@ -836,7 +836,7 @@ static struct pil_reset_ops pil_ops_trusted = {
 	.deinit_image = pil_deinit_image_trusted,
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Wentiam.Mai@PSW.NW.EM.1248599, 2018/01/25
 //Add for customized subsystem ramdump to skip generate dump cause by SAU
 bool SKIP_GENERATE_RAMDUMP = false;

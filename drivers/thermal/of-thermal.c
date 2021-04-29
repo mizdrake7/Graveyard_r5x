@@ -90,7 +90,7 @@ struct __sensor_param {
  * @list: sibling thermal zone pointer
  * @senps: sensor related parameters
  */
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 struct __thermal_zone {
 	enum thermal_device_mode mode;
 	int passive_delay;
@@ -1334,7 +1334,7 @@ __init *thermal_of_build_thermal_zone(struct device_node *np)
 
 	tz->is_wakeable = of_property_read_bool(np,
 					"wake-capable-sensor");
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	tz->temp_track = of_property_read_bool(np,
 					"temp-track");
 

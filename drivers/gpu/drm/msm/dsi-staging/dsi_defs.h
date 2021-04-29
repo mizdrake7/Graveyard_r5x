@@ -282,7 +282,7 @@ enum dsi_dyn_clk_feature_type {
  * @DSI_CMD_SET_POST_TIMING_SWITCH:        Post timing switch
  * @DSI_CMD_SET_QSYNC_ON                   Enable qsync mode
  * @DSI_CMD_SET_QSYNC_OFF                  Disable qsync mode
- #ifdef VENDOR_EDIT
+ #ifdef CONFIG_PRODUCT_REALME_TRINKET
  * @ Gou shengjun@PSW.MM.Display.LCD.Stability,2018/12/14, add for lcd notes
  * @DSI_CMD_POST_ON_BACKLIGHT:             Panel on cmd send for AOD and Fingerprint
  * @DSI_CMD_AOD_ON:                        Panel AOD on cmd
@@ -325,7 +325,7 @@ enum dsi_cmd_set_type {
 	DSI_CMD_SET_POST_TIMING_SWITCH,
 	DSI_CMD_SET_QSYNC_ON,
 	DSI_CMD_SET_QSYNC_OFF,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/07/03
  * optimize screen on
 */
@@ -353,14 +353,14 @@ enum dsi_cmd_set_type {
 	DSI_CMD_FAILSAFE_ON,
 	DSI_CMD_FAILSAFE_OFF,
 #endif
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, add CABC cmd used for power saving
 	DSI_CMD_SET_CABC_OFF,
 	DSI_CMD_SET_CABC_UI_MODE,
 	DSI_CMD_SET_CABC_STILL_MODE,
 	DSI_CMD_SET_CABC_MOVING_MODE,
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, add CABC cmd used for power saving
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	DSI_CMD_SET_MAX
 };
 
@@ -666,11 +666,11 @@ struct dsi_display_mode_priv_info {
 	struct msm_display_dsc_info dsc;
 	bool dsc_enabled;
 	struct msm_roi_caps roi_caps;
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Guoqiang.Jiang@PSW.MM.Display.LCD.Stable,2019-11-17 add for fingerprint */
 	int fod_on_vblank;
 	int fod_off_vblank;
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 };
 
 /**

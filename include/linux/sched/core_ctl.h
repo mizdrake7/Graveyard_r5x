@@ -24,10 +24,10 @@ void core_ctl_check(u64 wallclock);
 int core_ctl_set_boost(bool boost);
 void core_ctl_notifier_register(struct notifier_block *n);
 void core_ctl_notifier_unregister(struct notifier_block *n);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //long.gao@swdp.shanghai, 2019/06/05, add declaration
 int hypnus_set_min_max_cpus(unsigned int index, unsigned int min, unsigned int max);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 #else
 static inline void core_ctl_check(u64 wallclock) {}
 static inline int core_ctl_set_boost(bool boost)
@@ -36,9 +36,9 @@ static inline int core_ctl_set_boost(bool boost)
 }
 static inline void core_ctl_notifier_register(struct notifier_block *n) {}
 static inline void core_ctl_notifier_unregister(struct notifier_block *n) {}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //long.gao@swdp.shanghai, 2019/06/05, add declaration
 static inline int hypnus_set_min_max_cpus(unsigned int index, unsigned int min, unsigned int max) {}
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 #endif
 #endif

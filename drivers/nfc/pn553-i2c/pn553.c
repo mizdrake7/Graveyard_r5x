@@ -130,10 +130,10 @@ static bool  sIsWakeLocked = false;
 #endif
 
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,add for load nfc driver according to boardid
 char nfc_hardware_info[20];
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 
 
 static struct pn544_dev *pn544_dev;
@@ -1737,7 +1737,7 @@ static void check_hw_info() {
  * module load/unload record keeping
  */
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,add for load nfc driver according to boardid
 static int __init nfc_board_id_get(char *str)
 {
@@ -1747,15 +1747,15 @@ static int __init nfc_board_id_get(char *str)
     return 0;
 }
 __setup("board_id=", nfc_board_id_get);
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 
 static int __init pn544_dev_init(void)
 {
     pr_info("Loading pn544 driver\n");
-	#ifndef ODM_WT_EDIT
+	#ifndef CONFIG_ODM_WT_EDIT
     //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,modify for load nfc driver according to boardid
     return i2c_add_driver(&pn544_driver);
-    #else /* ODM_WT_EDIT */
+    #else /* CONFIG_ODM_WT_EDIT */
     if((strncmp(nfc_hardware_info,"S86125FA1",strlen("S86125FA1")) == 0)||
       (strncmp(nfc_hardware_info,"S86125EA1",strlen("S86125EA1")) == 0)||
       (strncmp(nfc_hardware_info,"S86125UA1",strlen("S86125UA1")) == 0)||
@@ -1772,7 +1772,7 @@ static int __init pn544_dev_init(void)
         pr_info(" %s This Board doesn't support NFC,BoardID:%s Exit! \n",__func__,nfc_hardware_info);
         return -1;
     }
-    #endif /* ODM_WT_EDIT */
+    #endif /* CONFIG_ODM_WT_EDIT */
 }
 
 module_init(pn544_dev_init);

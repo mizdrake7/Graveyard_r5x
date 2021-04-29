@@ -52,7 +52,7 @@
  * CONFIG_RANDOMIZE_BASE=n
  * after add the config, /proc/mtk_memcfg/slabtrace
  */
-#if defined(VENDOR_EDIT) && defined(CONFIG_ARM64) && defined(CONFIG_SLUB_DEBUG_ON) && defined(CONFIG_SLUB_DEBUG)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_ARM64) && defined(CONFIG_SLUB_DEBUG_ON) && defined(CONFIG_SLUB_DEBUG)
 #ifndef CONFIG_RANDOMIZE_BASE
 #define OPPO_SLUB_TRACK
 #endif
@@ -220,7 +220,7 @@ static inline bool kmem_cache_has_cpu_partial(struct kmem_cache *s)
 struct track {
 	unsigned long addr;	/* Called from address */
 #ifdef CONFIG_STACKTRACE
-#if defined(VENDOR_EDIT) && defined(OPPO_SLUB_TRACK)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(OPPO_SLUB_TRACK)
 /* Store the offset after MODULES_VADDR for
  * kernel module and kernel text address
  */
@@ -471,7 +471,7 @@ static inline bool cmpxchg_double_slab(struct kmem_cache *s, struct page *page,
 
 	return false;
 }
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-11-12, if SLAB_STAT_DEBUG is
  * is enabled, /proc/slabinfo is created for getting more slab details. */
 #if defined(CONFIG_SLUB_DEBUG) || defined(CONFIG_SLAB_STAT_DEBUG)
@@ -520,7 +520,7 @@ static inline void inc_slabs_node(struct kmem_cache *s, int node,
 static inline void dec_slabs_node(struct kmem_cache *s, int node,
 							int objects) {}
 #endif /* CONFIG_SLUB_DEBUG || CONFIG_SLAB_STAT_DEBUG */
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #ifdef CONFIG_SLUB_DEBUG
 /*
@@ -634,7 +634,7 @@ static void set_track(struct kmem_cache *s, void *object,
 
 	if (addr) {
 #ifdef CONFIG_STACKTRACE
-#if defined(VENDOR_EDIT) && defined(OPPO_SLUB_TRACK)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(OPPO_SLUB_TRACK)
 		unsigned long addrs[TRACK_ADDRS_COUNT];
 		struct stack_trace trace;
 		int i;
@@ -707,7 +707,7 @@ static void print_track(const char *s, struct track *t)
 	pr_err("INFO: %s in %pS age=%lu cpu=%u pid=%d\n",
 	       s, (void *)t->addr, jiffies - t->when, t->cpu, t->pid);
 #ifdef CONFIG_STACKTRACE
-#if defined(VENDOR_EDIT) && defined(OPPO_SLUB_TRACK)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(OPPO_SLUB_TRACK)
 	{
 		int i;
 		unsigned long addrs[TRACK_ADDRS_COUNT];
@@ -1192,7 +1192,7 @@ static void remove_full(struct kmem_cache *s, struct kmem_cache_node *n, struct 
 	list_del(&page->lru);
 }
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-11-12, if SLAB_STAT_DEBUG is
  * is enabled, /proc/slabinfo is created for getting more slab details. */
 /* Tracking of the number of slabs for debugging purposes */
@@ -1230,7 +1230,7 @@ static inline void dec_slabs_node(struct kmem_cache *s, int node, int objects)
 	atomic_long_dec(&n->nr_slabs);
 	atomic_long_sub(objects, &n->total_objects);
 }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 /* Object debug checks for alloc/free paths */
 static void setup_object_debug(struct kmem_cache *s, struct page *page,
@@ -1487,7 +1487,7 @@ unsigned long kmem_cache_flags(unsigned long object_size,
 
 #define disable_higher_order_debug 0
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-11-12, if SLAB_STAT_DEBUG is
   * is enabled, /proc/slabinfo is created for getting more slab details. */
 static inline unsigned long slabs_node(struct kmem_cache *s, int node)
@@ -1498,7 +1498,7 @@ static inline void inc_slabs_node(struct kmem_cache *s, int node,
 							int objects) {}
 static inline void dec_slabs_node(struct kmem_cache *s, int node,
 							int objects) {}
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static bool freelist_corrupted(struct kmem_cache *s, struct page *page,
 			       void **freelist, void *nextfree)
@@ -2549,7 +2549,7 @@ static inline int node_match(struct page *page, int node)
 	return 1;
 }
 
-#if defined(CONFIG_SLUB_DEBUG) || (defined(VENDOR_EDIT) && defined(CONFIG_SLAB_STAT_DEBUG))
+#if defined(CONFIG_SLUB_DEBUG) || (defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_SLAB_STAT_DEBUG))
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-11-12, if SLAB_STAT_DEBUG is
   * is enabled, /proc/slabinfo is created for getting more slab details. */
 static int count_free(struct page *page)
@@ -3506,7 +3506,7 @@ init_kmem_cache_node(struct kmem_cache_node *n)
 	n->nr_partial = 0;
 	spin_lock_init(&n->list_lock);
 	INIT_LIST_HEAD(&n->partial);
-#if defined(CONFIG_SLUB_DEBUG) || (defined(VENDOR_EDIT) && defined(CONFIG_SLAB_STAT_DEBUG))
+#if defined(CONFIG_SLUB_DEBUG) || (defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_SLAB_STAT_DEBUG))
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-11-12, if SLAB_STAT_DEBUG is
 * is enabled, /proc/slabinfo is created for getting more slab details. */
 	atomic_long_set(&n->nr_slabs, 0);
@@ -4648,7 +4648,7 @@ static long validate_slab_cache(struct kmem_cache *s)
  * and freed.
  */
 
-#if defined(VENDOR_EDIT) && defined(OPPO_SLUB_TRACK)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(OPPO_SLUB_TRACK)
 #define OPPO_MEMCFG_SLABTRACE_CNT 4
 #if (OPPO_MEMCFG_SLABTRACE_CNT > TRACK_ADDRS_COUNT)
 #error (OPPO_MEMCFG_SLABTRACE_CNT > TRACK_ADDRS_COUNT)
@@ -4657,7 +4657,7 @@ static long validate_slab_cache(struct kmem_cache *s)
 struct location {
 	unsigned long count;
 	unsigned long addr;
-#if defined(VENDOR_EDIT) && defined(OPPO_SLUB_TRACK)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(OPPO_SLUB_TRACK)
 #ifdef CONFIG_STACKTRACE
 	unsigned long addrs[OPPO_MEMCFG_SLABTRACE_CNT]; /* caller address */
 #endif
@@ -6118,7 +6118,7 @@ ssize_t slabinfo_write(struct file *file, const char __user *buffer,
 }
 #endif /* CONFIG_SLABINFO */
 
-#if defined(VENDOR_EDIT) && defined(OPPO_SLUB_TRACK) //&& (!defined(CONFIG_SLAB_STAT_DEBUG))
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(OPPO_SLUB_TRACK) //&& (!defined(CONFIG_SLAB_STAT_DEBUG))
 static int oppo_memcfg_add_location(struct loc_track *t, struct kmem_cache *s,
 				const struct track *track)
 {

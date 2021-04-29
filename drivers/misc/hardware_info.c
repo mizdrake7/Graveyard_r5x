@@ -1,6 +1,6 @@
 /***********************************************************
 ** Copyright (C), 2008-2016, OPPO Mobile Comm Corp., Ltd.
-** ODM_WT_EDIT
+** CONFIG_ODM_WT_EDIT
 ** File: - hardware_info.c
 ** Description: source  for hardware infomation
 **
@@ -60,11 +60,11 @@ char* hardwareinfo_items[HARDWARE_MAX_ITEM] =
 	"MSENSOR",
 	"GPS",
 	"FM",
-	#ifdef ODM_WT_EDIT
+	#ifdef CONFIG_ODM_WT_EDIT
 	//Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.BUG2056606,2019/5/30,add for mmi test NFC infomation
 	//Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.BUG2056606,2019/6/4,add for factory binrany NFC info
 	"NFC",
-	#endif /* ODM_WT_EDIT */
+	#endif /* CONFIG_ODM_WT_EDIT */
 	"BATTERY",
 	"CAM_M_BACK",
 	"CAM_M_FRONT",
@@ -225,14 +225,14 @@ static long hardwareinfo_ioctl(struct file *file, unsigned int cmd,unsigned long
 		hardwareinfo_set_prop(HARDWARE_FM, "Qualcomm");
 	    hardwareinfo_num = HARDWARE_FM;
 		break;
-	#ifdef ODM_WT_EDIT
+	#ifdef CONFIG_ODM_WT_EDIT
 	//Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.BUG2056606,2019/5/30,add for mmi test NFC infomation
 	//Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.BUG2056606,2019/6/4,add for factory binrany NFC info
 	case HARDWARE_NFC_GET:
 		hardwareinfo_num = HARDWARE_NFC;
 		hardwareinfo_set_prop(HARDWARE_NFC, "NXP,NQ330");
 		break;
-	#endif /* ODM_WT_EDIT */
+	#endif /* CONFIG_ODM_WT_EDIT */
 	case HARDWARE_BATTERY_ID_GET:
 		hardwareinfo_num = HARDWARE_BATTERY_ID;
 		break;

@@ -381,7 +381,7 @@ static int smb1355_set_charge_param(struct smb1355 *chip,
 			param->name, val_u, param->min_u, param->max_u);
 		return -EINVAL;
 	}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* wangchao@ODM.BSP.charge, 2019/12/17, Add for smb1355 debug*/
 	else
 	{

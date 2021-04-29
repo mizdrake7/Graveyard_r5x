@@ -3649,7 +3649,7 @@ static int icnss_get_vbatt_info(struct icnss_priv *priv)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Laixin@PSW.CN.WiFi.Basic.Switch.1069763, 2018/08/08
 //Add for: check fw status for switch issue
 static void icnss_create_fw_state_kobj(void);
@@ -3667,7 +3667,7 @@ struct driver_attribute fw_ready_attr = {
 	.show = icnss_show_fw_ready,
 	//read only so we don't need to impl store func
 };
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static int icnss_probe(struct platform_device *pdev)
 {
@@ -3892,11 +3892,11 @@ static int icnss_probe(struct platform_device *pdev)
 
 	init_completion(&priv->unblock_shutdown);
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Laixin@PSW.CN.WiFi.Basic.Switch.1069763, 2018/08/08
 	//Add for: check fw status for switch issue
 	icnss_create_fw_state_kobj();
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	icnss_pr_info("Platform driver probed successfully\n");
 
@@ -4095,7 +4095,7 @@ static struct platform_driver icnss_driver = {
 	},
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Laixin@PSW.CN.WiFi.Basic.Switch.1069763, 2018/08/08
 //Add for: check fw status for switch issue
 static void icnss_create_fw_state_kobj(void) {
@@ -4103,7 +4103,7 @@ static void icnss_create_fw_state_kobj(void) {
 		icnss_pr_info("failed to create %s", fw_ready_attr.attr.name);
 	}
 }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static int __init icnss_initialize(void)
 {

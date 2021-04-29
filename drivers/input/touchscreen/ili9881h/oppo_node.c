@@ -26,7 +26,7 @@ static uint32_t temp[5] = {0};
 extern struct ili_gesture_info * gesture_report_data;
 extern unsigned char g_user_buf[PAGE_SIZE];
 bool black_suspend_flag = false;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 int sign_firmware = 0;
 #endif
@@ -664,7 +664,7 @@ static ssize_t ilitek_proc_read_write_register_write(struct file *filp, const ch
 	return size;
 }
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 /*node to control if upload fireware with sign bin
 *default value is ture
@@ -723,7 +723,7 @@ static ssize_t ilitek_proc_oppo_upgrade_fw_write(struct file *filp, const char *
 	ilitek_plat_irq_disable();
 	mutex_lock(&idev->touch_mutex);
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 	if ((strncmp(cmd, "0", 1) == 0)||(strncmp(cmd, "1", 1) == 0)) {
 		sign_firmware = 0;
@@ -940,7 +940,7 @@ static ssize_t ilitek_limit_control_write(struct file *file, const char __user *
     }
 	ipio_info("%s,direction = %d\n",__func__,idev->direction);
 	mutex_lock(&idev->touch_mutex);
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/6/12, add function status value
 		if (idev->suspend==false) {
 			if (idev->direction == 0) {
@@ -1012,7 +1012,7 @@ static ssize_t ilitek_direction_write(struct file *file, const char __user *user
 
        idev->direction = buf[0] -'0';
        mutex_lock(&idev->touch_mutex);
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/6/12, add function status value
        if (idev->suspend==false) {
               if (idev->direction == 0) {

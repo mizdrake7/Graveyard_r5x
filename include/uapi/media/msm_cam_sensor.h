@@ -297,7 +297,7 @@ struct msm_eeprom_info_t {
 };
 
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*add by yufeng@camera, 20190618 for write calibration*/
 #define CALIB_DATA_LENGTH         1561
 #define WRITE_DATA_MAX_LENGTH     8
@@ -672,7 +672,7 @@ struct sensor_init_cfg_data {
 #define VIDIOC_MSM_LASER_LED_CFG \
 	_IOWR('V', BASE_VIDIOC_PRIVATE + 16, struct msm_laser_led_cfg_data_t)
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*add by hongbo.dai@camera, 20190820 for write eeprom data*/
 #define VIDIOC_MSM_EEPROM_WRITE_CALIB \
 	_IOWR('V', BASE_VIDIOC_PRIVATE + 17, struct cam_write_eeprom_t)

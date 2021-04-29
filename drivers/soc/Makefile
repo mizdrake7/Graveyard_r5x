@@ -24,7 +24,7 @@ obj-$(CONFIG_ARCH_U8500)	+= ux500/
 obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
 obj-$(CONFIG_ARCH_ZX)		+= zte/
 
-# ifdef VENDOR_EDIT
+# ifdef CONFIG_PRODUCT_REALME_TRINKET
 # yinchao@BSP.kernel.drvier, 2019/10/19, Add for oppo project;
 obj-y   += oppo/
 # endif

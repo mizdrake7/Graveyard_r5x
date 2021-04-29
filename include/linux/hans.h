@@ -1,6 +1,6 @@
 /***********************************************************
 ** Copyright (C), 2008-2019, OPPO Mobile Comm Corp., Ltd.
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** File: hans.h
 ** Description: Add for hans freeze manager
 **

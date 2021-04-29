@@ -78,7 +78,7 @@
 #include "binder_trace.h"
 
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HANS)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HANS)
 // Kun.Zhou@ROM.Framework, 2019/09/23, add for hans freeze manager
 #include <linux/hans.h>
 #endif
@@ -2998,7 +2998,7 @@ static void binder_transaction(struct binder_proc *proc,
 	int t_debug_id = atomic_inc_return(&binder_last_id);
 	char *secctx = NULL;
 	u32 secctx_sz = 0;
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HANS)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HANS)
 // Kun.Zhou@ROM.Framework, 2019/09/23, add for hans freeze manager
 	char buf_data[INTERFACETOKEN_BUFF_SIZE];
 	size_t buf_data_size;
@@ -3122,7 +3122,7 @@ static void binder_transaction(struct binder_proc *proc,
 			goto err_dead_binder;
 		}
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HANS)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HANS)
 // Kun.Zhou@ROM.Framework, 2019/09/23, add for hans freeze manager
 		if (!(tr->flags & TF_ONE_WAY) //report sync binder call
 			&& target_proc
@@ -3338,7 +3338,7 @@ static void binder_transaction(struct binder_proc *proc,
 		return_error_line = __LINE__;
 		goto err_bad_offset;
 	}
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HANS)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HANS)
 // Kun.Zhou@ROM.Framework, 2019/09/23, add for hans freeze manager
 	if ((tr->flags & TF_ONE_WAY) //report async binder call
 		&& target_proc
@@ -4222,12 +4222,12 @@ static int binder_wait_for_work(struct binder_thread *thread,
 			list_add(&thread->waiting_thread_node,
 				 &proc->waiting_threads);
 		binder_inner_proc_unlock(proc);
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
         current->in_binder = 1;
 #endif
         schedule();
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
         current->in_binder = 0;
 #endif
@@ -5991,7 +5991,7 @@ static int binder_state_show(struct seq_file *m, void *unused)
 	return 0;
 }
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HANS)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HANS)
 // Kun.Zhou@ROM.Framework, 2019/09/23, add for hans freeze manager
 static void hans_check_uid_proc_status(struct binder_proc *proc)
 {

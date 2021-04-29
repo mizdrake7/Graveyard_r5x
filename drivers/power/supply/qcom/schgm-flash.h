@@ -15,7 +15,7 @@
 
 #include <linux/bitops.h>
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2019-07-10  for charge */
 #include "../../oppo/charger_ic/oppo_battery_sm6125Q.h"
 #endif

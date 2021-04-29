@@ -1,6 +1,6 @@
 /*******************************************************************************
 ** Copyright (C), 2008-2016, OPPO Mobile Comm Corp., Ltd.
-** ODM_WT_EDIT
+** CONFIG_ODM_WT_EDIT
 ** FILE: - usb_notifier.h
 ** Description : This program is for usb notifier
 ** Version: 1.0

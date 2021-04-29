@@ -755,7 +755,7 @@ static int msm_isp_buf_divert(struct msm_isp_buf_mgr *buf_mgr,
 	return 0;
 }
 
-#ifdef VENDOR_EDIT /* Camera@Drv 2020/05/11, Add for isp buffer error */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET /* Camera@Drv 2020/05/11, Add for isp buffer error */
 static int msm_isp_buf_err(struct msm_isp_buf_mgr *buf_mgr,
 	uint32_t bufq_handle, uint32_t buf_index,
 	struct timeval *tv, uint32_t frame_id, uint32_t output_format)
@@ -1560,7 +1560,7 @@ static struct msm_isp_buf_ops isp_buf_ops = {
 	.buf_mgr_debug = msm_isp_buf_mgr_debug,
 	.get_bufq = msm_isp_get_bufq,
 	.buf_divert = msm_isp_buf_divert,
-#ifdef VENDOR_EDIT /* Camera@Drv 2020/05/11, Add for isp buffer error */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET /* Camera@Drv 2020/05/11, Add for isp buffer error */
 	.buf_err = msm_isp_buf_err,
 #endif
 };

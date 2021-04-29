@@ -22,7 +22,7 @@ struct ramdump_segment {
 	unsigned long size;
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Wentiam.Mai@PSW.NW.EM.1248599, 2018/01/25
 //Add for customized subsystem ramdump to skip generate dump cause by SAU
 extern bool SKIP_GENERATE_RAMDUMP;

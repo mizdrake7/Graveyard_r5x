@@ -16,11 +16,11 @@
 #include <linux/delay.h>
 #include "dsi_hw.h"
 #include "dsi_phy_hw.h"
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/09/18, add ILI9881H INNOLUX INX GG3 LCD tag
 extern bool mipi_d_phy_ilitek_innolux_gg3_flag;
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add ILI9881H INNOLUX INX GG3 LCD tag
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 #define DSIPHY_CMN_REVISION_ID0                   0x0000
 #define DSIPHY_CMN_REVISION_ID1                   0x0004

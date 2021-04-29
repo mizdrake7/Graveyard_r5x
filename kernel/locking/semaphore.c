@@ -33,9 +33,9 @@
 #include <linux/semaphore.h>
 #include <linux/spinlock.h>
 #include <linux/ftrace.h>
-#ifdef VENDOR_EDIT//Fanhong.Kong@ProDrv.CHG,add 2018/12/19 for DeathHealer kernel 4.14
+#ifdef CONFIG_PRODUCT_REALME_TRINKET//Fanhong.Kong@ProDrv.CHG,add 2018/12/19 for DeathHealer kernel 4.14
 #include <linux/sched/signal.h>
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static noinline void __down(struct semaphore *sem);
 static noinline int __down_interruptible(struct semaphore *sem);
@@ -216,7 +216,7 @@ static inline int __sched __down_common(struct semaphore *sem, long state,
 
 	for (;;) {
 
-		//#ifdef VENDOR_EDIT fangpan@Swdp.shanghai,2015/11/12
+		//#ifdef CONFIG_PRODUCT_REALME_TRINKET fangpan@Swdp.shanghai,2015/11/12
 		if (signal_pending_state(state, current) || hung_long_and_fatal_signal_pending(current))
 		//#endif
 			goto interrupted;

@@ -41,14 +41,14 @@ static ktime_t curr_monotime; /* monotonic time after last suspend */
 static ktime_t last_stime; /* monotonic boottime offset before last suspend */
 static ktime_t curr_stime; /* monotonic boottime offset after last suspend */
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic, 2018/11/19, add for analysis power coumption.
 #include <linux/notifier.h>
 #include <linux/fb.h>
 #include <linux/msm_drm_notify.h>
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic, 2018/11/19, add for analysis power coumption.
 static u64 wakeup_sleep_abort_all = 0;
 extern u64 wakeup_source_count_all;
@@ -145,10 +145,10 @@ static ssize_t modem_resume_reason_stastics_show(struct kobject *kobj, struct ko
     return sprintf(buf, "%s:%d:%d\n", modem_wakeup_src_string[max_wakeup_src_index], max_wakeup_src_count, total);
 }
 //Yongyao.Song add end
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic, 2018/11/19, add for analysis power coumption.
 static void wakeup_reason_count_clear(void)
 {
@@ -276,7 +276,7 @@ static int wakeup_src_fb_notifier_callback(struct notifier_block *self,
 static struct notifier_block wakeup_src_fb_notif = {
 	.notifier_call = wakeup_src_fb_notifier_callback,
 };
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 
 static ssize_t last_resume_reason_show(struct kobject *kobj, struct kobj_attribute *attr,
@@ -302,7 +302,7 @@ static ssize_t last_resume_reason_show(struct kobject *kobj, struct kobj_attribu
 	return buf_offset;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic, 2018/11/19, Add for clean wake up source according to
 //echo reset > /sys/kernel/wakeup_reasons/wakeup_stastisc_reset
 static ssize_t  wakeup_stastisc_reset_store(struct kobject *kobj,
@@ -319,7 +319,7 @@ static ssize_t  wakeup_stastisc_reset_store(struct kobject *kobj,
 	wakeup_src_clean();
 	return count;
 }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 static ssize_t last_suspend_time_show(struct kobject *kobj,
 			struct kobj_attribute *attr, char *buf)
 {
@@ -351,7 +351,7 @@ static ssize_t last_suspend_time_show(struct kobject *kobj,
 static struct kobj_attribute resume_reason = __ATTR_RO(last_resume_reason);
 static struct kobj_attribute suspend_time = __ATTR_RO(last_suspend_time);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic, 2018/11/19, add for analysis power coumption.
 static struct kobj_attribute ap_resume_reason_stastics = __ATTR_RO(ap_resume_reason_stastics);
 //Yongyao.Song@PSW.NW.PWR.919039,2018/11/19, add for analysis power coumption. by modem
@@ -361,13 +361,13 @@ static struct kobj_attribute modem_resume_reason_stastics = __ATTR_RO(modem_resu
 //echo reset >   /sys/kernel/wakeup_reasons/wakeup_stastisc_reset
 static struct kobj_attribute wakeup_stastisc_reset_sys =
 	__ATTR(wakeup_stastisc_reset, S_IWUSR|S_IRUGO, NULL, wakeup_stastisc_reset_store);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static struct attribute *attrs[] = {
 	&resume_reason.attr,
 	&suspend_time.attr,
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic, 2018/11/19, add for analysis power coumption.
     &ap_resume_reason_stastics.attr,
 	//Yongyao.Song@PSW.NW.PWR.919039, 2018/11/19, add for analysis power coumption.by modem
@@ -376,7 +376,7 @@ static struct attribute *attrs[] = {
 	//Wenxian.Zhen@BSP.Power.Basic, 2018/11/17, Add for  clean wake up source according to  
 	//echo reset >   /sys/kernel/wakeup_reasons/wakeup_stastisc_reset
 	&wakeup_stastisc_reset_sys.attr,
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	NULL,
 };
@@ -436,7 +436,7 @@ void log_suspend_abort_reason(const char *fmt, ...)
 		spin_unlock(&resume_reason_lock);
 		return;
 	}
-	#ifdef VENDOR_EDIT //yunqing.zeng@bsp.power.basic Add for abort count statistics
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET //yunqing.zeng@bsp.power.basic Add for abort count statistics
 	wakeup_sleep_abort_all++;
 	#endif
 
@@ -503,14 +503,14 @@ int __init wakeup_reason_init(void)
 				__func__, retval);
 	}
 
-    #ifdef VENDOR_EDIT
+    #ifdef CONFIG_PRODUCT_REALME_TRINKET
     //Nanwei.Deng@BSP.Power.Basic,2018/11/19, add for analysis power coumption.
 #ifdef CONFIG_DRM_MSM
 	msm_drm_register_client(&wakeup_src_fb_notif);
 #else
 	fb_register_client(&wakeup_src_fb_notif);
 #endif
-    #endif /* VENDOR_EDIT */
+    #endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	return 0;
 }
 

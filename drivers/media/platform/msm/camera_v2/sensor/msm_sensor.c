@@ -18,7 +18,7 @@
 #include <linux/regulator/rpm-smd-regulator.h>
 #include <linux/regulator/consumer.h>
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Add by Zhengrong.Zhang@Camera 20160630 for merge basic modification*/
 #include <linux/proc_fs.h>
 
@@ -278,7 +278,7 @@ static uint16_t msm_sensor_id_by_mask(struct msm_sensor_ctrl_t *s_ctrl,
 	return sensor_id;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Add by Zhengrong.Zhang@Camera 20160630 for merge basic modification*/
 static int at_msm_sensor_power_down(struct msm_sensor_ctrl_t *s_ctrl)
 {
@@ -625,7 +625,7 @@ int msm_sensor_match_id(struct msm_sensor_ctrl_t *s_ctrl)
 		return -ENODEV;
 	}
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Added by Jindian.Guan@Camera 20190921 for [module vendor info]*/
 	rc = msm_sensor_read_moduleinfo(s_ctrl,sensor_name);
 	/*Cong.Zhou@ODM_HQ 20200226 for only read once in bootup*/
@@ -692,13 +692,13 @@ static long msm_sensor_subdev_ioctl(struct v4l2_subdev *sd,
 		pr_err("%s s_ctrl NULL\n", __func__);
 		return -EBADF;
 	}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Add by Zhengrong.Zhang@Camera 20160630 for merge basic modification*/
 	if (cmd == 0 && arg == NULL) {
 		rc = at_msm_sensor_power_down(s_ctrl);
 		return rc;
 	}
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	else if (cmd ==1 && arg == NULL) {
 		rc = at_msm_sensor_power_up(s_ctrl);
 #else  /*add by hongbo.dai@camera 20170325 for AT test*/

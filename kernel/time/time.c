@@ -871,7 +871,7 @@ struct timespec timespec_add_safe(const struct timespec lhs,
 
 	return res;
 }
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*He.Lu@PSW.MM.AudioDriver.Driver, 2019/12/16, Add for sia*/
 EXPORT_SYMBOL(timespec_add_safe);
 #endif

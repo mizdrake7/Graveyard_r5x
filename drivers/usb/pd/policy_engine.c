@@ -388,7 +388,7 @@ struct usbpd {
 	struct workqueue_struct	*wq;
 	struct work_struct	sm_work;
 	struct work_struct	start_periph_work;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	struct delayed_work	vbus_work;
 #endif
 	struct hrtimer		timer;
@@ -841,7 +841,7 @@ static int pd_select_pdo(struct usbpd *pd, int pdo_pos, int uv, int ua)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 extern bool oppochg_pd_sdp;
 #endif
 static int pd_eval_src_caps(struct usbpd *pd)
@@ -2642,7 +2642,7 @@ static void usbpd_sm(struct work_struct *w)
 		if (pd->current_pr == PR_SINK) {
 			usbpd_set_state(pd, PE_SNK_STARTUP);
 		} else if (pd->current_pr == PR_SRC) {
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2019-08-26  for disable vconn config */
 			if (!pd->vconn_enabled &&
 					pd->typec_mode ==
@@ -4382,7 +4382,7 @@ static ssize_t get_battery_status_show(struct device *dev,
 }
 static DEVICE_ATTR_RW(get_battery_status);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 struct usbpd *pd_lobal;
 unsigned int pd_vbus_ctrl;
 module_param(pd_vbus_ctrl, uint, S_IRUGO | S_IWUSR);
@@ -4442,7 +4442,7 @@ static ssize_t pd_vbus_store(struct device *dev,
 	return size;
 }
 static DEVICE_ATTR_RW(pd_vbus);
-#endif//VENDOR_EDIT
+#endif//CONFIG_PRODUCT_REALME_TRINKET
 static struct attribute *usbpd_attrs[] = {
 	&dev_attr_contract.attr,
 	&dev_attr_initial_pr.attr,
@@ -4467,7 +4467,7 @@ static struct attribute *usbpd_attrs[] = {
 	&dev_attr_get_pps_status.attr,
 	&dev_attr_get_battery_cap.attr,
 	&dev_attr_get_battery_status.attr,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	&dev_attr_pd_vbus.attr,
 #endif
 	NULL,
@@ -4546,7 +4546,7 @@ static void usbpd_release(struct device *dev)
 
 	kfree(pd);
 }
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 int oppo_pdo_select(int vbus_mv, int ibus_ma)
 {
 	int i = 0;
@@ -4605,7 +4605,7 @@ out:
 	return rc;
 }
 EXPORT_SYMBOL(oppo_pdo_select);
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static int num_pd_instances;
 
@@ -4795,7 +4795,7 @@ struct usbpd *usbpd_create(struct device *parent)
 
 	/* force read initial power_supply values */
 	psy_changed(&pd->psy_nb, PSY_EVENT_PROP_CHANGED, pd->usb_psy);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		pd_lobal = pd;
 #endif
 

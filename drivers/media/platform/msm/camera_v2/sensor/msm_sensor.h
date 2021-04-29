@@ -90,7 +90,7 @@ struct msm_sensor_ctrl_t {
 	uint8_t is_csid_tg_mode;
 	uint32_t is_secure;
 	uint8_t bypass_video_node_creation;
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Added by Jindian.Guan@Camera 20190921 for [module vendor info]*/
 	/*for proc file*/
 	uint16_t module_info;

@@ -185,17 +185,17 @@ struct sock_common {
 	struct proto		*skc_prot;
 	possible_net_t		skc_net;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Jiemin.Zhu@PSW.Android.OppoFeature.TrafficMonitor, 2018/06/28, Add for net comsuption statistics for
 //process which use the same uid
 	char skc_cmdline[TASK_COMM_LEN];
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
-	//#ifdef VENDOR_EDIT
+	//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Junyuan.Huang@PSW.CN.WiFi.Network.internet.1197891, 2018/04/10,
 	//Add code for appo sla function
 	u32 skc_oppo_mark;
-	//#endif /* VENDOR_EDIT */
+	//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #if IS_ENABLED(CONFIG_IPV6)
 	struct in6_addr		skc_v6_daddr;
@@ -363,16 +363,16 @@ struct sock {
 #define sk_incoming_cpu		__sk_common.skc_incoming_cpu
 #define sk_flags		__sk_common.skc_flags
 #define sk_rxhash		__sk_common.skc_rxhash
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Jiemin.Zhu@PSW.Android.OppoFeature.TrafficMonitor, 2018/06/28, Add for net comsuption statistics for
 //process which use the same uid
 #define sk_cmdline		__sk_common.skc_cmdline
-#endif /* VENDOR_EDIT */
-//#ifdef VENDOR_EDIT
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Junyuan.Huang@PSW.CN.WiFi.Network.internet.1197891, 2018/04/10,
 //Add code for appo sla function
 #define oppo_sla_mark   __sk_common.skc_oppo_mark
-//#endif /* VENDOR_EDIT */
+//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	socket_lock_t		sk_lock;
 	atomic_t		sk_drops;
@@ -1861,7 +1861,7 @@ static inline void sk_dst_confirm(struct sock *sk)
 
 static inline void sock_confirm_neigh(struct sk_buff *skb, struct neighbour *n)
 {
-	#ifndef VENDOR_EDIT
+	#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	//Wei.Wang@PSW.CN.WiFi.Network.internet.1357567, 2018/04/27,
 	//Remove for [1357567],some AP doesn't send arp when it needs to send data to DUT
 	//We remove this code to send arp more frequently to notify our mac to AP
@@ -1875,7 +1875,7 @@ static inline void sock_confirm_neigh(struct sk_buff *skb, struct neighbour *n)
 		if (sk && sk->sk_dst_pending_confirm)
 			sk->sk_dst_pending_confirm = 0;
 	}
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 }
 
 bool sk_mc_loop(struct sock *sk);

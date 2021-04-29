@@ -1,6 +1,6 @@
 /***************************************************************
 ** Copyright (C),  2018,  OPPO Mobile Comm Corp.,  Ltd
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** File : oppo_display_private_api.h
 ** Description : oppo display private api implement
 ** Version : 1.0
@@ -29,10 +29,10 @@ int lcd_closebl_flag = 0;
 int lcd_closebl_flag_fp = 0;
 int oppo_request_power_status = OPPO_DISPLAY_POWER_ON;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Kui.Feng@BSP.TP.Function, 2019/12/16, add shutdownflag node for lcd reset - /sys/kernel/oppo_display/shutdownflag*/
 int shutdown_flag = 0;
-#endif/*VENDOR_EDIT*/
+#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 
 extern int oppo_underbrightness_alpha;
 extern int msm_drm_notifier_call_chain(unsigned long val, void *v);
@@ -2155,9 +2155,9 @@ static ssize_t oppo_display_notify_panel_blank(struct device *dev,
 	}
 	return count;
 }
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC api used for power saving
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jinzhu.Han@RM.MM.DISPLAY.FEATURE,2019.05.11 Add for cabc attribute*/
 static ssize_t oppo_display_set_cabc(struct device *dev,
 		struct device_attribute *attr,
@@ -2195,7 +2195,7 @@ static ssize_t oppo_display_get_cabc(struct device *dev,
 }
 #endif
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC api used for power saving
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 #define FFL_LEVEL_START 2
 #define FFL_LEVEL_END  236
@@ -2816,7 +2816,7 @@ error:
 	return count;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Kui.Feng@BSP.TP.Function, 2019/12/16, add shutdownflag node for lcd reset - /sys/kernel/oppo_display/shutdownflag*/
 
 static ssize_t oppo_get_shutdownflag(struct device *dev,
@@ -2838,7 +2838,7 @@ static ssize_t oppo_set_shutdownflag(struct device *dev,
     pr_err("shutdown_flag = %d\n",shutdown_flag);
     return count;
 }
-#endif/*VENDOR_EDIT*/
+#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static struct kobject *oppo_display_kobj;
 
@@ -2871,10 +2871,10 @@ static DEVICE_ATTR(cabc, S_IRUGO|S_IWUSR, oppo_display_get_cabc, oppo_display_se
 static DEVICE_ATTR(aod_area, S_IRUGO|S_IWUSR, oppo_display_get_aod_area, oppo_display_set_aod_area);
 static DEVICE_ATTR(video, S_IRUGO|S_IWUSR, oppo_display_get_video, oppo_display_set_video);
 static DEVICE_ATTR(failsafe, S_IRUGO|S_IWUSR, oppo_display_get_failsafe, oppo_display_set_failsafe);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Kui.Feng@BSP.TP.Function, 2019/12/16, add shutdownflag node for lcd reset - /sys/kernel/oppo_display/shutdownflag*/
 static DEVICE_ATTR(shutdownflag, S_IRUGO|S_IWUSR, oppo_get_shutdownflag, oppo_set_shutdownflag);
-#endif/*VENDOR_EDIT*/
+#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 /*
  * Create a group of attributes so that we can create and destroy them all
  * at once.
@@ -2909,10 +2909,10 @@ static struct attribute *oppo_display_attrs[] = {
 	&dev_attr_aod_area.attr,
 	&dev_attr_video.attr,
 	&dev_attr_failsafe.attr,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Kui.Feng@BSP.TP.Function, 2019/12/16, add shutdownflag node for lcd reset - /sys/kernel/oppo_display/shutdownflag*/
 	&dev_attr_shutdownflag.attr,
-#endif/*VENDOR_EDIT*/
+#endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 	NULL,	/* need to NULL terminate the list of attributes */
 };
 

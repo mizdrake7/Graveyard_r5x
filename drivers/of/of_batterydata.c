@@ -360,7 +360,7 @@ struct device_node *of_batterydata_get_best_profile(
 			for (i = 0; i < batt_ids.num; i++) {
 				delta = abs(batt_ids.kohm[i] - batt_id_kohm);
 				limit = (batt_ids.kohm[i] * id_range_pct) / 100;
-				#ifdef VENDOR_EDIT
+				#ifdef CONFIG_PRODUCT_REALME_TRINKET
 				/* wangchao@ODM.BSP.charge, 2019/12/25, Add to support 1K battery ID*/
 				if(limit < 1){
 					pr_err("delta = %d, limit = %d, set limit to 1", delta, limit);
@@ -389,7 +389,7 @@ struct device_node *of_batterydata_get_best_profile(
 	}
 
 	/* check that profile id is in range of the measured batt_id */
-	#ifndef VENDOR_EDIT
+	#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	/* wangchao@ODM.BSP.charge, 2019/12/25, Modify to support 1K battery ID*/
 	if (abs(best_id_kohm - batt_id_kohm) >
 			((best_id_kohm * id_range_pct) / 100)) {

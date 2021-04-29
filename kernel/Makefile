@@ -12,7 +12,7 @@ obj-y     = fork.o exec_domain.o panic.o \
 	    notifier.o ksysfs.o cred.o reboot.o \
 	    async.o range.o smpboot.o ucount.o
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #yawnu@TECH.Storage.FS.oF2FS, 2019/09/13, flush device cache in panic if necessary
 obj-y += panic_flush.o
 #endif

@@ -97,7 +97,7 @@ struct rpmh_master_stats_prv_data {
 	struct kobject *kobj;
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/05/23 add for get sys/power/oppo/oppo_rpm_stats
 extern struct kobject *rpmstats_kobj_oppo;
 #endif
@@ -214,7 +214,7 @@ static int msm_rpmh_master_stats_probe(struct platform_device *pdev)
 	struct kobject *rpmh_master_stats_kobj = NULL;
 	int ret = -ENOMEM;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/05/23 add for get sys/power/oppo/rpm_stats
 	struct rpmh_master_stats_prv_data *prvdata_oppo = NULL;
 #endif
@@ -246,7 +246,7 @@ static int msm_rpmh_master_stats_probe(struct platform_device *pdev)
 		goto fail_sysfs;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/05/23 add for get sys/power/oppo/oppo_rpm_master_stats
 	if(rpmstats_kobj_oppo == NULL)
 	{
@@ -286,7 +286,7 @@ static int msm_rpmh_master_stats_probe(struct platform_device *pdev)
 
 	apss_master_stats.version_id = 0x1;
 	platform_set_drvdata(pdev, prvdata);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/05/23 add for get sys/power/oppo/rpm_stats	
 	platform_set_drvdata(pdev, prvdata_oppo);
 #endif
@@ -294,7 +294,7 @@ static int msm_rpmh_master_stats_probe(struct platform_device *pdev)
 
 fail_iomap:
 	sysfs_remove_file(prvdata->kobj, &prvdata->ka.attr);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/05/23 add for get sys/power/oppo/rpm_stats	
 	sysfs_remove_file(prvdata_oppo->kobj, &prvdata_oppo->ka.attr);
 fail_sysfs_oppo:

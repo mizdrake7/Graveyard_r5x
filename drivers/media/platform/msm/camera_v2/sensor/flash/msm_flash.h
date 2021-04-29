@@ -103,7 +103,7 @@ struct msm_flash_ctrl_t {
 	/* flash state */
 	enum msm_camera_flash_state_t flash_state;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Add by Zhengrong.Zhang@Camera 20160809 for flash*/
 	const char *flash_name;
 #endif

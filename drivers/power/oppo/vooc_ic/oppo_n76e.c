@@ -1,6 +1,6 @@
 /**********************************************************************************
 * Copyright (c)  2017-2019  Guangdong OPPO Mobile Comm Corp., Ltd
-* VENDOR_EDIT
+* CONFIG_PRODUCT_REALME_TRINKET
 * Description: For Nuvoton N76E003 MCU
 * Version   : 1.0
 * Date      : 2018-03-12

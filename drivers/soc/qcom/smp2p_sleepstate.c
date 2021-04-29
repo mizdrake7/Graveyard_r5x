@@ -21,12 +21,12 @@
 
 #define PROC_AWAKE_ID 12 /* 12th bit */
 #define AWAKE_BIT BIT(PROC_AWAKE_ID)
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Bo.Xiang@BSP.Sensor, 2019-08-21, add for ignore non_wakeup sensor notify event wihle ap is going to sleep
 struct qcom_smem_state *qstate;
 #else
 static struct qcom_smem_state *state;
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 struct wakeup_source notify_ws;
 
 /**
@@ -42,7 +42,7 @@ static int sleepstate_pm_notifier(struct notifier_block *nb,
 				  unsigned long event, void *unused)
 {
 	switch (event) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Bo.Xiang@BSP.Sensor, 2019-08-21, add for ignore non_wakeup sensor notify event wihle ap is going to sleep
     case PM_SUSPEND_PREPARE:
         //qcom_smem_state_update_bits(state, AWAKE_BIT, 0);
@@ -59,7 +59,7 @@ static int sleepstate_pm_notifier(struct notifier_block *nb,
     case PM_POST_SUSPEND:
 	    qcom_smem_state_update_bits(state, AWAKE_BIT, AWAKE_BIT);
         break;
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 	}
 
 	return NOTIFY_DONE;
@@ -82,7 +82,7 @@ static int smp2p_sleepstate_probe(struct platform_device *pdev)
 	int irq = -1;
 	struct device *dev = &pdev->dev;
 	struct device_node *node = dev->of_node;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Bo.Xiang@BSP.Sensor, 2019-08-21, add for ignore non_wakeup sensor notify event wihle ap is going to sleep
     //state = qcom_smem_state_get(&pdev->dev, 0, &ret);
     //if (IS_ERR(state))
@@ -97,7 +97,7 @@ static int smp2p_sleepstate_probe(struct platform_device *pdev)
     if (IS_ERR(state))
         return PTR_ERR(state);
     qcom_smem_state_update_bits(state, AWAKE_BIT, AWAKE_BIT);
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 	ret = register_pm_notifier(&sleepstate_pm_nb);
 	if (ret)
 		dev_err(&pdev->dev, "%s: power state notif error %d\n",

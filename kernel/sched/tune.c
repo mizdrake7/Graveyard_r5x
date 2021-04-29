@@ -7,7 +7,7 @@
 #include <linux/slab.h>
 
 #include <trace/events/sched.h>
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* huangzhigen@oppo.com, 2019/05/09 add for frame boost 2.0 */
 #include <linux/hrtimer.h>
 #include <linux/kthread.h>
@@ -63,7 +63,7 @@ struct schedtune {
 	 * towards idle CPUs */
 	int prefer_idle;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	s64 defered;
 #endif
 };
@@ -102,7 +102,7 @@ root_schedtune = {
 	.colocate_update_disabled = false,
 #endif
 	.prefer_idle = 0,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	.defered = 0,
 #endif
 };
@@ -118,7 +118,7 @@ root_schedtune = {
  *    implementation especially for the computation of the per-CPU boost
  *    value
  */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #define BOOSTGROUPS_COUNT 8
 #else
 #define BOOSTGROUPS_COUNT 6
@@ -139,7 +139,7 @@ static struct schedtune *allocated_group[BOOSTGROUPS_COUNT] = {
  * maximum per-CPU boosting value.
  */
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 struct boost_group_timer {
 	/* Boost defered time */
 	s64 defered;
@@ -181,7 +181,7 @@ struct boost_groups {
 		/* Timestamp of boost activation */
 		u64 ts;
 	} group[BOOSTGROUPS_COUNT];
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* Boost group timer */
 	struct boost_group_timer bg_timer[BOOSTGROUPS_COUNT];
 #endif
@@ -272,7 +272,7 @@ schedtune_boost_group_active(int idx, struct boost_groups* bg, u64 now)
 	if (bg->group[idx].tasks)
 		return true;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	if (bg->bg_timer[idx].defered)
 		return false;
 #endif
@@ -280,7 +280,7 @@ schedtune_boost_group_active(int idx, struct boost_groups* bg, u64 now)
 	return !schedtune_boost_timeout(now, bg->group[idx].ts);
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Used for update defered(-1) and boost */
 static inline void
 schedtune_queue_boost_work(struct boost_groups* bg, int idx, int cpu)
@@ -324,7 +324,7 @@ schedtune_cpu_update(int cpu, u64 now)
 		if (!schedtune_boost_group_active(idx, bg, now))
 			continue;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/* Defered does not affect to root schedtune */
 		if (bg->bg_timer[idx].defered) {
 			if (boost_max < bg->bg_timer[idx].dboost) {
@@ -373,7 +373,7 @@ schedtune_boostgroup_update(int idx, int boost)
 		/* Update the boost value of this boost group */
 		bg->group[idx].boost = boost;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/* Do not update boost max when defered was enabled.
 		 * defered > 0 : update by hrtimer,
 		 * defered < 0 : instantly update with queue work.
@@ -434,7 +434,7 @@ schedtune_tasks_update(struct task_struct *p, int cpu, int idx, int task_count)
 {
 	struct boost_groups *bg = &per_cpu(cpu_boost_groups, cpu);
 	int tasks = bg->group[idx].tasks + task_count;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	int boost_max;
 	struct boost_work *bw;
 #endif
@@ -454,7 +454,7 @@ schedtune_tasks_update(struct task_struct *p, int cpu, int idx, int task_count)
 			schedtune_cpu_update(cpu, now);
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* Update boost max every dequeue/quque when defered was enabled and boost > 0 */
 	if (!(bg->bg_timer[idx].defered && bg->group[idx].boost > 0))
 		goto out;
@@ -687,7 +687,7 @@ int schedtune_task_boost(struct task_struct *p)
 {
 	struct schedtune *st;
 	int task_boost;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	struct boost_groups *bg;
 #endif
 
@@ -701,7 +701,7 @@ int schedtune_task_boost(struct task_struct *p)
 
 
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	bg = &per_cpu(cpu_boost_groups, task_cpu(p));
 	if (bg->bg_timer[st->idx].defered)
 		task_boost = bg->bg_timer[st->idx].dboost;
@@ -794,7 +794,7 @@ boost_write(struct cgroup_subsys_state *css, struct cftype *cft,
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #define DEFERED_MAX_MSEC	100
 static int
 schedtune_boostgroup_update_defered(int idx, s64 defered)
@@ -877,7 +877,7 @@ static struct cftype files[] = {
 		.read_u64 = prefer_idle_read,
 		.write_u64 = prefer_idle_write,
 	},
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	{
 		.name = "defered",
 		.read_s64 = defered_read,
@@ -887,7 +887,7 @@ static struct cftype files[] = {
 	{ }	/* terminate */
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 static enum hrtimer_restart
 schedtune_boostgroup_timer(struct hrtimer *htimer)
 {
@@ -998,7 +998,7 @@ schedtune_boostgroup_init(struct schedtune *st)
 		bg->group[st->idx].boost = 0;
 		bg->group[st->idx].tasks = 0;
 		bg->group[st->idx].ts = 0;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		bg->bg_timer[st->idx].defered = 0;
 		bg->bg_timer[st->idx].dboost = 0;
 		bg->bg_timer[st->idx].index = st->idx;
@@ -1057,7 +1057,7 @@ out:
 static void
 schedtune_boostgroup_release(struct schedtune *st)
 {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* Reset defered and dboost */
 	schedtune_boostgroup_update_defered(st->idx, 0);
 #endif
@@ -1099,7 +1099,7 @@ schedtune_init_cgroups(void)
 		bg = &per_cpu(cpu_boost_groups, cpu);
 		memset(bg, 0, sizeof(struct boost_groups));
 		raw_spin_lock_init(&bg->lock);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		bg->bg_timer[0].cpu = cpu;
 		hrtimer_init(&bg->bg_timer[0].timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 		bg->bg_timer[0].timer.function = schedtune_boostgroup_timer;
@@ -1120,7 +1120,7 @@ schedtune_init(void)
 {
 	schedtune_spc_rdiv = reciprocal_value(100);
 	schedtune_init_cgroups();
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	schedtune_init_boost_kthread();
 #endif
 	return 0;

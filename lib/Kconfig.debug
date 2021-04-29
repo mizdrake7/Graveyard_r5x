@@ -955,7 +955,7 @@ config BOOTPARAM_HUNG_TASK_PANIC_VALUE
 	default 0 if !BOOTPARAM_HUNG_TASK_PANIC
 	default 1 if BOOTPARAM_HUNG_TASK_PANIC
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #fanhui@PhonwSW.BSP, 2016/04/07, DeathHealer enable config
 config DEATH_HEALER
 	bool "Enable DeathHealer"

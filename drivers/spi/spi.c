@@ -3585,7 +3585,7 @@ static int __init spi_init(void)
 {
 	int	status;
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 //#Lijie.Yang@ODM_WT.BSP.Kernel.Stability.1941873, 2020/06/08, modify for spi buf alloc flag
 	buf = kmalloc(SPI_BUFSIZ, GFP_KERNEL);
 #else

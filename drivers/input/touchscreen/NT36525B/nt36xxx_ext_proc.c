@@ -46,7 +46,7 @@
 #define OPPO_FW_UPDATE "tp_fw_update"
 #define OPPO_GAME_SWITCH "game_switch_enable"
 #define OPPO_TP_LIMIT_ENABLE "oppo_tp_limit_enable"
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.Tp.Init,2019/1/19,Add direction node for limit funciton.
 #define OPPO_TP_DIRECTION "oppo_tp_direction"
 #endif
@@ -66,7 +66,7 @@ static struct proc_dir_entry *oppo_fw_update;
 static struct proc_dir_entry *oppo_game_switch;
 static struct proc_dir_entry *oppo_tp_limit_enable;
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.Tp.Init,2019/1/19,Add direction node for limit funciton.
 static struct proc_dir_entry *oppo_tp_direction;
 #endif
@@ -109,14 +109,14 @@ int limit_direction;
 
 int NT_SIGN = 0;
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_POLLING
 bool hop_status = false;
 bool fix_status = false;
 static unsigned int oppo_game_switch_flag = 0;
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,add power on function
 extern int power_flag;
 extern int  nvt_power_on(struct nvt_ts_data *power_idev, bool on);
@@ -710,7 +710,7 @@ static int32_t c_main_register_show(struct seq_file *m, void *v)
 	NVT_LOG("HEADSET_FLAG:%d\n", (buf[1]>> HEADSET_FLAG) & 0x01);
 	seq_printf(m, "HEADSET_FLAG:%d\n", (buf[1]>> HEADSET_FLAG) & 0x01);
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	//Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_POLLING
 	NVT_LOG("HOPPING_POLLING_FLAG:%d\n", (buf[1]>> HOPPING_POLLING_FLAG) & 0x01);
 	seq_printf(m, "HOPPING_POLLING_FLAG:%d\n", (buf[1]>> HOPPING_POLLING_FLAG) & 0x01);
@@ -790,7 +790,7 @@ static ssize_t oppo_gesture_write(struct file *filp, const char __user *buf,size
 		NVT_LOG("%s, is already suspend",__func__);
 		return -1;
 	}*/
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,add power on function
 	int pwr;
 #endif
@@ -810,7 +810,7 @@ static ssize_t oppo_gesture_write(struct file *filp, const char __user *buf,size
 			NVT_LOG("far away psensor\n");
 			ts->gesture_enable = 1;
 			g_gesture = 1;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,add power on function
 			if(power_flag == 0){
 				pwr = nvt_power_on(ts, true);
@@ -939,7 +939,7 @@ static ssize_t oppo_fw_update_write(struct file *filp, const char __user *buf,
 		case 0:	/* noflash: force update. flash: force update */
             NT_SIGN = 0;
             request_and_download_normal_complete = false;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 			nvt_update_firmware(fw->firmware_name);
 #endif
@@ -1134,7 +1134,7 @@ static ssize_t oppo_tp_limit_enable_write(struct file *filp, const char __user *
 		return -EINVAL;
 	}
 	NVT_LOG("%s +++ \n",__func__);
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,avoid use user buf
 	sscanf(cmd, "%x", &tmp);
 #endif
@@ -1210,7 +1210,7 @@ static ssize_t oppo_tp_direction_write(struct file *filp, const char __user *buf
 		return -EINVAL;
 	}
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,avoid use user buf
 	sscanf(cmd, "%x", &tmp);
 #endif
@@ -1258,7 +1258,7 @@ static ssize_t oppo_tp_direction_read(struct file *file, char __user *buf, size_
 }
 
 /*oppo_tp_hop_test*/
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_POLLING
 static ssize_t oppo_tp_hop_test_write(struct file *filp, const char __user *buf,
 		size_t count, loff_t *ppos)
@@ -1274,7 +1274,7 @@ static ssize_t oppo_tp_hop_test_write(struct file *filp, const char __user *buf,
 		NVT_ERR("input value error\n");
 		return -EINVAL;
 	}
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,avoid use user buf
 	sscanf(cmd, "%x", &tmp);
 #endif
@@ -1324,7 +1324,7 @@ static ssize_t oppo_tp_hop_test_read(struct file *file, char __user *buf, size_t
 }
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_FIX
 static ssize_t oppo_tp_fix_test_write(struct file *filp, const char __user *buf,
 		size_t count, loff_t *ppos)
@@ -1340,7 +1340,7 @@ static ssize_t oppo_tp_fix_test_write(struct file *filp, const char __user *buf,
 		NVT_ERR("input value error\n");
 		return -EINVAL;
 	}
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,avoid use user buf
 	sscanf(cmd, "%x", &tmp);
 #endif
@@ -1404,7 +1404,7 @@ static const struct file_operations oppo_tp_direction_fops =
 	.owner = THIS_MODULE,
 };
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING
 static const struct file_operations freq_hop_simulate_fops =
 {
@@ -1809,7 +1809,7 @@ int32_t nvt_extra_proc_init(void)
 		NVT_MK_PROC_ENTRY(delta, 0664, ts->nvt_oppo_proc_data->debug_info_dir_entry)
 		NVT_MK_PROC_ENTRY(baseline, 0664, ts->nvt_oppo_proc_data->debug_info_dir_entry)
 		NVT_MK_PROC_ENTRY(main_register, 0664, ts->nvt_oppo_proc_data->debug_info_dir_entry)
-		#ifdef ODM_WT_EDIT
+		#ifdef CONFIG_ODM_WT_EDIT
 		//Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_POLLING
 		NVT_MK_PROC_ENTRY(freq_hop_simulate, 0666, ts->nvt_oppo_proc_data->debug_info_dir_entry)
 		NVT_MK_PROC_ENTRY(fix_hop_simulate, 0666, ts->nvt_oppo_proc_data->debug_info_dir_entry)

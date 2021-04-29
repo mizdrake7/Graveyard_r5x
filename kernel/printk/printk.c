@@ -59,7 +59,7 @@
 #include "braille.h"
 #include "internal.h"
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.CHG.Basic 2018/05/01 add for disable uart print
 #include <soc/oppo/boot_mode.h>
 #endif
@@ -68,7 +68,7 @@
 extern void printascii(char *);
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //ye.zhang@BSP.CHG.Basic 2019/10/1,modify for get disable uart value from cmdline
 #ifdef CONFIG_OPPO_DEBUG_BUILD
 bool printk_disable_uart = false;
@@ -80,7 +80,7 @@ bool oem_get_uartlog_status(void)
 {
 	return !printk_disable_uart;
 }
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 int console_printk[4] = {
 	CONSOLE_LOGLEVEL_DEFAULT,	/* console_loglevel */
@@ -610,7 +610,7 @@ static int log_store(int facility, int level,
 	u32 size, pad_len;
 	u16 trunc_msg_len = 0;
 
-    #ifdef VENDOR_EDIT 
+    #ifdef CONFIG_PRODUCT_REALME_TRINKET 
 	//part 1/2: yixue.ge 2015-04-22 add for add cpu number and current id and current comm to kmsg
     int this_cpu = smp_processor_id();
     char tbuf[64];
@@ -649,7 +649,7 @@ static int log_store(int facility, int level,
 
 	/* fill message */
 	msg = (struct printk_log *)(log_buf + log_next_idx);
-    #ifndef VENDOR_EDIT 
+    #ifndef CONFIG_PRODUCT_REALME_TRINKET 
 	//part 2/2: yixue.ge 2015-04-22 add for add cpu number and current id and current comm to kmsg
 	memcpy(log_text(msg), text, text_len);
     #else
@@ -814,14 +814,14 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
 	/* Ignore when user logging is disabled. */
 	if (devkmsg_log & DEVKMSG_LOG_MASK_OFF)
 		return len;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Lijie.Yang@ODM_WT.BSP.Kernel.Stability.1941873, 2020/05/21, add kernel log print limit
 	/* Ratelimit when not explicitly enabled. */
 	if (!(devkmsg_log & DEVKMSG_LOG_MASK_ON)) {
 		if (!___ratelimit(&user->rs, current->comm))
 			return ret;
 	}
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 	buf = kmalloc(len+1, GFP_KERNEL);
 	if (buf == NULL)
 		return -ENOMEM;
@@ -1260,12 +1260,12 @@ static inline void boot_delay_msec(int level)
 static bool printk_time = IS_ENABLED(CONFIG_PRINTK_TIME);
 module_param_named(time, printk_time, bool, S_IRUGO | S_IWUSR);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.CHG.Basic 2018/05/01,add for get disable uart value from cmdline
 
 module_param_named(disable_uart, printk_disable_uart, bool, S_IRUGO | S_IWUSR);
 
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static size_t print_time(u64 ts, char *buf)
 {
@@ -1762,7 +1762,7 @@ static void call_console_drivers(const char *ext_text, size_t ext_len,
 		return;
 
 	for_each_console(con) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.CHG.Basic 2018/05/01,add for disable uart print,this modify can reduce poweron time add ftm mode
 		if(get_boot_mode() == MSM_BOOT_MODE__FACTORY
 		|| get_boot_mode() == MSM_BOOT_MODE__RF

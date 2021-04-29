@@ -14,12 +14,12 @@
 #include <linux/sched/cputime.h>
 #include <linux/tick.h>
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // wenbin.liu@PSW.BSP.MM, 2018/05/02
 // Add for get cpu load
 #include <linux/delay.h>
 #include <soc/oppo/oppo_healthinfo.h>
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 #ifndef arch_irq_stat_cpu
 #define arch_irq_stat_cpu(cpu) 0
@@ -204,7 +204,7 @@ static const struct file_operations proc_stat_operations = {
 	.release	= single_release,
 };
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // wenbin.liu@PSW.BSP.MM, 2018/05/02
 // Add for get cpu load
 struct cpu_load_stat {
@@ -261,7 +261,7 @@ int ohm_get_cur_cpuload(bool ctrl)
 	return 100 * load / sum;
 }
 
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static int __init proc_stat_init(void)
 {

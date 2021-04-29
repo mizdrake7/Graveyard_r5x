@@ -132,7 +132,7 @@ static ssize_t show_max_cpus(const struct cluster_data *state, char *buf)
 	return snprintf(buf, PAGE_SIZE, "%u\n", state->max_cpus);
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //cuixiaogang@SRC.hypnus, 2019.05.20 add for hypnus-daemon
 int hypnus_set_min_max_cpus(unsigned int index, unsigned int min, unsigned int max)
 {
@@ -149,7 +149,7 @@ int hypnus_set_min_max_cpus(unsigned int index, unsigned int min, unsigned int m
         wake_up_core_ctl_thread(state);
         return 0;
 }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static ssize_t store_offline_delay_ms(struct cluster_data *state,
 					const char *buf, size_t count)

@@ -1,6 +1,6 @@
 /**
  * Copyright 2008-2013 OPPO Mobile Comm Corp., Ltd, All rights reserved.
- * VENDOR_EDIT:
+ * CONFIG_PRODUCT_REALME_TRINKET:
  * FileName:devinfo.c
  * ModuleName:devinfo
  * Author: wangjc
@@ -201,7 +201,7 @@ int register_device_proc(char *name, char *version, char *vendor)
 }
 
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP devinfo begain
 int register_tp_proc(char *name, char *version, char *manufacture ,char *fw_path)
 {
@@ -228,7 +228,7 @@ int register_tp_proc(char *name, char *version, char *manufacture ,char *fw_path
      return 0;
 }
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP devinfo end
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 
 /*maxinming_hq added for camera devinfo 20191212*/

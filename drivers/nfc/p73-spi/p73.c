@@ -84,10 +84,10 @@ static struct regulator *p61_regulator = NULL;
 #endif
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,add for load nfc driver according to boardid
 extern char nfc_hardware_info[20];
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 
 
 /* size of maximum read/write buffer supported by driver */
@@ -954,10 +954,10 @@ static int __init p61_dev_init(void)
 
     P61_DBG_MSG("Entry : %s\n", __FUNCTION__);
 
-    #ifndef ODM_WT_EDIT
+    #ifndef CONFIG_ODM_WT_EDIT
     //Xiaoping.Xie@ODM_WT.WCN.NFC.Basic.1941873,2019/5/17,modify for load p73 driver according to boardid
     return spi_register_driver(&p61_driver);
-    #else /* ODM_WT_EDIT */
+    #else /* CONFIG_ODM_WT_EDIT */
     if((strncmp(nfc_hardware_info,"S86125FA1",strlen("S86125FA1")) == 0)||
       (strncmp(nfc_hardware_info,"S86125EA1",strlen("S86125EA1")) == 0)||
       (strncmp(nfc_hardware_info,"S86125UA1",strlen("S86125UA1")) == 0)||
@@ -976,7 +976,7 @@ static int __init p61_dev_init(void)
 	    pr_info(" %s This Board doesn't support NFC. BoardID: %sExit! \n",__func__,nfc_hardware_info);
 	    return -1;
     }
-    #endif /* ODM_WT_EDIT */
+    #endif /* CONFIG_ODM_WT_EDIT */
 
 
     P61_DBG_MSG("Exit : %s\n", __FUNCTION__);

@@ -894,7 +894,7 @@ static ssize_t mmc_dsr_show(struct device *dev,
 
 static DEVICE_ATTR(dsr, S_IRUGO, mmc_dsr_show, NULL);
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoxiang.xiong@ODM_WT.BSP.Storage.eMMC 2020/03/21, Add for factory version serial number
 static int calc_mem_size(void)
 {
@@ -1004,7 +1004,7 @@ static ssize_t flash_name_show(struct device *dev,
 }
 
 static DEVICE_ATTR(flash_name, S_IRUGO, flash_name_show, NULL);
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 
 static struct attribute *mmc_std_attrs[] = {
@@ -1032,10 +1032,10 @@ static struct attribute *mmc_std_attrs[] = {
 	&dev_attr_ocr.attr,
 	&dev_attr_dsr.attr,
 	&dev_attr_cmdq_en.attr,
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoxiang.xiong@ODM_WT.BSP.Storage.eMMC 2020/03/21, Add for factory version serial number
 	&dev_attr_flash_name.attr,
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	NULL,
 };
 ATTRIBUTE_GROUPS(mmc_std);

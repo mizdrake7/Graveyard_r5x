@@ -180,7 +180,7 @@ struct msm_isp_buf_ops {
 	int (*buf_divert)(struct msm_isp_buf_mgr *buf_mgr,
 			uint32_t bufq_handle, uint32_t buf_index,
 			struct timeval *tv, uint32_t frame_id);
-#ifdef VENDOR_EDIT /* Camera@Drv 2020/05/11, Add for isp buffer error */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET /* Camera@Drv 2020/05/11, Add for isp buffer error */
 	int (*buf_err)(struct msm_isp_buf_mgr *buf_mgr,
 		uint32_t bufq_handle, uint32_t buf_index,
 		struct timeval *tv, uint32_t frame_id, uint32_t output_format);

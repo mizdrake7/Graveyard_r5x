@@ -158,10 +158,10 @@ struct sde_plane_state {
 	bool const_alpha_en;
 	bool pending;
 	bool defer_prepare_fb;
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Mark.Yao@PSW.MM.Display.LCD.Stable,2019-01-12 add is_skip check */
 	bool is_skip;
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	uint32_t pipe_order_flags;
 
 	/* scaler configuration */
@@ -311,7 +311,7 @@ int sde_plane_validate_multirect_v2(struct sde_multirect_plane_states *plane);
  */
 void sde_plane_clear_multirect(const struct drm_plane_state *drm_state);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.Service.Feature,2018/11/21
  * For OnScreenFingerprint feature
 */

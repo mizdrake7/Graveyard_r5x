@@ -1427,7 +1427,7 @@ static int32_t msm_cci_init(struct v4l2_subdev *sd,
 	}
 
 	/* Re-initialize the completion */
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*modify by hongbo.dai@camera 20190709, for Qualcomm CCI patch*/
 	for (j = 0; j < NUM_MASTERS; j++) {
 			reinit_completion(&cci_dev->cci_master_info[j].reset_complete);

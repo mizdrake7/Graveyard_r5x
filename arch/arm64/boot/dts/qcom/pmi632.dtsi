@@ -145,9 +145,9 @@
 				qcom,pre-scaling = <1 1>;
 			};
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Baisc, 2019/07/04, add for usb connector temperature check*/
-// #ifdef ODM_WT_EDIT
+// #ifdef CONFIG_ODM_WT_EDIT
 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Remove for 86125 Q */
 /*
 			usb_temp_v_l {
@@ -162,7 +162,7 @@
 				qcom,pre-scaling = <1 1>;
 			};
 */
-// #endif /* ODM_WT_EDIT */
+// #endif /* CONFIG_ODM_WT_EDIT */
 //#endif
 		};
 
@@ -213,9 +213,9 @@
 			io-channels = <&pmi632_vadc ADC_USB_IN_V_16>,
 				      <&pmi632_vadc ADC_USB_IN_I>,
 				      <&pmi632_vadc ADC_CHG_TEMP>,
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/07/04, add for usb connector temperature check*/
-// #ifdef ODM_WT_EDIT
+// #ifdef CONFIG_ODM_WT_EDIT
 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Modify for 86125 Q */
 //				      <&pmi632_vadc ADC_DIE_TEMP>,
 //				      <&pmi632_vadc ADC_GPIO1_PU2>,
@@ -224,14 +224,14 @@
 				      <&pmi632_vadc ADC_DIE_TEMP>,
 				      <&pm6125_vadc ADC_GPIO3_PU2>,
 				      <&pm6125_vadc ADC_AMUX_THM2_PU2>;
-// #endif /* ODM_WT_EDIT */
+// #endif /* CONFIG_ODM_WT_EDIT */
 //#endif
 			io-channel-names = "usb_in_voltage",
 					   "usb_in_current",
 					   "chg_temp",
-//#ifdef VENDOR_EDIT                  
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET                  
 /*LiYue@BSP.CHG.Basic, 2019/07/04, add for usb connector temperature check*/
-// #ifdef ODM_WT_EDIT
+// #ifdef CONFIG_ODM_WT_EDIT
 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Modify for 86125 Q */
 //					   "die_temp",
 //					   "usb_temp_v_l",
@@ -240,13 +240,13 @@
 					   "die_temp",
 					   "odm_skin_temp",
 					   "odm_cpu_temp";
-// #endif /* ODM_WT_EDIT */
+// #endif /* CONFIG_ODM_WT_EDIT */
 //#endif
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/08/08, disable lpd*/
 			qcom,lpd-disable;
 //#endif
-//#ifdef VENDOR_EDIT /* Jianchao.Shi@BSP.CHG.Basic, 2016/12/26, sjc Add for charging */
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET /* Jianchao.Shi@BSP.CHG.Basic, 2016/12/26, sjc Add for charging */
 			//for smb5:
 			qcom,usb-icl-ua = <2000000>;
 			qcom,fcc-max-ua = <2200000>;
@@ -266,7 +266,7 @@
 			qcom,input_current_calling_ma = <1200>;
 			qcom,input_current_camera_ma = <1200>;
 			//qcom,input_current_led_ma_overtemp = <900>;
-		// #ifdef ODM_WT_EDIT
+		// #ifdef CONFIG_ODM_WT_EDIT
 			/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Modify for 86125 Q */
 			qcom,input_current_led_ma_high = <1200>;
 			qcom,input_current_led_ma_warm = <1500>;
@@ -274,7 +274,7 @@
 			qcom,led_warm_bat_decidegc = <350>;
 			qcom,led_high_bat_decidegc = <370>;
 			qcom,overtemp_bat_decidegc = <350>;
-		// #endif /* ODM_WT_EDIT */
+		// #endif /* CONFIG_ODM_WT_EDIT */
 			qcom,iterm_disabled = <0>;
 			qcom,iterm_ma = <255>;	/*0.05C+10*/
 			qcom,recharge-mv = <100>;
@@ -287,7 +287,7 @@
 			qcom,temp_cold_vfloat_mv = <3980>;
 			qcom,temp_cold_fastchg_current_ma = <350>;	/*300-364mA*/
 
-		//#ifdef ODM_WT_EDIT
+		//#ifdef CONFIG_ODM_WT_EDIT
 			/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200415, Modify for 86125 Q */
 			qcom,little_cold_bat_decidegc = <0>;	/* 0C~5C */
 			qcom,temp_little_cold_vfloat_mv = <4435>;
@@ -312,7 +312,7 @@
 			qcom,temp_warm_vfloat_mv = <4130>;
 			qcom,temp_warm_fastchg_current_ma = <1350>;	/* 0.3C*0.95-64 ~ 0.3C*0.95 */
 			qcom,temp_warm_fastchg_current_ma_led_on = <500>;
-		//#endif /* ODM_WT_EDIT */
+		//#endif /* CONFIG_ODM_WT_EDIT */
 
 			qcom,hot_bat_decidegc = <530>;
 
@@ -391,7 +391,7 @@
 			qcom,sw_vfloat_over_protect_enable;
 
 			qcom,usbid-gpio = <&tlmm 47 0x00>;
-		// #ifdef ODM_WT_EDIT
+		// #ifdef CONFIG_ODM_WT_EDIT
 			/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Modify for 86125 Q */
 			//qcom,dischg-gpio = <&pmi632_gpios 2 0x00>;
 
@@ -406,8 +406,8 @@
 			//pinctrl-3 = <&gpio4_adc_default>;
 			//pinctrl-4 = <&dischg_enable>;
 			//pinctrl-5 = <&dischg_disable>;
-		// #endif /* ODM_WT_EDIT */
-//#endif //VENDOR_EDIT
+		// #endif /* CONFIG_ODM_WT_EDIT */
+//#endif //CONFIG_PRODUCT_REALME_TRINKET
 
 			qcom,chgr@1000 {
 				reg = <0x1000 0x100>;
@@ -562,7 +562,7 @@
 			#size-cells = <1>;
 
 			qcom,pmic-revid = <&pmi632_revid>;
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Kun.Zhang@PSW.BSP.CHG  2019-05-16  recognize SDI\ATL\Liwion\Coslight battery with parallel 300k and series 5.1k */
 			qcom,atl_4_45_battery_id_low = <664>;
 			qcom,atl_4_45_battery_id_high = <752>;
@@ -576,19 +576,19 @@
 			qcom,jeita-hard-thresholds_5p1k = <0x5E68 0x72A>;
 //#endif
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-10-11  increase s3 threshold, avoid qg-fifo-done resume pm suspend */
 			qcom,s3-entry-ibat-ua = <18000>;
 			qcom,s3-exit-ibat-ua = <38000>;
 //#endif
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/07/12, modify for change pull up 30K*/
 			io-channels = <&pmi632_vadc ADC_BAT_THERM_PU1>,
 //#else
 //			io-channels = <&pmi632_vadc ADC_BAT_THERM_PU2>,
 //#endif
 				      <&pmi632_vadc ADC_BAT_ID_PU2>;
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/07/12, modify for change pull up 30K*/
 			io-channel-names = "bat_therm_30k",
 //#else
@@ -809,11 +809,11 @@
 				qcom,max-current = <500>;
 				qcom,default-led-trigger = "torch0_trigger";
 				qcom,id = <0>;
-				/*ifdef  ODM_WT_EDIT*/
+				/*ifdef  CONFIG_ODM_WT_EDIT*/
 				qcom,current-ma = <110>;
 				/*else
 				qcom,current-ma = <300>;
-				endif ODM_WT_EDIT
+				endif CONFIG_ODM_WT_EDIT
 				*/
 				qcom,ires-ua = <12500>;
 				qcom,hdrm-voltage-mv = <400>;

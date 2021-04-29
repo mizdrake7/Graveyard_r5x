@@ -831,7 +831,7 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 		 * wait_lock. This ensures the lock cancellation is ordered
 		 * against mutex_unlock() and wake-ups do not go missing.
 		 */
-		//#ifdef VENDOR_EDIT fangpan@Swdp.shanghai,2015/11/12
+		//#ifdef CONFIG_PRODUCT_REALME_TRINKET fangpan@Swdp.shanghai,2015/11/12
 		if (unlikely(signal_pending_state(state, current))
 			|| hung_long_and_fatal_signal_pending(current)) {
 		//#endif
@@ -846,14 +846,14 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 		}
 
 		spin_unlock(&lock->wait_lock);
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
         if (state & TASK_UNINTERRUPTIBLE) {
             current->in_mutex = 1;
         }
 #endif
 		schedule_preempt_disabled();
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
         if (state & TASK_UNINTERRUPTIBLE) {
             current->in_mutex = 0;

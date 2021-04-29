@@ -1337,7 +1337,7 @@ static void geni_spi_handle_tx(struct spi_geni_master *mas)
 
 	if (!mas->cur_xfer)
 		return;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Lijie.Yang@ODM_WT.BSP.Kernel.Stability.1941873, 2020/06/08, modify for debug tx buff is none issue
 	if (mas->cur_xfer->tx_buf == NULL) {
 		dev_err(mas->dev, "geni_spi_handle_tx:[%s] tx_buf is Null len = %d tx_rem_bytes = %d\n",
@@ -1405,7 +1405,7 @@ static void geni_spi_handle_rx(struct spi_geni_master *mas)
 	if (!mas->cur_xfer)
 		return;
 
-#ifdef VENDOR_EDIT 
+#ifdef CONFIG_PRODUCT_REALME_TRINKET 
 //Lijie.Yang@ODM_WT.BSP.Kernel.Stability.1941873, 2020/06/08, modify for debug tx buff is none issue
 	if (mas->cur_xfer->rx_buf == NULL) {
 		dev_err(mas->dev, "geni_spi_handle_rx:[%s] rx_buf is Null len = %d rx_rem_bytes = %d\n",

@@ -18,8 +18,8 @@
 #ifndef 	_LINUX_NVT_TOUCH_H
 #define		_LINUX_NVT_TOUCH_H
 
-#ifndef 	ODM_WT_EDIT
-#define		ODM_WT_EDIT
+#ifndef 	CONFIG_ODM_WT_EDIT
+#define		CONFIG_ODM_WT_EDIT
 #endif
 
 #include <linux/spi/spi.h>
@@ -30,13 +30,13 @@
 #include <linux/gpio.h>
 #include <linux/msm_drm_notify.h>
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.Tp,2018/10/11,Add touch-info file function
 //#include<linux/input/touch-info.h>
 #include<linux/workqueue.h>
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,add power on function
 #include <linux/regulator/consumer.h>
 #endif
@@ -93,7 +93,7 @@ extern const uint16_t touch_key_array[TOUCH_KEY_NUM];
 #endif
 
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //bin.su@ODM_WT.BSP.Tp,2019/08/12,solver probleml for RTC 2224750
 #define TOUCH_FORCE_NUM 255
 #else
@@ -190,7 +190,7 @@ struct oppo_debug_gesture_record_info {
 };
 
 #define BOOT_UPDATE_FIRMWARE 1
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 
 
@@ -235,7 +235,7 @@ struct nvt_oppo_data {
 	struct proc_dir_entry *oppo_tp_limit_area_entry;
 	struct proc_dir_entry *oppo_tp_limit_enable_entry;
 	struct proc_dir_entry *oppo_tp_direction_entry;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING
 	struct proc_dir_entry *freq_hop_simulate_entry;
 	struct proc_dir_entry *fix_hop_simulate_entry;
@@ -324,11 +324,11 @@ struct nvt_ts_data {
 #ifdef CONFIG_SPI_MT65XX
     struct mtk_chip_config spi_ctrl;
 #endif
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 	int vendor_id;
 #endif
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/07/04,add power on function
 	struct regulator *iovcc_pwr;
 	struct regulator *vsp_pwr;
@@ -342,7 +342,7 @@ struct nvt_flash_data{
 };
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 typedef enum {
 	HLT  = 0,
@@ -382,7 +382,7 @@ typedef enum {
 	MODE_CHARGE,
 	MODE_GAME,
 	MODE_HEADSET,
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_POLLING
 	MODE_HOPPING_POLLING
 #endif
@@ -392,7 +392,7 @@ typedef enum {
     EDGE_REJECT_L = 0,
     EDGE_REJECT_H,
     PWR_FLAG,
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_POLLING
     HOPPING_POLLING_FLAG = 4,
 #endif
@@ -405,7 +405,7 @@ typedef enum {
 #define HOST_CMD_PWR_PLUG_IN    (0x53)
 #define HOST_CMD_PWR_PLUG_OUT   (0x51)
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/24,add HOPPING_POLLING
 #define HOST_CMD_HOPPING_POLLING_ON   (0x73)
 #define HOST_CMD_HOPPING_POLLING_OFF  (0x74)
@@ -438,7 +438,7 @@ typedef enum {
 
 //---extern structures---
 extern struct nvt_ts_data *ts;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 extern struct upgrade_fw_info *fw;
 #endif

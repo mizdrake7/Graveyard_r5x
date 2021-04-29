@@ -29,12 +29,12 @@
 #include "dsi_pwr.h"
 #include "dsi_parser.h"
 #include "msm_drv.h"
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21
  * Add for save display panel power status at oppo display management
 */
 #include <linux/dsi_oppo_support.h>
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 #define MAX_BL_LEVEL 4096
 #define MAX_BL_SCALE_LEVEL 1024
@@ -121,20 +121,20 @@ struct dsi_backlight_config {
 	u32 bl_max_level;
 	u32 brightness_max_level;
 	u32 brightness_default_level;
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-11-04 add for global hbm */
 	u32 bl_normal_max_level;
 	u32 brightness_normal_max_level;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	u32 bl_level;
 	u32 bl_scale;
 	u32 bl_scale_ad;
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09,Add blmap for BL
 	int blmap_size;
 	int *blmap;
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2019/03/09,Add blmap for BL
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 	int en_gpio;
 	/* PWM params */
@@ -184,7 +184,7 @@ struct drm_panel_esd_config {
 	u32 groups;
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Mark.Yao@PSW.MM.Display.LCD.Feature,2019-11-07 add for oppo custom info */
 struct dsi_panel_oppo_privite {
 
@@ -192,7 +192,7 @@ struct dsi_panel_oppo_privite {
 	bool is_aod_ramless;
 
 };
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 struct dsi_panel {
 	const char *name;
@@ -229,25 +229,25 @@ struct dsi_panel {
 	struct dsi_parser_utils utils;
 
 	bool lp11_init;
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add NT36525B HOLITECH BOE LCD bringup code
 	bool novatek_flag;
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add NT36525B HOLITECH BOE LCD bringup code
-//#endif /* ODM_WT_EDIT */
-//#ifdef ODM_WT_EDIT
+//#endif /* CONFIG_ODM_WT_EDIT */
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/09/18, add ILI9881H INNOLUX INX GG3 LCD tag
 	bool ilitek_innolux_gg3_flag;
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add ILI9881H INNOLUX INX GG3 LCD tag
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	bool ulps_feature_enabled;
 	bool ulps_suspend_enabled;
 	bool allow_phy_power_off;
 	atomic_t esd_recovery_pending;
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, optimize lcd wakeup time
 	atomic_t esd_recovery_flag;
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, optimize lcd wakeup time
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	bool panel_initialized;
 	bool te_using_watchdog_timer;
 	u32 qsync_min_fps;
@@ -259,7 +259,7 @@ struct dsi_panel {
 	int power_mode;
 	enum dsi_panel_physical_type panel_type;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.Service.Feature,2018/11/21
  * For OnScreenFingerprint feature
 */
@@ -354,7 +354,7 @@ int dsi_panel_post_unprepare(struct dsi_panel *panel);
 
 int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl);
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/9, add CABC cmd used for power saving
 int dsi_panel_set_cabc_mode(struct dsi_panel *panel, u32 cabc_mode);
 int dsi_panel_get_cabc_mode(struct dsi_panel *panel, unsigned int *cabc_mode);
@@ -363,7 +363,7 @@ int dsi_panel_cabc_ui_mode_enable(struct dsi_panel *panel);
 int dsi_panel_cabc_still_mode_enable(struct dsi_panel *panel);
 int dsi_panel_cabc_moving_mode_enable(struct dsi_panel *panel);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/9, add CABC cmd used for power saving
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 int dsi_panel_update_pps(struct dsi_panel *panel);
 
@@ -398,7 +398,7 @@ struct dsi_panel *dsi_panel_ext_bridge_get(struct device *parent,
 int dsi_panel_parse_esd_reg_read_configs(struct dsi_panel *panel);
 
 void dsi_panel_ext_bridge_put(struct dsi_panel *panel);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.LCD.Stability,2018/11/21
  * Add for oppo display new structure
 */

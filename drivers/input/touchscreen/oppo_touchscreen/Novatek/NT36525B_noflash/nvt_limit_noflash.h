@@ -1,6 +1,6 @@
 /***************************************************
  * File:nvt_limit.h
- * VENDOR_EDIT
+ * CONFIG_PRODUCT_REALME_TRINKET
  * Copyright (c)  2017 - 2030  Oppo Mobile communication Corp.ltd.
  * Description:
  *             nova nt36525b test limit data

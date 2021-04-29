@@ -1785,7 +1785,7 @@ static __latent_entropy struct task_struct *copy_process(
 #endif
 
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
     p->stuck_trace = 0;
     memset(&p->oppo_stuck_info, 0, sizeof(struct oppo_uifirst_monitor_info));

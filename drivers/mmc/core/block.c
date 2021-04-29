@@ -52,11 +52,11 @@
 
 #include "queue.h"
 #include "block.h"
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoxiang.Xiong@ODM_WT.BSP.Storage, 2020/04/15, Add for eMMC and DDR device information
 #include <soc/oppo/device_info.h>
 #include <soc/oppo/oppo_project.h>
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 #include "core.h"
 #include "card.h"
 #include "host.h"
@@ -147,7 +147,7 @@ struct mmc_blk_data {
 	/* debugfs files (only in main mmc_blk_data) */
 	struct dentry *status_dentry;
 	struct dentry *ext_csd_dentry;
-	//#ifdef ODM_WT_EDIT
+	//#ifdef CONFIG_ODM_WT_EDIT
 	//#Xiaoxiang.Xiong@ODM_WT.BSP.Storage, 2020/04/07, add for emmc lifetime
 	struct dentry *sector_count_dentry;
 	struct dentry *life_time_dentry;
@@ -1400,10 +1400,10 @@ static int card_busy_detect(struct mmc_card *card, unsigned int timeout_ms,
 	unsigned long timeout = jiffies + msecs_to_jiffies(timeout_ms);
 	int err = 0;
 	u32 status;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@PhoneSW.BSP, 2017-1-17, send card changing to RO mode uevent to android layer
 	char *envp[2] = {"sdcard_ro=1", NULL};
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	do {
 		err = __mmc_send_status(card, &status, 5);
 		if (err) {
@@ -1431,13 +1431,13 @@ static int card_busy_detect(struct mmc_card *card, unsigned int timeout_ms,
 			pr_err("%s: Card stuck in programming state! %s %s\n",
 				mmc_hostname(card->host),
 				req->rq_disk->disk_name, __func__);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //yh@bsp, 2015-10-21 Add for special card compatible
 //yh@PhoneSW.BSP, 2017-1-17, send card changing to RO mode uevent to android layer
 			kobject_uevent_env(
 					&(card->dev.kobj),
 					KOBJ_CHANGE, envp);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 			return -ETIMEDOUT;
 		}
 
@@ -2096,7 +2096,7 @@ static enum mmc_blk_status mmc_blk_err_check(struct mmc_card *card,
 
 		err = card_busy_detect(card, MMC_BLK_TIMEOUT_MS, false, req,
 					&gen_err);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019-12-20 Add for special card compatibility
 		if(-ETIMEDOUT == err)
 			card->host->card_stuck_in_programing_status = true;
@@ -4017,7 +4017,7 @@ static void mmc_blk_remove_req(struct mmc_blk_data *md)
 #endif
 			del_gendisk(md->disk);
 		}
-		//#ifdef ODM_WT_EDIT
+		//#ifdef CONFIG_ODM_WT_EDIT
 		//#Lijie Yang@ODM_WT.BSP.Kernel.Stability.2728779, 2020/04/23, Delete gendisk before cleaning up the request queue
 		mmc_cleanup_queue(&md->queue);
 		//#endif
@@ -4213,7 +4213,7 @@ static const struct file_operations mmc_dbg_ext_csd_fops = {
 	.llseek		= default_llseek,
 };
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //#Xiaoxiang.Xiong@ODM_WT.BSP.Storage, 2020/04/07, add for emmc lifetime
 #define SECTOR_COUNT_BUF_LEN 16
 static int mmc_sector_count_open(struct inode *inode, struct file *filp)
@@ -4412,7 +4412,7 @@ static int mmc_blk_add_debugfs(struct mmc_card *card, struct mmc_blk_data *md)
 		if (!md->ext_csd_dentry)
 			return -EIO;
 	}
-	//#ifdef ODM_WT_EDIT
+	//#ifdef CONFIG_ODM_WT_EDIT
 	//#Xiaoxiang.Xiong@ODM_WT.BSP.Storage, 2020/04/07, add for emmc lifetime
 	if (mmc_card_mmc(card)) {
 		md->sector_count_dentry =
@@ -4469,22 +4469,22 @@ static int mmc_blk_probe(struct mmc_card *card)
 {
 	struct mmc_blk_data *md, *part_md;
 	char cap_str[10];
-	//#ifdef ODM_WT_EDIT
+	//#ifdef CONFIG_ODM_WT_EDIT
 	//Xiaoxiang.Xiong@ODM_WT.BSP.Storage, 2020/04/15, Add for eMMC and DDR device information
 	char * manufacturerid;
     static char temp_version[10];
-	//#endif /* ODM_WT_EDIT */
+	//#endif /* CONFIG_ODM_WT_EDIT */
 
 	/*
 	 * Check that the card supports the command class(es) we need.
 	 */
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019-11-11 Add for loading failure for CSD info mismatches the real capability of card when the CSD register is not working.
 	if (!(card->csd.cmdclass & CCC_BLOCK_READ))
 		return -ENODEV;
 #endif
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Xiaoxiang.Xiong@ODM_WT.BSP.Storage, 2020/04/15, Add for eMMC and DDR device information
 	switch (card->cid.manfid) {
 		case  0x11:
@@ -4512,7 +4512,7 @@ static int mmc_blk_probe(struct mmc_card *card)
 		register_device_proc("emmc", mmc_card_name(card), manufacturerid);
 		register_device_proc("emmc_version", mmc_card_name(card), temp_version);
 	}
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	mmc_fixup_device(card, mmc_blk_fixups);
 
 	md = mmc_blk_alloc(card);
@@ -4563,7 +4563,7 @@ static int mmc_blk_probe(struct mmc_card *card)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Chunyi.Mei@PSW.BSP.Storage.Sdcard, 2018-12-10, Add for SD Card device information
 char *capacity_string(struct mmc_card *card){
 	static char cap_str[10] = "unknown";

@@ -1,6 +1,6 @@
 /*******************************************************************************
 ** Copyright (C), 2008-2016, OPPO Mobile Comm Corp., Ltd.
-** ODM_WT_EDIT
+** CONFIG_ODM_WT_EDIT
 ** FILE: - hiamx_common.c
 ** Description : This program is for headset notifier
 ** Version: 1.0

@@ -1578,7 +1578,7 @@ static int soc_probe_component(struct snd_soc_card *card,
 				"ASoC: failed to probe component %d\n", ret);
 			goto err_probe;
 		}
-		#ifndef VENDOR_EDIT
+		#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/*Jianfeng.Qiu@PSW.MM.AudioDriver.Platform.1234162, 2018/03/30,
 		 *Delete for uart issue duo to warning log.
 		 */
@@ -1586,7 +1586,7 @@ static int soc_probe_component(struct snd_soc_card *card,
 			dapm->bias_level != SND_SOC_BIAS_OFF,
 			"codec %s can not start from non-off bias with idle_bias_off==1\n",
 			component->name);
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	}
 
 	/* machine specific init */

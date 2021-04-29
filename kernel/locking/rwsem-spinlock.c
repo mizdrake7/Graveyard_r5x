@@ -152,7 +152,7 @@ int __sched __down_read_common(struct rw_semaphore *sem, int state)
 	for (;;) {
 		if (!waiter.task)
 			break;
-		//#ifdef VENDOR_EDIT fangpan@Swdp.shanghai,2015/11/12
+		//#ifdef CONFIG_PRODUCT_REALME_TRINKET fangpan@Swdp.shanghai,2015/11/12
 		if (hung_long_and_fatal_signal_pending(current)) {
 			list_del(&waiter.list);
 			break;
@@ -239,7 +239,7 @@ int __sched __down_write_common(struct rw_semaphore *sem, int state)
 		 */
 		if (sem->count == 0)
 			break;
-		//#ifdef VENDOR_EDIT fangpan@Swdp.shanghai,2015/11/12
+		//#ifdef CONFIG_PRODUCT_REALME_TRINKET fangpan@Swdp.shanghai,2015/11/12
 		if (hung_long_and_fatal_signal_pending(current)) {
 			break;
 		}

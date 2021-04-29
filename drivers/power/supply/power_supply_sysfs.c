@@ -226,7 +226,7 @@ static ssize_t power_supply_store_property(struct device *dev,
 /* Must be in the same order as POWER_SUPPLY_PROP_* */
 static struct device_attribute power_supply_attrs[] = {
 	/* Properties of type `int' */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao,Shi@BSP.CHG.Basic, 2016/12/20, sjc Add for charging */
 	POWER_SUPPLY_ATTR(battery_request_poweroff),
 	POWER_SUPPLY_ATTR(InstatVolt),
@@ -276,7 +276,7 @@ static struct device_attribute power_supply_attrs[] = {
 
 	POWER_SUPPLY_ATTR(ctrl_by_hotspot),
 	POWER_SUPPLY_ATTR(ctrl_by_camera),
-#endif  /* VENDOR_EDIT */
+#endif  /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	POWER_SUPPLY_ATTR(status),
 	POWER_SUPPLY_ATTR(charge_type),
@@ -409,7 +409,7 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(parallel_disable),
 	POWER_SUPPLY_ATTR(pe_start),
 	POWER_SUPPLY_ATTR(soc_reporting_ready),
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-06-04  save soc */
 	POWER_SUPPLY_ATTR(battery_info),
 	POWER_SUPPLY_ATTR(battery_info_id),
@@ -484,7 +484,7 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(parallel_output_mode),
 	/* Local extensions of type int64_t */
 	POWER_SUPPLY_ATTR(charge_counter_ext),
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao,Shi@BSP.CHG.Basic, 2016/12/20, sjc Add for charging */
 	POWER_SUPPLY_ATTR(adjust_power),
 	POWER_SUPPLY_ATTR(adapter_fw_update),
@@ -496,20 +496,20 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(short_c_batt_update_change),
 	POWER_SUPPLY_ATTR(short_c_batt_in_idle),
 	POWER_SUPPLY_ATTR(short_c_batt_cv_status),
-#endif /* VENDOR_EDIT */
-#ifdef VENDOR_EDIT//Fanhong.Kong@PSW.BSP.CHG, 2017/10/20, Add for hw battery check
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET//Fanhong.Kong@PSW.BSP.CHG, 2017/10/20, Add for hw battery check
 #ifdef CONFIG_OPPO_SHORT_HW_CHECK
 	POWER_SUPPLY_ATTR(short_c_hw_feature),
 	POWER_SUPPLY_ATTR(short_c_hw_status),
 #endif	
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	/* Properties of type `const char *' */
 	POWER_SUPPLY_ATTR(model_name),
 	POWER_SUPPLY_ATTR(manufacturer),
 	POWER_SUPPLY_ATTR(serial_number),
 	POWER_SUPPLY_ATTR(battery_type),
 	POWER_SUPPLY_ATTR(cycle_counts),
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
     /* Boyu.Wen  PSW.BSP.CHG  2020-1-19  for Fixed a problem with unstable torch current */
     POWER_SUPPLY_ATTR(batt_torch),
 #endif
@@ -606,7 +606,7 @@ int power_supply_uevent(struct device *dev, struct kobj_uevent_env *env)
 		struct device_attribute *attr;
 		char *line;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/08/22, Add for reduce reading Vbus*/
 		if (((psy->desc->properties[j] == POWER_SUPPLY_PROP_VOLTAGE_NOW) && (psy->desc->type == POWER_SUPPLY_TYPE_USB))
 			|| ((psy->desc->properties[j] == POWER_SUPPLY_PROP_CHARGE_NOW) && (psy->desc->type == POWER_SUPPLY_TYPE_BATTERY)))

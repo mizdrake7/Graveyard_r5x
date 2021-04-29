@@ -22,7 +22,7 @@
 
 #include "ilitek.h"
 uint8_t buf_gesture[GESTURE_INFO_LENGTH+1];
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 uint32_t last_pressure = 0;
 int package_times = 0;
 #endif
@@ -886,7 +886,7 @@ void ilitek_tddi_report_ap_mode(u8 *buf, int len)
 
 		if (MT_PRESSURE) {
 			touch_info[idev->finger].pressure = buf[(4 * i) + 4];
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 			if(last_pressure == touch_info[idev->finger].pressure){
 			if(package_times %(idev->presure_speed) != 0){
 				touch_info[idev->finger].pressure++;
@@ -990,7 +990,7 @@ void ilitek_tddi_report_debug_mode(u8 *buf, int len)
 
 		if (MT_PRESSURE) {
 			touch_info[idev->finger].pressure = buf[(4 * i) + 4];
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 			if(last_pressure == touch_info[idev->finger].pressure){
 			if(package_times %(idev->presure_speed) != 0){
 				touch_info[idev->finger].pressure++;

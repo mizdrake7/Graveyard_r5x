@@ -46,7 +46,7 @@ struct msm_eeprom_ctrl_t {
 	int32_t userspace_probe;
 	struct msm_eeprom_memory_block_t cal_data;
 	uint8_t is_supported;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Added by Jinshui.Liu@Camera 20160821 for [module vendor info]*/
 	/*from dts*/
 	int32_t position;
@@ -61,7 +61,7 @@ struct msm_eeprom_ctrl_t {
 #endif
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*add by hongbo.dai@camera 20170417 for support alps actuator*/
 	struct vcm_id_info {
 		uint16_t  vcm_id;

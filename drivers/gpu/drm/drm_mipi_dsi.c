@@ -35,7 +35,7 @@
 
 #include <video/mipi_display.h>
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* HQ001218@MM.Display.Driver.Stability. 20200301 */
 extern int himax_backlight_off;
 #endif
@@ -370,7 +370,7 @@ static ssize_t mipi_dsi_device_transfer(struct mipi_dsi_device *dsi,
 	return ops->transfer(dsi->host, msg);
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //liwei.a@PSW.MM.Display.Stability, 2019/07/29, add for transfer all command in once
 static ssize_t oppo_mipi_dsi_device_transfer(struct mipi_dsi_device *dsi,
 					struct mipi_dsi_msg *msg, u8 last)
@@ -705,7 +705,7 @@ ssize_t mipi_dsi_dcs_write_buffer(struct mipi_dsi_device *dsi,
 }
 EXPORT_SYMBOL(mipi_dsi_dcs_write_buffer);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //liwei.a@PSW.MM.Display.Stability, 2019/07/29, add for transfer all command in once
 ssize_t oppo_mipi_dsi_write_buffer(struct mipi_dsi_device *dsi,
 				  const void *data, size_t len, u8 last, int is_ili)
@@ -789,7 +789,7 @@ ssize_t mipi_dsi_dcs_write(struct mipi_dsi_device *dsi, u8 cmd,
 }
 EXPORT_SYMBOL(mipi_dsi_dcs_write);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //liwei.a@PSW.MM.Display.Stability, 2019/07/29, add for transfer all command in once
 ssize_t oppo_mipi_dsi_write(struct mipi_dsi_device *dsi, u8 cmd,
 			   const void *data, size_t len, u8 last, int is_ili)
@@ -1153,7 +1153,7 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_scanline);
 int mipi_dsi_dcs_set_display_brightness(struct mipi_dsi_device *dsi,
 					u16 brightness)
 {
-	//#ifdef VENDOR_EDIT
+	//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* W9001377@MM.Display.Driver.Stability. 20191023 */
 	/* ensure backlight display normal */
 	//u8 payload[2] = { brightness & 0xff, brightness >> 8 };
@@ -1171,7 +1171,7 @@ int mipi_dsi_dcs_set_display_brightness(struct mipi_dsi_device *dsi,
 }
 EXPORT_SYMBOL(mipi_dsi_dcs_set_display_brightness);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /**
  * oppo_mipi_dsi_dcs_set_display_brightness() - sets the brightness value of the
  *    display
@@ -1203,7 +1203,7 @@ EXPORT_SYMBOL(oppo_mipi_dsi_dcs_set_display_brightness);
 #endif
 
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* HQ001218@MM.Display.Driver.Stability. 20200107 */
 /* set backlight display for himax 11bit brightness*/
 int mipi_dsi_dcs_set_display_brightness_himax(struct mipi_dsi_device *dsi,
@@ -1217,7 +1217,7 @@ int mipi_dsi_dcs_set_display_brightness_himax(struct mipi_dsi_device *dsi,
 
 	pr_err("himax_backlight_off = %d\n",himax_backlight_off);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* HQ001109@MM.Display.Driver.Stability. 20200221 */
 /* make sure MIPI is powered off before backlight when suspend and power off */
 	if (brightness == 0 && himax_backlight_off == 1) {
@@ -1248,7 +1248,7 @@ int mipi_dsi_dcs_set_display_brightness_himax(struct mipi_dsi_device *dsi,
 EXPORT_SYMBOL(mipi_dsi_dcs_set_display_brightness_himax);
 #endif
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC cmd used for power saving
 int mipi_dsi_dcs_set_display_cabc(struct mipi_dsi_device *dsi,
 									u32 cabc_mode)
@@ -1266,7 +1266,7 @@ int mipi_dsi_dcs_set_display_cabc(struct mipi_dsi_device *dsi,
 }
 EXPORT_SYMBOL(mipi_dsi_dcs_set_display_cabc);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 /**
  * mipi_dsi_dcs_get_display_brightness() - gets the current brightness value

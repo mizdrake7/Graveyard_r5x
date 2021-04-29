@@ -156,7 +156,7 @@ enum ufs_desc_def_size {
 	QUERY_DESC_HEALTH_MAX_SIZE              = 0x25,
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019/11/19,Add for check storage endurance
 /* Health descriptor parameters offsets in bytes*/
 enum health_desc_param {

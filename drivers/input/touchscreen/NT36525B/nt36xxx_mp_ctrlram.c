@@ -1,6 +1,6 @@
 /*******************************************************************************
 ** Copyright (C), 2008-2016, OPPO Mobile Comm Corp., Ltd.
-** ODM_WT_EDIT
+** CONFIG_ODM_WT_EDIT
 ** FILE: - nt36xxx_mp_ctrlram.c
 ** Description : This program is for nt36xxx driver
 ** Version: 1.0
@@ -29,7 +29,7 @@
 #define MP_MODE_CC 0x41
 #define FREQ_HOP_DISABLE 0x66
 #define FREQ_HOP_ENABLE 0x65
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Zhonghua.Hu@ODM_WT.BSP.Tp.Init.1372106,2018/12/14,Modify for oppo factory test
 //#define SHORT_TEST_CSV_FILE "/data/local/tmp/ShortTest.csv"
 //#define OPEN_TEST_CSV_FILE "/data/local/tmp/OpenTest.csv"
@@ -1523,7 +1523,7 @@ int32_t nvt_selftest_open(struct inode *inode, struct file *file)
 #endif /* #if NVT_TOUCH_ESD_PROTECT */
 
 	//---Download MP FW---
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 	nvt_update_firmware(fw->firmware_mp_name);
 #endif
@@ -1547,7 +1547,7 @@ int32_t nvt_selftest_open(struct inode *inode, struct file *file)
 		if (nvt_mp_parse_dt(np, mpcriteria)) {
 			NVT_LOG("%s : Download Normal FW",__func__);
 			//---Download Normal FW---
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 			nvt_update_firmware(fw->firmware_name);
 #endif
@@ -1689,7 +1689,7 @@ int32_t nvt_selftest_open(struct inode *inode, struct file *file)
 	}
 
 	//---Download Normal FW---
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 /*
 	if (ts->oppo_baseline_test_flag == 0) {
@@ -1815,7 +1815,7 @@ static int32_t nvt_lpwg_selftest_open(struct inode *inode, struct file *file)
 #endif /* #if NVT_TOUCH_ESD_PROTECT */
 
 	//---Download MP FW---
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 	nvt_update_firmware(fw->firmware_mp_name);
 #endif
@@ -1831,7 +1831,7 @@ static int32_t nvt_lpwg_selftest_open(struct inode *inode, struct file *file)
 
 		if (nvt_mp_parse_lpwg_dt(np, mpcriteria)) {
 			//---Download Normal FW---
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 			nvt_update_firmware(fw->firmware_name);
 #endif
@@ -1927,7 +1927,7 @@ static int32_t nvt_lpwg_selftest_open(struct inode *inode, struct file *file)
 	}
 
 	//---Download Normal FW---
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 	nvt_update_firmware(fw->firmware_name);
 #endif

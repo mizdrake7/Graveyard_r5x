@@ -355,7 +355,7 @@ int qg_write_monotonic_soc(struct qpnp_qg *chip, int msoc)
 int qg_get_battery_temp(struct qpnp_qg *chip, int *temp)
 {
 	int rc = 0;
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Baisc, 2019/07/04, remove for charging*/
 	if (chip->battery_missing) {
 		*temp = 250;

@@ -203,13 +203,13 @@ struct task_group;
 
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 
 extern int sysctl_uifirst_enabled;
 extern int sysctl_launcher_boost_enabled;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
 struct uifirst_d_state {
     u64 iowait_ns;
@@ -578,13 +578,13 @@ struct cpu_cycle_counter_cb {
 
 extern DEFINE_PER_CPU_READ_MOSTLY(int, sched_load_boost);
 #ifdef CONFIG_SMP
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //wangmengmeng@swdp.shanghai, 2019/6/20, export some symbol
 extern unsigned long sched_get_capacity_orig(int cpu);
 extern unsigned int sched_get_cpu_util(int cpu);
 #endif
 #else
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //wangmengmeng@swdp.shanghai, 2019/6/20, export some symbol
 static inline unsigned long sched_get_capacity_orig(int cpu)
 {
@@ -600,13 +600,13 @@ static inline unsigned int sched_get_cpu_util(int cpu)
 
 
 #ifdef CONFIG_SCHED_WALT
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //cuixiaogang@swdp.shanghai, 2018/3/18, export some symbol
 extern int sched_boost(void);
 extern int sched_set_updown_migrate(unsigned int *up_pct, unsigned int *down_pct);
 extern int sched_get_updown_migrate(unsigned int *up_pct, unsigned int *down_pct);
 void sched_boost_disable_all(void);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 extern void sched_exit(struct task_struct *p);
 extern int register_cpu_cycle_counter_cb(struct cpu_cycle_counter_cb *cb);
 extern void sched_set_io_is_busy(int val);
@@ -794,7 +794,7 @@ struct wake_q_node {
 	struct wake_q_node *next;
 };
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
 /* Kui.Zhang@TEC.Kernel.Performance, 2019/03/04
  * Record process reclaim infor
  */
@@ -1422,13 +1422,13 @@ struct task_struct {
 	/* Used by LSM modules for access restriction: */
 	void				*security;
 #endif
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
 	/* Kui.Zhang@TEC.Kernel.Performance, 2019/03/04
 	* Record process reclaim infor
 	*/
 	union reclaim_limit reclaim;
 #endif
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
 	   /* Kui.Zhang@TEC.Kernel.Performance, 2019/03/05
 	    * record the time used of process reclaim
 	    */
@@ -1436,10 +1436,10 @@ struct task_struct {
 	   unsigned long reclaim_run_ns;
 	   unsigned long reclaim_intr_ns;
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	int static_ux;
-#endif /* VENDOR_EDIT */
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
     int stuck_trace;
     struct oppo_uifirst_monitor_info oppo_stuck_info;
@@ -1673,7 +1673,7 @@ extern struct pid *cad_pid;
 #define PF_MUTEX_TESTER		0x20000000	/* Thread belongs to the rt mutex tester */
 #define PF_FREEZER_SKIP		0x40000000	/* Freezer should not count it as freezable */
 #define PF_SUSPEND_TASK		0x80000000      /* This thread called freeze_processes() and should not be frozen */
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-12-25, flag that current task is process reclaimer */
 #define PF_RECLAIM_SHRINK	0x10000000
 

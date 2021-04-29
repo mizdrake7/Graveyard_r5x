@@ -22,7 +22,7 @@
 
 #include "ilitek.h"
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Zhonghua.Hu@ODM_WT.BSP.Tp.Init.1372106,2018/5/21,Add for hardware info and compatible txd and hlt ctp
 //#include <linux/hardware_info.h>
 //extern char Ctp_name[HARDWARE_MAX_ITEM_LONGTH];
@@ -30,12 +30,12 @@ extern int ili_ctpmodule;
 //extern unsigned char* CTPM_FW;
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Zhonghua.Hu@ODM_WT.BSP.Tp.Function.1372106,2018/5/21,Add for ctp hardware info
 	char ili_version[20] = {"0"};
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Zhonghua.Hu@ODM_WT.BSP.Tp.Init.1372106,2018/5/21,Add for hardware info for OPPO
 //extern void devinfo_info_tp_set(char *version, char *manufacture, char *fw_path);
 
@@ -86,14 +86,14 @@ static u32 ic_sup_list[CHIP_SUP_NUM] = {
 	[5] = ILI7807G_AB,
 };
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP devinfo begain
 __attribute__((weak)) int register_tp_proc(char *name, char *version, char *manufacture ,char *fw_path)
 {
     return 1;
 }
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP devinfo end
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 
 static int ilitek_tddi_ic_check_support(u32 pid, u16 id)
@@ -788,7 +788,7 @@ int ilitek_tddi_ic_get_fw_ver(void)
 
 	ipio_info("Firmware version = %d.%d.%d.%d\n", buf[1], buf[2], buf[3], buf[4]);
 	idev->chip->fw_ver = buf[1] << 24 | buf[2] << 16 | buf[3] << 8 | buf[4];
-	//#ifdef ODM_WT_EDIT
+	//#ifdef CONFIG_ODM_WT_EDIT
 //Zhonghua.Hu@ODM_WT.BSP.Tp.Init.1372106,2018/5/21,Modify for ito test
   /*
 	if ( ili_ctpmodule == 0 ){
@@ -801,7 +801,7 @@ int ilitek_tddi_ic_get_fw_ver(void)
 #endif
 */
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Zhonghua.Hu@ODM_WT.BSP.Tp.Function.1372106,2018/5/21,Add for ctp hardware info for OPPO
 	if ( ili_ctpmodule == 0 ) {
 	    sprintf(ili_version,"XL_Ili_%0x",buf[3]);

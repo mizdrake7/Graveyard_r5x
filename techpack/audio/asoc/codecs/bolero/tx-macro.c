@@ -47,14 +47,14 @@
 #define TX_MACRO_SWR_MIC_MUX_SEL_MASK 0xF
 #define TX_MACRO_ADC_MUX_CFG_OFFSET 0x2
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*Jianfeng.Qiu@PSW.MM.AudioDriver.Codec.1447862, 2018/06/26,
  *Modify for pop noise when start dmic
  */
 #define TX_MACRO_TX_UNMUTE_DELAY_MS	40
-#else /* VENDOR_EDIT */
+#else /* CONFIG_PRODUCT_REALME_TRINKET */
 #define TX_MACRO_TX_UNMUTE_DELAY_MS	50
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 static int tx_unmute_delay = TX_MACRO_TX_UNMUTE_DELAY_MS;
 module_param(tx_unmute_delay, int, 0664);

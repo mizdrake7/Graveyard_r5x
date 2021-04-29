@@ -4742,7 +4742,7 @@ close_time:
 }
 
 #define AICL_IRQ_LIMIT_SECONDS	60
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 #define AICL_IRQ_LIMIT_COUNT	25
 #else
 #define AICL_IRQ_LIMIT_COUNT	10
@@ -4794,7 +4794,7 @@ static void increment_aicl_count(struct oppo_chg_chip *chip)////pppp
 			 * Disable AICL rerun since many interrupts were
 			 * triggered in a short time
 			 */
-	#ifndef VENDOR_EDIT
+	#ifndef CONFIG_PRODUCT_REALME_TRINKET
 			chip->pmic_spmi.very_weak_charger = true;
 			bad_charger = true;
 	#endif

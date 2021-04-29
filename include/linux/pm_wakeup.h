@@ -59,7 +59,7 @@ struct wakeup_source {
 	struct timer_list	timer;
 	unsigned long		timer_expires;
 	ktime_t total_time;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Yunqing.Zeng@BSP.Power.Basic 2017/11/09 add for wakelock profiler
 	ktime_t total_time_backup;
 #endif
@@ -113,7 +113,7 @@ extern void pm_relax(struct device *dev);
 extern void pm_wakeup_ws_event(struct wakeup_source *ws, unsigned int msec, bool hard);
 extern void pm_wakeup_dev_event(struct device *dev, unsigned int msec, bool hard);
 /* OPPO 2013-09-17 wangjc Add begin for print wakeup source */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 extern void pm_print_active_wakeup_sources(void);
 #endif
 

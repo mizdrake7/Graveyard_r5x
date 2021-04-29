@@ -321,7 +321,7 @@ static int wcd_check_cross_conn(struct wcd_mbhc *mbhc)
 		goto done;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*pangbin1@wingtech.com, 2019/9/4, add for cross_conn recognition error*/
 	if (hphl_adc_res > 100 && hphr_adc_res < 100 && (hphl_adc_res - hphr_adc_res) >= 500) {
 		pr_warn("%s: hphl_adc_res recognition error\n", __func__);
@@ -355,7 +355,7 @@ done:
 	WCD_MBHC_REG_UPDATE_BITS(WCD_MBHC_ELECT_SCHMT_ISRC, elect_ctl);
 
 	pr_debug("%s: leave, plug type: %d\n", __func__,  plug_type);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*pangbin1@wingtech.com, 2019/9/4, add for cross_conn recognition error*/
 	if (plug_type == MBHC_PLUG_TYPE_INVALID)
 		return -1;
@@ -567,10 +567,10 @@ static void wcd_mbhc_adc_detect_plug_type(struct wcd_mbhc *mbhc)
 	struct snd_soc_codec *codec = mbhc->codec;
 
 	pr_debug("%s: enter\n", __func__);
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	// Ming.Liu@MM.Audiodriver.Machine, 2019/08/27, Modify for pop noise
 	msleep(400);
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	WCD_MBHC_RSC_ASSERT_LOCKED(mbhc);
 
@@ -596,7 +596,7 @@ static void wcd_mbhc_adc_detect_plug_type(struct wcd_mbhc *mbhc)
 static void wcd_micbias_disable(struct wcd_mbhc *mbhc)
 {
 	if (mbhc->micbias_enable) {
-		#ifndef VENDOR_EDIT
+		#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/* Zhaoan.Xu@Multimedia.AudioDriver.Stability, 2019/04/11, Modify for checklist 861440*/
 		mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic(
 			mbhc->codec, MIC_BIAS_2, false);
@@ -605,7 +605,7 @@ static void wcd_micbias_disable(struct wcd_mbhc *mbhc)
 			mbhc->mbhc_cb->mbhc_micb_ctrl_thr_mic(
 			    mbhc->codec, MIC_BIAS_2, false);
 		}
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 		if (mbhc->mbhc_cb->set_micbias_value)
 			mbhc->mbhc_cb->set_micbias_value(
 					mbhc->codec);
@@ -640,7 +640,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 	enum wcd_mbhc_plug_type plug_type = MBHC_PLUG_TYPE_INVALID;
 	unsigned long timeout;
 	bool wrk_complete = false;
-	#ifndef VENDOR_EDIT
+	#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	/*xiang.fei@PSW.MM.AudioDriver.HeadsetDet, 2017/03/03,
 	 *Delete for headset detect.
 	 */
@@ -648,7 +648,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 	int no_gnd_mic_swap_cnt = 0;
 	#endif
 	bool is_pa_on = false, spl_hs = false, spl_hs_reported = false;
-	#ifndef VENDOR_EDIT
+	#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	/*xiang.fei@PSW.MM.AudioDriver.HeadsetDet, 2017/03/03,
 	 *Delete for headset detect.
 	 */
@@ -674,7 +674,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 	WCD_MBHC_RSC_UNLOCK(mbhc);
 
 	/* Check for cross connection */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*pangbin1@wingtech.com, 2019/9/4, add for cross_conn recognition error*/
 	cross_conn = wcd_check_cross_conn(mbhc);
 	if (cross_conn >= 0)
@@ -682,7 +682,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 #endif
 
 	do {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/*pangbin1@wingtech.com, 2019/9/4, add for cross_conn recognition error*/
 		if (cross_conn < 0)
 			msleep(500);
@@ -701,7 +701,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 	output_mv = wcd_measure_adc_continuous(mbhc);
 	plug_type = wcd_mbhc_get_plug_from_adc(mbhc, output_mv);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*pangbin1@wingtech.com, 2019/8/16, add for plug and unplug frequently*/
 	if ((plug_type == MBHC_PLUG_TYPE_HEADSET ||
 	     plug_type == MBHC_PLUG_TYPE_HEADPHONE) &&
@@ -717,7 +717,7 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 	if ((plug_type == MBHC_PLUG_TYPE_HEADSET ||
 	     plug_type == MBHC_PLUG_TYPE_HEADPHONE) &&
 	    (!wcd_swch_level_remove(mbhc))
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		&& (output_mv != 0)
 #endif
 		) {
@@ -763,7 +763,7 @@ correct_plug_type:
 			wcd_micbias_disable(mbhc);
 			goto exit;
 		}
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/*pangbin1@wingtech.com, 2019/8/16, add for plug and unplug frequently*/
 		msleep(180);
 #else
@@ -781,26 +781,26 @@ correct_plug_type:
 		 */
 		plug_type = wcd_mbhc_get_plug_from_adc(mbhc, output_mv);
 
-		#ifndef VENDOR_EDIT
+		#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/* Zhao.Pan@PSW.MM.AudioDriver.AudioDriver.HeadsetDet,
 		 * 2019/01/28, Add for headset threshold compare */
 		if ((output_mv > WCD_MBHC_ADC_HS_THRESHOLD_MV) &&
 		#else
 		if ((output_mv > hs_threshold) &&
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 		    (spl_hs_count < WCD_MBHC_SPL_HS_CNT)) {
 			spl_hs = wcd_mbhc_adc_check_for_spl_headset(mbhc,
 								&spl_hs_count);
 			output_mv = wcd_measure_adc_once(mbhc, MUX_CTL_IN2P);
 
 			if (spl_hs_count == WCD_MBHC_SPL_HS_CNT) {
-				#ifndef VENDOR_EDIT
+				#ifndef CONFIG_PRODUCT_REALME_TRINKET
 				/* Zhao.Pan@PSW.MM.AudioDriver.AudioDriver.HeadsetDet,
 				 * 2019/01/28, Add for headset threshold compare */
 				output_mv = WCD_MBHC_ADC_HS_THRESHOLD_MV;
 				#else
 				output_mv = hs_threshold;
-				#endif /* VENDOR_EDIT */
+				#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 				spl_hs = true;
 				mbhc->micbias_enable = true;
 			}
@@ -809,7 +809,7 @@ correct_plug_type:
 		if (mbhc->mbhc_cb->hph_pa_on_status)
 			is_pa_on = mbhc->mbhc_cb->hph_pa_on_status(mbhc->codec);
 
-		#ifndef VENDOR_EDIT
+		#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/*xiang.fei@PSW.MM.AudioDriver.HeadsetDet, 2017/03/03,
 		*Delete for headset detect.
 		*/
@@ -868,13 +868,13 @@ correct_plug_type:
 		}
 		#endif
 
-		#ifndef VENDOR_EDIT
+		#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		/* Zhao.Pan@PSW.MM.AudioDriver.AudioDriver.HeadsetDet,
 		 * 2019/01/28, Add for headset threshold compare */
 		if (output_mv > WCD_MBHC_ADC_HS_THRESHOLD_MV) {
 		#else
 		if (output_mv > hs_threshold) {
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 			pr_debug("%s: cable is extension cable\n", __func__);
 			plug_type = MBHC_PLUG_TYPE_HIGH_HPH;
 			wrk_complete = true;
@@ -976,11 +976,11 @@ enable_supply:
 	if (mbhc->mbhc_cb->mbhc_micbias_control)
 		wcd_mbhc_adc_update_fsm_source(mbhc, plug_type);
 exit:
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Jianfeng.Qiu@PSW.MM.AudioDriver.HeadsetDet.2784831, 2020/01/20, Add for log*/
 	pr_info("%s: mbhc exit plug_type %d, micbias_enable %d\n",
 		__func__, plug_type, mbhc->micbias_enable);
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	if (mbhc->mbhc_cb->mbhc_micbias_control &&
 	    !mbhc->micbias_enable)
 		mbhc->mbhc_cb->mbhc_micbias_control(codec, MIC_BIAS_2,

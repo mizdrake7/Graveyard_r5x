@@ -1,9 +1,9 @@
 #ifndef __UAPI_LINUX_MSMB_CAMERA_H
 #define __UAPI_LINUX_MSMB_CAMERA_H
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*Yingpiao.Lin@Camera.Drv, 20191025, add for android Q*/
-#define VENDOR_EDIT
+#define CONFIG_PRODUCT_REALME_TRINKET
 #endif
 
 #include <linux/videodev2.h>
@@ -62,7 +62,7 @@
 #define MSM_CAMERA_SUBDEV_EXT          (MSM_CAMERA_SUBDEV_BASE + 19)
 #define MSM_CAMERA_SUBDEV_TOF          (MSM_CAMERA_SUBDEV_BASE + 20)
 #define MSM_CAMERA_SUBDEV_LASER_LED    (MSM_CAMERA_SUBDEV_BASE + 21)
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*Jindian.Guan@Camera.Drv, 2019/05/20, modify for dual camera*/
 #define MSM_MAX_CAMERA_SENSORS  5
 #else

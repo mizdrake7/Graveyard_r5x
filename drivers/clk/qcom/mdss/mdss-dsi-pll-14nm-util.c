@@ -50,14 +50,14 @@ static int mdss_pll_read_stored_trim_codes(
 			codes_info->pll_codes.pll_codes_1,
 			codes_info->pll_codes.pll_codes_2);
 
-		#ifdef VENDOR_EDIT
+		#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/*Mark.Yao@PSW.MM.Display.LCD.Params,2019-11-17 fix mipi clk setting error */
 		if ((vco_clk_rate / 1000) != (codes_info->clk_rate / 1000) &&
 				codes_info->is_valid) {
 		#else
 		if (vco_clk_rate != codes_info->clk_rate &&
 				codes_info->is_valid) {
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 				continue;
 		}
 

@@ -306,12 +306,12 @@ EXPORT_SYMBOL(sysctl_tcp_delack_seg);
 int sysctl_tcp_use_userconfig __read_mostly;
 EXPORT_SYMBOL(sysctl_tcp_use_userconfig);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Mengqing.Zhao@PSW.CN.WiFi.Network.internet.1394484, 2019/04/02,
 //add for: When find TCP SYN-ACK Timestamp value error, just do not use Timestamp
 int sysctl_tcp_ts_control[2] __read_mostly = {0,0};
 EXPORT_SYMBOL(sysctl_tcp_ts_control);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 /*
  * Current number of TCP sockets.

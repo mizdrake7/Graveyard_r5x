@@ -125,16 +125,16 @@ void nmi_panic(struct pt_regs *regs, const char *msg)
 }
 EXPORT_SYMBOL(nmi_panic);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* yawnu@TECH.Storage.FS.oF2FS, 2019/09/13, flush device cache in panic if necessary */
 extern int panic_flush_device_cache(int timeout);
 void dumpcpuregs(struct pt_regs *pt_regs);
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*yanghao@BSP.Kernel.Stability, 2019-9-5*/
 extern int get_download_mode(void);
-#endif  /*VENDOR_EDIT*/
+#endif  /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 /**
  *	panic - halt the system
@@ -191,10 +191,10 @@ void panic(const char *fmt, ...)
 	vsnprintf(buf, sizeof(buf), fmt, args);
 	va_end(args);
 	dump_stack_minidump(0);
-#ifdef VENDOR_EDIT //yixue.ge@bsp.drv add for dump cpu contex for minidump
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@bsp.drv add for dump cpu contex for minidump
 	dumpcpuregs(0);
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*yanwu@TECH.Storage.FS, 2019-08-27, flush device cache before goto dump mode*/
 /*yanghao@BSP.Kernel.Stability, 2019-9-5*/
 	if(!get_download_mode())

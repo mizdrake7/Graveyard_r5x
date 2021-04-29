@@ -1431,7 +1431,7 @@ static enum d_walk_ret select_collect(void *_data, struct dentry *dentry)
 		goto out;
 
 	if (dentry->d_flags & DCACHE_SHRINK_LIST) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/*xing.xiong@BSP.Kernel.Stability, Modify for hungtask dcache*/
 		goto out;
 #else

@@ -236,7 +236,7 @@ static inline void msm_pm_qos_add_request(void)
 static void msm_pm_qos_remove_request(void)
 {
 	pr_info("%s: remove request", __func__);
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*yixue.ge@bsp.stability modify for set qos_add_request_done
 	 as 0 when call pm_qos_remove_request
 	*/

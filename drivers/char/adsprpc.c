@@ -3367,10 +3367,10 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
 	/* yanghao@PSW.Kernel.Stability kasan detect the buf_size < snprintf return size caused
 	 * the out of bounds. here just alloc the UL_SIZE 2019-01-05
 	 */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	if (buf_size < UL_SIZE)
 		buf_size = UL_SIZE;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	VERIFY(err, NULL != (fl->debug_buf = kzalloc(buf_size, GFP_KERNEL)));
 	if (err) {

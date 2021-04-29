@@ -495,14 +495,14 @@ static void flush_to_ldisc(struct work_struct *work)
 {
 	struct tty_port *port = container_of(work, struct tty_port, buf.work);
 	struct tty_bufhead *buf = &port->buf;
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
         /* zhenjian Jiang@PSW.BSP.Kernel.Statbility 2018/11/30 add for migration checklist fix typeC null pointer bug */
 	struct tty_struct *tty;
 
 	tty = READ_ONCE(port->itty);
 	if (tty == NULL)
 		return;
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	mutex_lock(&buf->lock);
 
@@ -532,7 +532,7 @@ static void flush_to_ldisc(struct work_struct *work)
 			continue;
 		}
 
-		#ifdef VENDOR_EDIT
+		#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		/* yanghao@PSW.BSP.Kernel.Statbility 2018/10/12
 		 * the tty->driver_data should use after uart_open
 		 * but current occur the workqueue run before uart_open
@@ -546,7 +546,7 @@ static void flush_to_ldisc(struct work_struct *work)
 		}
 		#else
 		count = receive_buf(port, head, count);
-		#endif /* VENDOR_EDIT */
+		#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 		if (!count)
 			break;
 		head->read += count;

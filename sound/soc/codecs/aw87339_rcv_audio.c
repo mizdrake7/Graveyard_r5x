@@ -1,6 +1,6 @@
 /***********************************************************
 ** Copyright (C), 2008-2019, OPPO Mobile Comm Corp., Ltd.
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** File: - aw87339_rcv_audio.c
 ** Description: Source file for AW87339 receiver PA driver.
 ** To allocate and free memory block safely.

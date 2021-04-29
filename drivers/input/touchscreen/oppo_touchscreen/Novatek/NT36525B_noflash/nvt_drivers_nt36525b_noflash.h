@@ -1,6 +1,6 @@
 /***************************************************
  * File:novatek_drivers_nt36525b_noflash.h
- * VENDOR_EDIT
+ * CONFIG_PRODUCT_REALME_TRINKET
  * Copyright (c)  2008- 2019  Oppo Mobile communication Corp.ltd.
  * Description:
  *             novatek nt36525b driver

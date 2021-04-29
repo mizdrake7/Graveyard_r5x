@@ -1,6 +1,6 @@
 /***********************************************************
 ** Copyright (C), 2008-2018, OPPO Mobile Comm Corp., Ltd.
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** File: - xt_qtaguid_oppo_stats.c
 ** Description: Add a proc node to support the function that make
 **              a backup of netstat before sleep

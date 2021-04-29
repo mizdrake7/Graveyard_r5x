@@ -86,7 +86,7 @@ struct cam_control {
 #define VIDIOC_CAM_CONTROL \
 	_IOWR('V', BASE_VIDIOC_PRIVATE, struct cam_control)
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*add by hongbo.dai@Camera,20180326 for AT test*/
 #define VIDIOC_CAM_FTM_POWNER_UP 0
 #define VIDIOC_CAM_FTM_POWNER_DOWN 1

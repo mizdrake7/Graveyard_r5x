@@ -1,6 +1,6 @@
 /**********************************************************************************
 * Copyright (c)  2008-2015  Guangdong OPPO Mobile Comm Corp., Ltd
-* VENDOR_EDIT
+* CONFIG_PRODUCT_REALME_TRINKET
 * Description: Charger IC management module for charger system framework.
 *                  Manage all charger IC and define abstarct function flow.
 * Version   : 1.0
@@ -631,11 +631,11 @@ struct oppo_chg_chip {
 	 int			usb_temp_l;
 	 int			usb_temp_r;
         struct task_struct *tbatt_pwroff_task;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
         /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Add for monitor skin/cpu temperature */
         int                 odm_skin_temp;
         int                 odm_cpu_temp;
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 };
 
 

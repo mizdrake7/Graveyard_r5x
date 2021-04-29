@@ -1,6 +1,6 @@
 /**********************************************************************************
 * Copyright (c)  2008-2015  Guangdong OPPO Mobile Comm Corp., Ltd
-* VENDOR_EDIT
+* CONFIG_PRODUCT_REALME_TRINKET
 * Description: Charger IC management module for charger system framework.
 *                          Manage all charger IC and define abstarct function flow.
 * Version   : 1.0
@@ -112,7 +112,7 @@ static void oppo_chg_battery_update_status(struct oppo_chg_chip *chip);
 static int fb_notifier_callback(struct notifier_block *nb, unsigned long event, void *data);
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Add for monitor skin/cpu temperature */
 #include <linux/iio/consumer.h>
 #include <linux/pmic-voter.h>
@@ -128,7 +128,7 @@ static int g_batt_temp_status = 0;
 static int g_skin_temp_status_1 = 0;
 /* Jie1.Huang@ODM_WT.BSP.Charger.Basic.1941873, 20191030, Add current limited according to cpu tempreture */
 static int g_cpu_temp_status_1 = 0;
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 /****************************************/
 static int reset_mcu_delay = 0;
 static bool vbatt_higherthan_4180mv = false;
@@ -3557,12 +3557,12 @@ void oppo_chg_variables_reset(struct oppo_chg_chip *chip, bool in)
         chip->short_c_batt.limit_chg = false;
         chip->short_c_batt.limit_rechg = false;
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
         /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Add for monitor skin/cpu temperature */
         g_batt_temp_status = 0;
         g_skin_temp_status_1 = 0;
         g_cpu_temp_status_1 = 0;
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 }
 
 static void oppo_chg_variables_init(struct oppo_chg_chip *chip)
@@ -4452,7 +4452,7 @@ static void oppo_chg_battery_update_status(struct oppo_chg_chip *chip)
         battery_update(chip);
 }
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200405, Add for monitor skin/cpu temperature */
 /* Jie1.Huang@ODM_WT.BSP.Charger.Basic.1941873, 20191030, Add current limited according to battery tempreture */
 #define TEMP_CURRENT_2000_MA (2000000)
@@ -4718,7 +4718,7 @@ static void oppo_chg_batt_skin_cpu_temp_set_current(struct oppo_chg_chip *chip)
         vote(chg->usb_icl_votable, SKIN_TEMP_VOTER, false, 0);
     }
 }
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 
 #define RESET_MCU_DELAY_30S     6
 
@@ -5556,10 +5556,10 @@ static void oppo_chg_update_work(struct work_struct *work)
                 oppo_chg_get_chargerid_voltage(chip);
                 oppo_chg_fast_switch_check(chip);
                 oppo_chg_chargerid_switch_check(chip);
-            #ifdef ODM_WT_EDIT
+            #ifdef CONFIG_ODM_WT_EDIT
                 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200416, Add for monitor skin/cpu temperature */
                 oppo_chg_batt_skin_cpu_temp_set_current(chip);
-            #endif /* ODM_WT_EDIT */
+            #endif /* CONFIG_ODM_WT_EDIT */
         }
         oppo_chg_pd_config(chip);
         oppo_chg_qc_config(chip);

@@ -2850,7 +2850,7 @@ static inline enum sched_boost_policy sched_boost_policy(void)
 }
 
 extern unsigned int sched_boost_type;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //cuixiaogang@SRC.hypnus. remove this inline function for hypnus feature
 extern int sched_boost(void);
 #else
@@ -2858,7 +2858,7 @@ static inline int sched_boost(void)
 {
 	return sched_boost_type;
 }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 extern int preferred_cluster(struct sched_cluster *cluster,
 						struct task_struct *p);
 extern struct sched_cluster *rq_cluster(struct rq *rq);

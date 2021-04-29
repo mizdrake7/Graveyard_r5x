@@ -62,7 +62,7 @@ arm64-obj-$(CONFIG_HARDEN_BRANCH_PREDICTOR)	+= bpi.o
 endif
 arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
 
-# ifdef VENDOR_EDIT //yixue.ge@bsp.drv add for minidump
+# ifdef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@bsp.drv add for minidump
 obj-y 					+=get_regs.o
 # endif
 obj-y					+= $(arm64-obj-y) vdso/ probes/

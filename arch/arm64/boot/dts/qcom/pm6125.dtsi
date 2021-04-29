@@ -45,7 +45,7 @@
 				qcom,pull-up = <1>;
 				linux,code = <KEY_POWER>;
 			};
-			//#ifndef VENDOR_EDIT
+			//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 			//Yunqing.Zeng@BSP.Kernel.Driver, 2019/04/03, Modify for key adjust.
 			//qcom,pon_2 {
 			//	qcom,pon-type = <PON_POWER_ON_TYPE_RESIN>;

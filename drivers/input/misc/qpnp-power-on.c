@@ -33,7 +33,7 @@
 #include <linux/regulator/machine.h>
 #include <linux/regulator/of_regulator.h>
 
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 #include <linux/kthread.h>
 #include <linux/rtc.h>
 #include <linux/proc_fs.h>
@@ -42,7 +42,7 @@
 #include <soc/oppo/oppo_project.h>
 #endif
 
-#ifndef ODM_WT_EDIT
+#ifndef CONFIG_ODM_WT_EDIT
 //xubuchao_wt@ODM_WT.BSP.Boardid,2020/03/19,Add board id for Litchi-Q
 #include <linux/hardware_info.h>
 #endif
@@ -98,13 +98,13 @@
 #define QPNP_PON_KPDPWR_RESIN_S2_CNTL2(pon)	((pon)->base + 0x4B)
 #define QPNP_PON_PS_HOLD_RST_CTL(pon)		((pon)->base + 0x5A)
 #define QPNP_PON_PS_HOLD_RST_CTL2(pon)		((pon)->base + 0x5B)
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 #define QPNP_PON_WD_RST_S1_TIMER(pon)		((pon)->base + 0x54)
 #define QPNP_PON_WD_RST_S2_TIMER(pon)		((pon)->base + 0x55)
 #endif
 #define QPNP_PON_WD_RST_S2_CTL(pon)		((pon)->base + 0x56)
 #define QPNP_PON_WD_RST_S2_CTL2(pon)		((pon)->base + 0x57)
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 #define QPNP_PON_WD_RESET_PET(pon)  ((pon)->base + 0x58)
 #endif
 #define QPNP_PON_S3_SRC(pon)			((pon)->base + 0x74)
@@ -131,7 +131,7 @@
 #define QPNP_PON_S1_TIMER_MASK			(0xF)
 #define QPNP_PON_S2_TIMER_MASK			(0x7)
 #define QPNP_PON_S2_CNTL_TYPE_MASK		(0xF)
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 #define QPNP_PON_WD_S2_TIMER_MASK		(0x7F)
 #define QPNP_PON_WD_S1_TIMER_MASK		(0x7F)
 #define QPNP_PON_WD_RESET_PET_MASK		BIT(0)
@@ -236,7 +236,7 @@ struct qpnp_pon {
 	struct mutex		restore_lock;
 	struct delayed_work	bark_work;
 	struct dentry		*debugfs;
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 	struct task_struct *wd_task;
 	struct mutex		wd_task_mutex;
 	unsigned int		pmicwd_state;//|reserver|rst type|timeout|enable|
@@ -825,7 +825,7 @@ int qpnp_pon_wd_config(bool enable)
 }
 EXPORT_SYMBOL(qpnp_pon_wd_config);
 
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 #define OPPO_PMIC_WD_DEFAULT_TIMEOUT 254
 #define OPPO_PMIC_WD_DEFAULT_ENABLE 1  //wen.luo@BSP.Kernel.Stability, 2019-8-15 add for enable pmic, enable in criticallog_config.xml
 extern int get_eng_version(void);
@@ -1013,7 +1013,7 @@ static ssize_t pmicwd_proc_write(struct file *file, const char __user *buf,
 }
 
 
-#ifdef VENDOR_EDIT /* yanghao@PSW.Kernel.Stability add for debug suspend crash problem */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET /* yanghao@PSW.Kernel.Stability add for debug suspend crash problem */
 void oppo_set_pmicWd_state(int enable)
 {
 	struct qpnp_pon *pon = sys_reset_dev;
@@ -1216,7 +1216,7 @@ static int qpnp_pon_input_dispatch(struct qpnp_pon *pon, u32 pon_type)
 	default:
 		return -EINVAL;
 	}
-#ifndef ODM_WT_EDIT
+#ifndef CONFIG_ODM_WT_EDIT
 // Lijie.Yang@ODM_WT.BSP.Kernel.Stability.1941873, 2020/03/21, Add for print key code log.
 	pr_debug("PMIC input: code=%d, status=0x%02X\n", cfg->key_code,
 		pon_rt_sts);
@@ -1240,7 +1240,7 @@ static int qpnp_pon_input_dispatch(struct qpnp_pon *pon, u32 pon_type)
 		input_sync(pon->pon_input);
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/* Fanhong.Kong@ProDrv.CHG,add 2016/7/26 for keycode */
 	pr_err("keycode = %d,key_st = %d\n", cfg->key_code, key_status);
 #endif
@@ -2352,12 +2352,12 @@ static int qpnp_pon_configure_s3_reset(struct qpnp_pon *pon)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/16, interface to read PMIC reg PON_REASON and POFF_REASON */
 extern char pon_reason[];
 extern char poff_reason[];
 int preason_initialized;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static int qpnp_pon_read_hardware_info(struct qpnp_pon *pon, bool sys_reset)
 {
@@ -2404,7 +2404,7 @@ static int qpnp_pon_read_hardware_info(struct qpnp_pon *pon, bool sys_reset)
 
 	/* PON reason */
 	rc = qpnp_pon_read(pon, QPNP_PON_REASON1(pon), &pon_sts);
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/16, interface to read PMIC reg PON_REASON and POFF_REASON */
 	if (rc)
 		return rc;
@@ -2417,40 +2417,40 @@ static int qpnp_pon_read_hardware_info(struct qpnp_pon *pon, bool sys_reset)
 		}
 		return rc;
 	}
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	if (sys_reset)
 		boot_reason = ffs(pon_sts);
 
 	index = ffs(pon_sts) - 1;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/18, when KPDPWR_N is set it is PWK start*/
 	if (pon_sts & 0x80)
 		index = 7;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	cold_boot = sys_reset_dev ? !_qpnp_pon_is_warm_reset(sys_reset_dev)
 				  : !_qpnp_pon_is_warm_reset(pon);
 	if (index >= ARRAY_SIZE(qpnp_pon_reason) || index < 0) {
 		dev_info(dev, "PMIC@SID%d Power-on reason: Unknown and '%s' boot\n",
 			 to_spmi_device(dev->parent)->usid,
 			 cold_boot ? "cold" : "warm");
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/16, interface to read PMIC reg PON_REASON and POFF_REASON */
 		if (!preason_initialized)
 			snprintf(pon_reason, 128, "Unknown[0x%02X] and '%s' boot\n", pon_sts, cold_boot ? "cold" : "warm");
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	} else {
 		pon->pon_trigger_reason = index;
 		dev_info(dev, "PMIC@SID%d Power-on reason: %s and '%s' boot\n",
 			 to_spmi_device(dev->parent)->usid,
 			 qpnp_pon_reason[index],
 			 cold_boot ? "cold" : "warm");
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/16, interface to read PMIC reg PON_REASON and POFF_REASON */
 		if (!preason_initialized)
 			snprintf(pon_reason, 128, "[0x%02X]%s and '%s' boot\n", pon_sts,
 				qpnp_pon_reason[index],	cold_boot ? "cold" : "warm");
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	}
 
 	/* POFF reason */
@@ -2465,13 +2465,13 @@ static int qpnp_pon_read_hardware_info(struct qpnp_pon *pon, bool sys_reset)
 		if (rc) {
 			dev_err(dev, "Register read failed, addr=0x%04X, rc=%d\n",
 				QPNP_POFF_REASON1(pon), rc);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/16, interface to read PMIC reg PON_REASON and POFF_REASON */
 			if (!preason_initialized) {
 				snprintf(poff_reason, 128, "Unable to read POFF_RESASON regs rc:%d\n", rc);
 				preason_initialized = 1;
 			}
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 			return rc;
 		}
 		poff_sts = buf[0] | (buf[1] << 8);
@@ -2480,25 +2480,25 @@ static int qpnp_pon_read_hardware_info(struct qpnp_pon *pon, bool sys_reset)
 	if (index >= ARRAY_SIZE(qpnp_poff_reason) || index < 0) {
 		dev_info(dev, "PMIC@SID%d: Unknown power-off reason\n",
 			 to_spmi_device(dev->parent)->usid);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/16, interface to read PMIC reg PON_REASON and POFF_REASON */
 		if (!preason_initialized) {
 			snprintf(poff_reason, 128, "Unknown[0x%04X]\n", poff_sts);
 			preason_initialized = 1;
 		}
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	} else {
 		pon->pon_power_off_reason = index;
 		dev_info(dev, "PMIC@SID%d: Power-off reason: %s\n",
 			 to_spmi_device(dev->parent)->usid,
 			 qpnp_poff_reason[index]);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/05/16, interface to read PMIC reg PON_REASON and POFF_REASON */
 		if (!preason_initialized) {
 			snprintf(poff_reason, 128, "[0x%04X]%s\n", poff_sts, qpnp_poff_reason[index]);
 			preason_initialized = 1;
 		}
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	}
 
 	if ((pon->pon_trigger_reason == PON_SMPL ||
@@ -2586,7 +2586,7 @@ static int qpnp_pon_parse_dt_power_off_config(struct qpnp_pon *pon)
 	return 0;
 }
 
-#ifndef ODM_WT_EDIT
+#ifndef CONFIG_ODM_WT_EDIT
 //xubuchao1_wt@ODM_WT.BSP.Boardid,2020/03/19,Add board id for Litchi-Q
 extern char board_id[HARDWARE_MAX_ITEM_LONGTH];
 void probe_board_and_set(void)
@@ -2681,7 +2681,7 @@ static int qpnp_pon_probe(struct platform_device *pdev)
 	u32 base, delay;
 	bool sys_reset;
 	int rc;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*xing.xiong@BSP.Kernel.Driver, 2019/07/31, Add for get pwr status when power on*/
 	u32 pon_rt_sts = 0;
 #endif
@@ -2794,7 +2794,7 @@ static int qpnp_pon_probe(struct platform_device *pdev)
 	if (sys_reset)
 		sys_reset_dev = pon;
 
-	#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 	pon->pmicwd_state = of_property_read_bool(pdev->dev.of_node,"oppo,pmicwd");
 	pon->wd_task = NULL;
 	if(sys_reset && pon->pmicwd_state){
@@ -2821,7 +2821,7 @@ static int qpnp_pon_probe(struct platform_device *pdev)
 
 	qpnp_pon_debugfs_init(pon);
 
-    #ifndef ODM_WT_EDIT
+    #ifndef CONFIG_ODM_WT_EDIT
     //xubuchao1_wt@ODM_WT.BSP.Boardid,2020/03/19,Add board id for Litchi-Q
     probe_board_and_set();
     #endif
@@ -2849,7 +2849,7 @@ static int qpnp_pon_remove(struct platform_device *pdev)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd
 static int  setalarm(unsigned long time,bool enable)
 {
 	static struct rtc_device *rtc;
@@ -2968,7 +2968,7 @@ static const struct dev_pm_ops qpnp_pm_ops = {
 	.poweroff = qpnp_poweroff,
 };
 #endif
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #ifdef CONFIG_PM
 static int qpnp_pon_restore(struct device *dev)
@@ -3016,7 +3016,7 @@ static int qpnp_pon_freeze(struct device *dev)
 static const struct dev_pm_ops qpnp_pon_pm_ops = {
 	.freeze = qpnp_pon_freeze,
 	.restore = qpnp_pon_restore,
-#ifdef VENDOR_EDIT //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd	
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.BSP.Kernel.Stablity, 2018-10-26 add for enable pmic wd	
 	.suspend = qpnp_suspend,
 	.resume = qpnp_resume,
 	.poweroff = qpnp_poweroff,	

@@ -2800,7 +2800,7 @@ struct reclaim_param {
 	int nr_to_reclaim;
 	/* pages reclaimed */
 	int nr_reclaimed;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #ifdef CONFIG_PROCESS_RECLAIM_ENHANCE
 	/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-11-07,
 	 * flag that relcaim inactive pages only */
@@ -2815,7 +2815,7 @@ struct reclaim_param {
 extern struct reclaim_param reclaim_task_anon(struct task_struct *task,
 		int nr_to_reclaim);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2019-01-01,
  * Extract the reclaim core code from task_mmu.c for /proc/process_reclaim*/
 extern ssize_t reclaim_task_write(struct task_struct* task,
@@ -2829,7 +2829,7 @@ extern ssize_t reclaim_task_write(struct task_struct* task,
 #define PR_FULL		5
 #define PR_TASK_RUN	6
 #define PR_TASK_DIE	7
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 #endif /* CONFIG_PROCESS_RECLAIM */
 
 #endif /* __KERNEL__ */

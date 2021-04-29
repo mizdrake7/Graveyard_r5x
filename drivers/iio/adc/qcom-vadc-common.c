@@ -169,7 +169,7 @@ static const struct vadc_map_pt adcmap_batt_therm_100k[] = {
  * Voltage to temperature table for 100k pull up for bat_therm with
  * MLP356477.
  */
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*ZhangKun.BSP.CHG.Basic  2019/05/05  Use 100K pull_up resistance*/
 static const struct vadc_map_pt adcmap_batt_therm_100k_6125[] = {
 	{1770,	-400},
@@ -280,7 +280,7 @@ static const struct vadc_map_pt adcmap_batt_therm_100k_6125[] = {
 	{101,	1200},
 	{100,	1250},
 };
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 /*
  * Voltage to temperature table for 30k pull up for bat_therm with
  * Alium.
@@ -362,7 +362,7 @@ static const struct vadc_map_pt adcmap_batt_therm_30k[] = {
  * Voltage to temperature table for 30k pull up for bat_therm with
  * MLP356477.
  */
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20190404, Mofify the ADC Channel because of battery ntc was 10K */
 /* Voltage to temperature */
 static const struct vadc_map_pt adcmap_batt_therm_30k_6125[] = {
@@ -437,7 +437,7 @@ static const struct vadc_map_pt adcmap_batt_therm_30k_6125[] = {
 	{372,	960},
 	{357,	980},
 };
-#else /* VENDOR_EDIT */
+#else /* CONFIG_PRODUCT_REALME_TRINKET */
 /*
 	Voltage to temperature
 	NTC 10k, Beta 3380. Add 5.1K resistance in NTC network. voltage to temperature
@@ -516,7 +516,7 @@ static const struct vadc_map_pt adcmap_batt_therm_30k_6125[] = {
 	{322,	960},
 	{320,	980}
 };
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 /*
  * Voltage to temperature table for 400k pull up for bat_therm with

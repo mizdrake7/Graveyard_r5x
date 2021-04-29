@@ -1,6 +1,6 @@
 obj-$(CONFIG_QPNP_FG_GEN3)     += qpnp-fg-gen3.o fg-memif.o fg-util.o
 obj-$(CONFIG_QPNP_FG_GEN4)     += qpnp-fg-gen4.o fg-memif.o fg-util.o fg-alg.o  pmic-voter.o
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #/* shanliangliang@CHG.BSP.charge, 2020/03/06, Add for oppo_gauge */
 $(warning simon $(SHIPPING_API_LEVEL))
 ##ifeq ($(SHIPPING_API_LEVEL), 28)
@@ -19,7 +19,7 @@ obj-$(CONFIG_QPNP_QNOVO5)	+= qpnp-qnovo5.o battery.o
 
 
 obj-$(CONFIG_QPNP_SMB5)	+= step-chg-jeita.o battery.o qpnp-smb5.o smb5-lib.o pmic-voter.o storm-watch.o schgm-flash.o
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #/* Yichun.Chen  PSW.BSP.CHG  2019- */
 obj-$(CONFIG_OPPO_CHARGER)		+= step-chg-jeita.o battery.o pmic-voter.o storm-watch.o schgm-flash.o
 #endif

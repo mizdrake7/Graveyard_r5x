@@ -56,7 +56,7 @@ enum desc_idn {
 	QUERY_DESC_IDN_GEOMETRY		= 0x7,
 	QUERY_DESC_IDN_POWER		= 0x8,
 	QUERY_DESC_IDN_RFU_2		= 0x9,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Hexiaosen@PSW.BSP. 2019/11/19. Add for check storage endurance
 	QUERY_DESC_IDN_HEALTH   	= 0x9,
 #endif

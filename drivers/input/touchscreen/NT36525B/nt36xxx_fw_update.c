@@ -329,7 +329,7 @@ static int32_t update_firmware_request(char *filename)
 
 	while (1) {
 		NVT_LOG("filename is %s\n", filename);
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 		if ((strcmp(filename, fw->firmware_name)) &&
 			(strcmp(filename, fw->firmware_mp_name))&&(strcmp(filename, fw->firmware_sign_name))) {
@@ -883,7 +883,7 @@ void nvt_update_firmware(char *firmware_name)
 		NVT_ERR("nvt_get_fw_info failed. (%d)\n", ret);
 	}
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 	if (!strcmp(firmware_name, fw->firmware_name)) {
 		request_and_download_normal_complete = true;
@@ -919,7 +919,7 @@ return:
 void Boot_Update_Firmware(struct work_struct *work)
 {
 	mutex_lock(&ts->lock);
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2018/12/04,Add skyw novatek TP IC
 	nvt_update_firmware(fw->firmware_name);
 #endif

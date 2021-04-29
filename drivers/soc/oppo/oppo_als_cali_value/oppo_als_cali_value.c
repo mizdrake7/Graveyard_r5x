@@ -1,5 +1,5 @@
 /************************************************************************************
- ** VENDOR_EDIT
+ ** CONFIG_PRODUCT_REALME_TRINKET
  ** Copyright (C), 2008-2018, OPPO Mobile Comm Corp., Ltd
  **
  ** Description:

@@ -379,7 +379,7 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 	}
 	input_sync(input);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*xing.xiong@BSP.Kernel.Driver, 2019/12/23, Add for print vol up/down key event*/
 	if (!strcmp(button->desc, "volume_up")) {
 		dev_info(input->dev.parent, "vol_up %s\n", !!state?"pressed":"release");

@@ -42,7 +42,7 @@
 #include "qg-battery-profile.h"
 #include "qg-defs.h"
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-04-25  Add for OPPO_CHARGE */
 #include "../../oppo/oppo_gauge.h"
 #include "../../oppo/oppo_charger.h"
@@ -55,13 +55,13 @@ static struct qpnp_qg *qg_chip = NULL;
 
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic, 2020-08-29, Add for battery/bms/chg hardwareinfo. */
 #include <linux/hardware_info.h>
 #define BMS_GAUGE_TYPE    "pmi632_qg"
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ji.Xu PSW.BSP.CHG  2018-07-23  Save battery capacity to persist partition */
 static bool healthd_ready = false;
 
@@ -82,7 +82,7 @@ enum batt_info_params {
 };
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*shanliangliang@PSW.BSP.CHG 2020/03/10, enable profile and pon debug default*/ 
 static int qg_debug_mask = QG_DEBUG_PROFILE | QG_DEBUG_PON;
 #else
@@ -123,7 +123,7 @@ static bool is_battery_present(struct qpnp_qg *chip)
 #define DEBUG_BATT_ID_HIGH	8500
 static bool is_debug_batt_id(struct qpnp_qg *chip)
 {
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-04-24  use oppo BAT_ID */
 	if (is_between(DEBUG_BATT_ID_LOW, DEBUG_BATT_ID_HIGH,
 					chip->batt_id_ohm))
@@ -1765,7 +1765,7 @@ static int qg_get_battery_capacity_real(struct qpnp_qg *chip, int *soc)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 static int qg_set_battery_info(struct qpnp_qg *chip, int val)
 {
 	if (chip->batt_info_id < 0 ||
@@ -2071,7 +2071,7 @@ static int qg_psy_set_property(struct power_supply *psy,
 	int rc = 0;
 
 	switch (psp) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ji.Xu PSW.BSP.CHG  2018-07-23  Save battery capacity to persist partition */
 	case POWER_SUPPLY_PROP_BATTERY_INFO:
 		rc = qg_set_battery_info(chip, pval->intval);
@@ -2179,7 +2179,7 @@ static int qg_psy_get_property(struct power_supply *psy,
 		pval->intval = chip->soc_reporting_ready;
 		break;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ji.Xu PSW.BSP.CHG  2018-07-23  Save battery capacity to persist partition */
 	case POWER_SUPPLY_PROP_BATTERY_INFO:
 		if (chip->batt_info_id < 0 || chip->batt_info_id >= BATT_INFO_MAX)
@@ -2292,7 +2292,7 @@ static int qg_property_is_writeable(struct power_supply *psy,
 				enum power_supply_property psp)
 {
 	switch (psp) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ji.Xu PSW.BSP.CHG  2018-07-23  Save battery capacity to persist partition */
 	case POWER_SUPPLY_PROP_BATTERY_INFO:
 	case POWER_SUPPLY_PROP_BATTERY_INFO_ID:
@@ -2325,7 +2325,7 @@ static enum power_supply_property qg_psy_props[] = {
 	POWER_SUPPLY_PROP_RESISTANCE_ID,
 	POWER_SUPPLY_PROP_RESISTANCE_NOW,
 	POWER_SUPPLY_PROP_SOC_REPORTING_READY,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ji.Xu PSW.BSP.CHG  2018-07-23  Save battery capacity to persist partition */
 	POWER_SUPPLY_PROP_SOC_NOTIFY_READY,
 	POWER_SUPPLY_PROP_BATTERY_INFO,
@@ -2987,7 +2987,7 @@ static int get_batt_id_ohm(struct qpnp_qg *chip, u32 *batt_id_ohm)
 	qg_dbg(chip, QG_DEBUG_PROFILE, "batt_id_mv=%d, batt_id_ohm=%d\n",
 					batt_id_mv, *batt_id_ohm);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen PSW.BSP.CHG  2018-05-05  debug */
     qg_debug("batt_id_mv = %d, batt_id_ohm = %d\n", batt_id_mv, *batt_id_ohm);
 #endif
@@ -2995,7 +2995,7 @@ static int get_batt_id_ohm(struct qpnp_qg *chip, u32 *batt_id_ohm)
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*shanliangliang@PSW.BSP.CHG 2020/03/10, add function qg_get_best_battery_profile*/ 
 static struct device_node* qg_get_best_battery_profile(struct qpnp_qg *chip)
 {
@@ -3092,10 +3092,10 @@ static int qg_load_battery_profile(struct qpnp_qg *chip)
 		return rc;
 	}
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 2020-08-29, Add for battery/bms/chg hardwareinfo. */
 	hardwareinfo_set_prop(HARDWARE_BATTERY_ID, chip->bp.batt_type_str);
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 
 	rc = qg_batterydata_init(profile_node);
 	if (rc < 0) {
@@ -3298,7 +3298,7 @@ static int qg_determine_pon_soc(struct qpnp_qg *chip)
 			shutdown_temp,
 			rtc_sec, batt_temp,
 			pon_soc);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
     /* LiYue@BSP.CHG.Basic, 2019/8/13, use qcom shutdown soc*/
 	/*
 	 * Use the shutdown SOC if
@@ -4368,7 +4368,7 @@ static int qg_parse_dt(struct qpnp_qg *chip)
 			chip->dt.vbatt_empty_mv, chip->dt.vbatt_low_mv,
 			chip->dt.delta_soc, chip->dt.qg_ext_sense);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen	PSW.BSP.CHG  2018-08-23  recognize SDI\ATL battery */
 	rc = of_property_read_u32(node, "qcom,atl_4_45_battery_id_low", &temp);
 	if (rc < 0) {
@@ -4670,7 +4670,7 @@ static const struct dev_pm_ops qpnp_qg_pm_ops = {
 	.resume		= qpnp_qg_resume,
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen PSW.BSP.CHG  2018-04-24  OPPO_CHARGE */
 #define DEFAULT_BATT_TEMP            250
 #define DEFAULT_BATT_VOLT            3800
@@ -4801,16 +4801,16 @@ static int qpnp_qg_get_battery_fcc(void)
 
 static int qpnp_qg_get_battery_cc(void)
 {
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200409, Add for engineer mode cc */
 	int rc = 0;
 	int temp = 0;
 
 	rc = get_cycle_count(qg_chip->counter, &temp);
 	return temp;
-#else /* ODM_WT_EDIT */
+#else /* CONFIG_ODM_WT_EDIT */
         return -1;
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 }
 
 static int qpnp_qg_get_battery_soh(void)
@@ -4826,7 +4826,7 @@ static bool qpnp_qg_get_battery_authenticate(void)
 		return true;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*shanliangliang@PSW.BSP.CHG 2020/03/10, update for battery authenticate by batt_id*/ 
     if (!is_battery_present(qg_chip))
         return false;
@@ -4873,7 +4873,7 @@ static struct oppo_gauge_operations qpnp_qg_gauge = {
 };
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* shanliangliang@PSW.BSP.CHG  2018-05-11  authenticate battery */
 static void register_gauge_devinfo(struct qpnp_qg *chip)
 {
@@ -4912,7 +4912,7 @@ static void register_gauge_devinfo(struct qpnp_qg *chip)
         pr_err("register_battery_devinfo fail\n");
     }
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
     /* Bin2.Zhang@ODM_WT.BSP.Charger.Basic.1941873, 20200406, Add for proc/devinfo */
     rc = register_device_proc("gauge", "PMI632", "Qualcomm");
     if (rc) {
@@ -4928,7 +4928,7 @@ static void register_gauge_devinfo(struct qpnp_qg *chip)
     if (rc) {
         pr_err("register_pmic6125_devinfo fail\n");
     }
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 }
 #endif
 
@@ -4937,7 +4937,7 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 	int rc = 0, soc = 0, nom_cap_uah;
 	struct qpnp_qg *chip;
     
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen PSW.BSP.CHG  2018-04-24  OPPO_CHARGE */
 	struct oppo_gauge_chip *the_oppo_gauge_chip = NULL;
 #endif
@@ -4964,7 +4964,7 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 		return rc;
 	}
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/07/12, modify for change pull up 30K*/
 	chip->batt_therm_chan = iio_channel_get(&pdev->dev, "bat_therm");
 #else
@@ -5129,7 +5129,7 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 		goto fail_votable;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen PSW.BSP.CHG  2018-04-24  OPPO_CHARGE */
 	qg_chip = chip;
 	if(use_qpnp_qg) {
@@ -5147,20 +5147,20 @@ static int qpnp_qg_probe(struct platform_device *pdev)
 	}
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen PSW.BSP.CHG  2018-05-11  authenticate battery */
 	register_gauge_devinfo(chip);
 #endif
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	/* Bin2.Zhang@ODM_WT.BSP.Charger.Basic, 2020-08-29, Add for battery/bms/chg hardwareinfo. */
 	hardwareinfo_set_prop(HARDWARE_BMS_GAUGE, BMS_GAUGE_TYPE);
-#endif /* ODM_WT_EDIT */
+#endif /* CONFIG_ODM_WT_EDIT */
 
 	qg_get_battery_capacity(chip, &soc);
 	pr_info("QG initialized! battery_profile=%s SOC=%d QG_subtype=%d\n",
 			qg_get_battery_type(chip), soc, chip->qg_subtype);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Ji.Xu PSW.BSP.CHG  2018-07-23  Save battery capacity to persist partition */
 	chip->batt_range_ocv = &fg_batt_valid_ocv;
 	chip->batt_range_pct = &fg_batt_range_pct;

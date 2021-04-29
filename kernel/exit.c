@@ -226,7 +226,7 @@ repeat:
 	if (unlikely(zap_leader))
 		goto repeat;
 }
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*He.Lu@PSW.MM.AudioDriver.Driver, 2019/12/16, Add for sia*/
 EXPORT_SYMBOL(release_task);
 #endif
@@ -372,7 +372,7 @@ static bool has_stopped_jobs(struct pid *pgrp)
 	return false;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Shu.Liu@PSW.AD.Stability.Crash.1052210, 2014/01/20, Add for not kill zygote
 static bool oppo_is_android_core_group(struct pid *pgrp)
 {
@@ -387,7 +387,7 @@ static bool oppo_is_android_core_group(struct pid *pgrp)
 
     return false;
 }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 /*
  * Check to see if any process groups have become orphaned as
@@ -415,13 +415,13 @@ kill_orphaned_pgrp(struct task_struct *tsk, struct task_struct *parent)
 	    task_session(parent) == task_session(tsk) &&
 	    will_become_orphaned_pgrp(pgrp, ignored_task) &&
 	    has_stopped_jobs(pgrp)) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Shu.Liu@PSW.AD.Stability.Crash.1052210, 2014/01/10, Add for clean backstage
             if (oppo_is_android_core_group(pgrp)) {
                 printk("kill_orphaned_pgrp: find android core process will be hungup, ignored it, only hungup itself:%s:%d , current=%d \n",tsk->comm,tsk->pid,current->pid);
                 return;
             }
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 		__kill_pgrp_info(SIGHUP, SEND_SIG_PRIV, pgrp);
 		__kill_pgrp_info(SIGCONT, SEND_SIG_PRIV, pgrp);
 	}
@@ -804,7 +804,7 @@ static void check_stack_usage(void)
 static inline void check_stack_usage(void) {}
 #endif
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Haoran.Zhang@PSW.AD.Stability.Crash.1052210, 2016/05/24, Add for debug critical svc crash
 static bool is_zygote_process(struct task_struct *t)
 {
@@ -836,18 +836,18 @@ static bool is_critial_process(struct task_struct *t) {
     }
 
 }
-//#endif /*VENDOR_EDIT*/
+//#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 void __noreturn do_exit(long code)
 {
 	struct task_struct *tsk = current;
 	int group_dead;
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Haoran.Zhang@PSW.AD.Stability.Crash.1052210, 2016/05/24, Add for debug critical svc crash
     if (is_critial_process(tsk)) {
         printk("critical svc %d:%s exit with %ld !\n", tsk->pid, tsk->comm,code);
     }
-//#endif /*VENDOR_EDIT*/
+//#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	/*
 	 * We can get here from a kernel oops, sometimes with preemption off.

@@ -34,10 +34,10 @@
 #include <soc/qcom/restart.h>
 #include <soc/qcom/watchdog.h>
 #include <soc/qcom/minidump.h>
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Fanhong.Kong@ProDrv.CHG,add 2018/12/1 for show_state_filter
 #include <linux/sched/debug.h>
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 #define EMERGENCY_DLOAD_MAGIC1    0x322A4F99
 #define EMERGENCY_DLOAD_MAGIC2    0xC67E4350
@@ -79,7 +79,7 @@ static bool force_warm_reboot;
 
 static int in_panic;
 static struct kobject dload_kobj;
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*xing.xiong@BSP.Kernel.Driver, 2019/06/16, Add for minidump & fulldump control*/
 static int dload_type = SCM_DLOAD_FULLDUMP;
 #else
@@ -98,7 +98,7 @@ static void *emergency_dload_mode_addr;
 static void *kaslr_imem_addr;
 #endif
 static bool scm_dload_supported;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/15,
  * Add for can disable minidump by rom update
  */
@@ -112,7 +112,7 @@ static int __init minidump_disable_param(char *str)
 }
 __setup("minidump.disable", minidump_disable_param);
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Wanghao@BSP.Kernel.Function 2018/12/07, add for 5G modem dump issue
 int get_download_mode(void)
 {
@@ -120,7 +120,7 @@ int get_download_mode(void)
 }
 EXPORT_SYMBOL(get_download_mode);
 //#endif
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static int dload_set(const char *val, const struct kernel_param *kp);
 /* interface for exporting attributes */
@@ -170,7 +170,7 @@ int scm_set_dload_mode(int arg1, int arg2)
 				&desc);
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //extern bool door_open;
 /*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/12,
  * Add for  enable full dload when combination keys
@@ -209,7 +209,7 @@ void oppo_switch_fulldump(int on)
 EXPORT_SYMBOL(oppo_switch_fulldump);
 
 
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 static void set_dload_mode(int on)
 {
 	int ret;
@@ -226,7 +226,7 @@ static void set_dload_mode(int on)
 	if (ret)
 		pr_err("Failed to set secure DLOAD mode: %d\n", ret);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/12,
  * Add for enable emmc dload when dload_type is minidump
  */
@@ -239,7 +239,7 @@ static void set_dload_mode(int on)
 			__raw_writel(0, dload_type_addr);
 		}
 	}
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	dload_mode_enabled = on;
 }
@@ -249,7 +249,7 @@ static bool get_dload_mode(void)
 	return dload_mode_enabled;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* yanwu@TECH.Storage.FS 2019/09/13, flush device cache in panic if necessary */
 bool is_fulldump_enable(void)
 {
@@ -396,7 +396,7 @@ static void msm_restart_prepare(const char *cmd)
 				(cmd != NULL && cmd[0] != '\0'));
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Fanhong.Kong@PSW.BSP.CHG,add 2018/3/25 panic reboot reason as kernel for hotfix
 	if (in_panic){
 		//warm reset
@@ -411,7 +411,7 @@ static void msm_restart_prepare(const char *cmd)
 #endif
 		return;
 	}
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	if (force_warm_reboot)
 		pr_info("Forcing a warm reset of the system\n");
@@ -422,7 +422,7 @@ static void msm_restart_prepare(const char *cmd)
 	else
 		qpnp_pon_system_pwr_off(PON_POWER_OFF_HARD_RESET);
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* OPPO 2013.07.09 hewei modify begin for restart mode*/
 	if (cmd != NULL) {
 		if (!strncmp(cmd, "bootloader", 10)) {
@@ -463,7 +463,7 @@ static void msm_restart_prepare(const char *cmd)
 			__raw_writel(0x77665501, restart_reason);
 		}
 	}
-#else //VENDOR_EDIT
+#else //CONFIG_PRODUCT_REALME_TRINKET
 	if (cmd != NULL) {
 		#ifndef DISABLE_FASTBOOT_CMDS //disable fastboot modem at release soft
 		if (!strncmp(cmd, "bootloader", 10)) {
@@ -558,7 +558,7 @@ static void msm_restart_prepare(const char *cmd)
 				PON_RESTART_REASON_NORMAL);
 	}
 /* OPPO 2013.07.09 hewei modify en for restart mode*/
-#endif //VENDOR_EDIT
+#endif //CONFIG_PRODUCT_REALME_TRINKET
 	flush_cache_all();
 
 	/*outer_flush_all is not supported by 64bit kernel*/
@@ -875,7 +875,7 @@ skip_sysfs_create:
 	if (scm_is_call_available(SCM_SVC_PWR, SCM_IO_DEASSERT_PS_HOLD) > 0)
 		scm_deassert_ps_hold_supported = true;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*YiXue.Ge@PSW.BSP.Kernel.Driver,2017/05/15,
 	 * Add for can disable minidump by rom update
 	 */

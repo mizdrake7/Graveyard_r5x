@@ -188,7 +188,7 @@ static const struct reg_default wcd937x_defaults[] = {
 	{ WCD937X_SLEEP_WATCHDOG_CTL,            0x00 },
 	{ WCD937X_MBHC_NEW_ELECT_REM_CLAMP_CTL,  0x00 },
 	{ WCD937X_MBHC_NEW_CTL_1,                0x02 },
-	#ifndef VENDOR_EDIT
+	#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	/*huanli.chang@PSW.MM.AudioDriver.HeadsetDET,2019/10/22,  Disable qcom moisture det*/
 	{ WCD937X_MBHC_NEW_CTL_2,                0x05 },
 	#else

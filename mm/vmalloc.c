@@ -2843,7 +2843,7 @@ static int s_show(struct seq_file *m, void *p)
 	seq_printf(m, "0x%pK-0x%pK %7ld",
 		v->addr, v->addr + v->size, v->size);
 
-#ifdef VENDOR_EDIT //wanghao@bsp.drv modify for android.bg get pss too slow
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //wanghao@bsp.drv modify for android.bg get pss too slow
 	if (v->caller && (strcmp(current->comm, "android.bg") != 0))
 #else
 	if (v->caller)

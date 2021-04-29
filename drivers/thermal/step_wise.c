@@ -149,7 +149,7 @@ static void thermal_zone_trip_update(struct thermal_zone_device *tz, int trip)
 	}
 
 	trend = get_tz_trend(tz, trip);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	dev_dbg(&tz->device, "Trip%d[type=%d,temp=%d]:trend=%d\n",
 				trip, trip_type, trip_temp, trend);
 #else
@@ -179,7 +179,7 @@ static void thermal_zone_trip_update(struct thermal_zone_device *tz, int trip)
 			throttle = false;
 
 		instance->target = get_target_state(instance, trend, throttle);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 		dev_dbg(&instance->cdev->device, "old_target=%d, target=%d, throttle=%d\n",
 					old_target, (int)instance->target, throttle);
 #else

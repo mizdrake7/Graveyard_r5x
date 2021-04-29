@@ -1566,13 +1566,13 @@ int q6asm_audio_client_buf_alloc_contiguous(unsigned int dir,
 		return 0;
 	}
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*Jianfeng.Qiu@PSW.MM.AudioDriver.Platform.1569079, 2019/08/21, Add for fix STS crash*/
 	if (bufcnt == 0) {
 		pr_err("%s: invalid buffer count\n", __func__);
 		return -EINVAL;
 	}
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	mutex_lock(&ac->cmd_lock);
 	buf = kzalloc(((sizeof(struct audio_buffer))*bufcnt),

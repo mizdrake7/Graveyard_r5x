@@ -161,7 +161,7 @@
 /* traffic shaper clock in Hz */
 #define TS_CLK			19200000
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Zhijun.Ye@PSW.MM.Display.LCD.Stability, 2020/04/13, add for get project info
 extern bool is_brandon(void);
 #endif
@@ -373,7 +373,7 @@ static void sde_hw_sspp_setup_format(struct sde_hw_pipe *ctx,
 			SDE_FETCH_CONFIG_RESET_VALUE |
 			ctx->mdp->highest_bank_bit << 18);
 		if (IS_UBWC_10_SUPPORTED(ctx->catalog->ubwc_version)) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Gou shengjun@PSW.MM.Display.LCD.Stability
  * delete for bug#1531511@20180824
  */
@@ -381,7 +381,7 @@ static void sde_hw_sspp_setup_format(struct sde_hw_pipe *ctx,
 			alpha_en_mask = const_alpha_en ? BIT(31) : 0;
 #else
 			alpha_en_mask = const_alpha_en ? BIT(31) : 0;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 			SDE_REG_WRITE(c, SSPP_UBWC_STATIC_CTRL,
 				alpha_en_mask | (ctx->mdp->ubwc_swizzle & 0x1) |
 				BIT(8) | (ctx->mdp->highest_bank_bit << 4));

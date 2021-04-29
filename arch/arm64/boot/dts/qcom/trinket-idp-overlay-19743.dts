@@ -26,9 +26,9 @@
 	oppo,dtsi_no = <19743>;
 };
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //guoqiang.jiang@oppo.com,2019.03.27,add himax 18112a panel
 //&dsi_td4330_truly_cmd_display {
 //	qcom,dsi-display-active;
 //};
-//#endif /* VENDOR_EDIT */
+//#endif /* CONFIG_PRODUCT_REALME_TRINKET */

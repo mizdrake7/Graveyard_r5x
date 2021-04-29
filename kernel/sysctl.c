@@ -70,10 +70,10 @@
 #include <linux/uaccess.h>
 #include <asm/processor.h>
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Hailong.Liu@TECH.Kernel.CPU, 2019/10/24, stat cpu usage on each tick. */
 #include <linux/kernel_stat.h>
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #ifdef CONFIG_X86
 #include <asm/nmi.h>
@@ -136,7 +136,7 @@ static unsigned long zero_ul;
 static unsigned long one_ul = 1;
 static unsigned long long_max = LONG_MAX;
 
-#ifdef VENDOR_EDIT //yixue.ge@PSW.BSP.Kernel.Driver 20170720 add for add direct_vm_swappiness
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@PSW.BSP.Kernel.Driver 20170720 add for add direct_vm_swappiness
 extern int direct_vm_swappiness;
 static int two_hundred = 200;
 #endif
@@ -146,25 +146,25 @@ static int one_thousand = 1000;
 #ifdef CONFIG_SCHED_WALT
 static int two_million = 2000000;
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Huacai.Zhou@PSW.BSP.Kernel.Performance, 2018-04-28, add foreground task io opt*/
 unsigned int sysctl_fg_io_opt = 1;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 //#ifdef COLOROS_EDIT
 /*Tiren.Ma@ROM.Framework, 2019-12-10, add for improving ed task migration*/
 int sysctl_ed_task_enabled = 1;
 //#endif /*COLOROS_EDIT*/
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*jason.tang@TECH.BSP.Kernel.Storage, 2019-05-20, add control ext4 fsync*/
 unsigned int sysctl_ext4_fsync_enable = 1;
 unsigned int ext4_fsync_enable_status = 0;
-#endif /*VENDOR_EDIT*/
-#ifdef VENDOR_EDIT
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*jason.tang@TECH.BSP.Kernel.Storage, 2019-05-20, add to count flush*/
 unsigned long sysctl_blkdev_issue_flush_count = 0;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 #ifdef CONFIG_PRINTK
 static int ten_thousand = 10000;
@@ -189,7 +189,7 @@ static const int cap_last_cap = CAP_LAST_CAP;
 /*this is needed for proc_doulongvec_minmax of sysctl_hung_task_timeout_secs */
 #ifdef CONFIG_DETECT_HUNG_TASK
 static unsigned long hung_task_timeout_max = (LONG_MAX/HZ);
-#if defined(VENDOR_EDIT) && defined(CONFIG_DEATH_HEALER)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_DEATH_HEALER)
 /* Wen.Luo@BSP.Kernel.Stability, 2019/01/12, DeathHealer , Foreground background optimization,change max io count */
 static int five = 5;
 #endif
@@ -342,10 +342,10 @@ static int max_sched_tunable_scaling = SCHED_TUNABLESCALING_END-1;
 #endif /* CONFIG_SMP */
 #endif /* CONFIG_SCHED_DEBUG */
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 int sysctl_uifirst_enabled = 1;
 int sysctl_launcher_boost_enabled = 0;
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #ifdef CONFIG_COMPACTION
 static int min_extfrag_threshold;
@@ -481,7 +481,7 @@ static struct ctl_table kern_table[] = {
 		.mode		= 0644,
 		.proc_handler	= sched_updown_migrate_handler,
 	},
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Huacai.Zhou@PSW.BSP.Kernel.Performance, 2018-04-28, add foreground task io opt*/
 {
 		.procname	= "fg_io_opt",
@@ -501,7 +501,7 @@ static struct ctl_table kern_table[] = {
         .proc_handler = proc_dointvec,
 },
 //#endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*jason.tang@TECH.BSP.Kernel.Storage, 2019-05-20, add control ext4 fsync*/
 {
 		.procname	= "ext4_fsync_enable",
@@ -511,7 +511,7 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= proc_dointvec,
 },
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*jason.tang@TECH.BSP.Kernel.Storage, 2019-05-20, add to count flush*/
 {
 		.procname	= "blkdev_issue_flush_count",
@@ -1335,7 +1335,7 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= &neg_one,
 	},
-#if defined(VENDOR_EDIT) && defined(CONFIG_DEATH_HEALER)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_DEATH_HEALER)
 /* fanhui@PhoneSW.BSP, 2016/02/02, DeathHealer, record the hung task killing */
 	{
 		.procname	= "hung_task_oppo_kill",
@@ -1506,7 +1506,7 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= proc_dointvec,
 	},
 #endif
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 // Liujie.Xie@TECH.Kernel.Sched, 2019/05/22, add for ui first
 	{
 		.procname	= "uifirst_enabled",
@@ -1522,8 +1522,8 @@ static struct ctl_table kern_table[] = {
 		.mode		= 0666,
 		.proc_handler = proc_dointvec,
 	},
-#endif /* VENDOR_EDIT */
-#ifdef VENDOR_EDIT
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Hailong.Liu@TECH.Kernel.CPU, 2019/10/24, stat cpu usage on each tick. */
 	{
 		.procname	= "task_cpustats_enable",
@@ -1669,13 +1669,13 @@ static struct ctl_table vm_table[] = {
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= &zero,
-#ifdef VENDOR_EDIT //yixue.ge@PSW.BSP.Kernel.Driver 20170720 add for add direct_vm_swappiness
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@PSW.BSP.Kernel.Driver 20170720 add for add direct_vm_swappiness
 		.extra2		= &two_hundred,
 #else
 		.extra2		= &one_hundred,
 #endif
 	},
-#ifdef VENDOR_EDIT //yixue.ge@PSW.BSP.Kernel.Driver 20170720 add for add direct_vm_swappiness
+#ifdef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@PSW.BSP.Kernel.Driver 20170720 add for add direct_vm_swappiness
 	{
 		.procname	= "direct_swappiness",
 		.data		= &direct_vm_swappiness,
@@ -1755,12 +1755,12 @@ static struct ctl_table vm_table[] = {
 		.procname	= "compact_memory",
 		.data		= &sysctl_compact_memory,
 		.maxlen		= sizeof(int),
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Huacai.Zhou@PSW.kernel.mm, 2018-08-20, modify permission for coloros.athena*/
 		.mode		= 0222,
 #else
 		.mode		= 0200,
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 		.proc_handler	= sysctl_compaction_handler,
 	},
 	{

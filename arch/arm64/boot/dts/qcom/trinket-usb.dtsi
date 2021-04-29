@@ -147,17 +147,17 @@
 		qcom,vdd-voltage-level = <0 925000 970000>;
 		qcom,tune2-efuse-bit-pos = <25>;
 		qcom,tune2-efuse-num-bits = <4>;
-		/* #ifdef ODM_WT_EDIT */
+		/* #ifdef CONFIG_ODM_WT_EDIT */
 		/* Haibin1.Zhang@ODM_WT.BSP.Storage.Usb,2019/05/29,Add for usb eye parameter */
 		qcom,tune2-efuse-correction = <(-6)>;
 		/* #endif */
 		qcom,qusb-phy-init-seq = <0xc8 0x80
-					/* #ifdef ODM_WT_EDIT */
+					/* #ifdef CONFIG_ODM_WT_EDIT */
 					/* Haibin1.Zhang@ODM_WT.BSP.Storage.Usb,2019/05/04,Modify for usb eye parameter */
 					0x30 0x84
 					/* #endif */
 					0x83 0x88
-					/* #ifdef ODM_WT_EDIT */
+					/* #ifdef CONFIG_ODM_WT_EDIT */
 					/* Haibin1.Zhang@ODM_WT.BSP.Storage.Usb,2019/05/29,Modify for usb eye parameter */
 					0xc7 0x8c
 					/* #endif */

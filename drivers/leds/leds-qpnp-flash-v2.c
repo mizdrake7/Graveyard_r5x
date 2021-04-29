@@ -1485,7 +1485,7 @@ static int qpnp_flash_led_switch_set(struct flash_switch_data *snode, bool on)
 	int rc, i, addr_offset, flag;
 	u8 val, mask;
 	union power_supply_propval ret = {0, };
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* SHUBHAM KABRA PSW.Camera.Drv  2020-1-19  for Fixed a problem with unstable torch current */
 	if (!led->batt_psy) {
 		led->batt_psy = power_supply_get_by_name("battery");//get the battery power supply
@@ -1502,7 +1502,7 @@ static int qpnp_flash_led_switch_set(struct flash_switch_data *snode, bool on)
 
 	if (!on) {
 		rc = qpnp_flash_led_switch_disable(snode);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* SHUBHAM KABRA PSW.Camera.Drv  2020-1-19  for Fixed a problem with unstable torch current */
 		ret.intval = 0;
 		flag = power_supply_set_property(led->batt_psy,
@@ -1524,7 +1524,7 @@ static int qpnp_flash_led_switch_set(struct flash_switch_data *snode, bool on)
 			return rc;
 		}
 	}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* SHUBHAM KABRA PSW.Camera.Drv  2020-1-19  for Fixed a problem with unstable torch current */
 	ret.intval = 1;
 	flag = power_supply_set_property(led->batt_psy,

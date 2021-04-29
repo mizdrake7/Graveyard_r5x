@@ -110,7 +110,7 @@ queue_ra_store(struct request_queue *q, const char *page, size_t count)
 
 	return ret;
 }
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Huacai.Zhou@PSW.BSP.Kernel.Performance, 2018-04-28, add foreground task io opt*/
 static ssize_t queue_fgio_show(struct request_queue *q, char *page)
 {
@@ -153,7 +153,7 @@ queue_bothio_store(struct request_queue *q, const char *page, size_t count)
 	return ret;
 }
 
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 static ssize_t queue_max_sectors_show(struct request_queue *q, char *page)
 {
 	int max_sectors_kb = queue_max_sectors(q) >> 1;
@@ -439,7 +439,7 @@ static ssize_t queue_poll_delay_store(struct request_queue *q, const char *page,
 	return count;
 }
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
 // Add for ioqueue
 static ssize_t queue_show_ohm_inflight(struct request_queue *q, char *page)
@@ -452,7 +452,7 @@ static ssize_t queue_show_ohm_inflight(struct request_queue *q, char *page)
 	ret += sprintf(page + ret, "fg:%d\n", q->in_flight[3]);
 	return ret;
 }
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static ssize_t queue_poll_show(struct request_queue *q, char *page)
 {
@@ -574,7 +574,7 @@ static struct queue_sysfs_entry queue_ra_entry = {
 	.show = queue_ra_show,
 	.store = queue_ra_store,
 };
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Huacai.Zhou@PSW.BSP.Kernel.Performance, 2018-04-28, add foreground task io opt*/
 static struct queue_sysfs_entry queue_fgio_entry = {
 	.attr = {.name = "fg_io_cnt_max", .mode = S_IRUGO | S_IWUSR },
@@ -587,7 +587,7 @@ static struct queue_sysfs_entry queue_bothio_entry = {
 	.store = queue_bothio_store,
 };
 
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 static struct queue_sysfs_entry queue_max_sectors_entry = {
 	.attr = {.name = "max_sectors_kb", .mode = S_IRUGO | S_IWUSR },
 	.show = queue_max_sectors_show,
@@ -715,14 +715,14 @@ static struct queue_sysfs_entry queue_iostats_entry = {
 	.store = queue_store_iostats,
 };
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
 // Add for ioqueue
 static struct queue_sysfs_entry queue_ohm_inflight_entry = {
 	.attr = {.name = "ohm_inflight", .mode = S_IRUGO },
 	.show = queue_show_ohm_inflight,
 };
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 static struct queue_sysfs_entry queue_random_entry = {
 	.attr = {.name = "add_random", .mode = S_IRUGO | S_IWUSR },
@@ -770,11 +770,11 @@ static struct queue_sysfs_entry throtl_sample_time_entry = {
 static struct attribute *default_attrs[] = {
 	&queue_requests_entry.attr,
 	&queue_ra_entry.attr,
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Huacai.Zhou@PSW.BSP.Kernel.Performance, 2018-04-28, add foreground task io opt*/
 	&queue_fgio_entry.attr,
 	&queue_bothio_entry.attr,
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	&queue_max_hw_sectors_entry.attr,
 	&queue_max_sectors_entry.attr,
 	&queue_max_segments_entry.attr,
@@ -799,11 +799,11 @@ static struct attribute *default_attrs[] = {
 	&queue_nomerges_entry.attr,
 	&queue_rq_affinity_entry.attr,
 	&queue_iostats_entry.attr,
-#if defined(VENDOR_EDIT) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
 // Add for ioqueue
 	&queue_ohm_inflight_entry.attr,
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	&queue_random_entry.attr,
 	&queue_poll_entry.attr,
 	&queue_wc_entry.attr,

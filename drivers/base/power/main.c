@@ -129,7 +129,7 @@ void device_pm_add(struct device *dev)
 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
 	device_pm_check_callbacks(dev);
 	mutex_lock(&dpm_list_mtx);
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	//Nanwei.Deng@BSP.CHG.Basic 2018/05/03 modify for power debug
 	if (dev->parent && dev->parent->power.is_prepared)
 		dev_warn(dev, "parent %s should not be sleeping\n",
@@ -141,7 +141,7 @@ void device_pm_add(struct device *dev)
 		pr_info("debug Adding info for %s:%s\n",
 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
 	}
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	list_add_tail(&dev->power.entry, &dpm_list);
 	dev->power.in_dpm_list = true;
 	mutex_unlock(&dpm_list_mtx);
@@ -616,7 +616,7 @@ static int device_resume_noirq(struct device *dev, pm_message_t state, bool asyn
 	dev->power.is_noirq_suspended = false;
 
  Out:
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP.bug. 2020/03/21, According to the modification of android P, prevent SPI error
 	pm_runtime_enable(dev);
 //#endif
@@ -763,7 +763,7 @@ static int device_resume_early(struct device *dev, pm_message_t state, bool asyn
 
  Out:
 	TRACE_RESUME(error);
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP.bug. 2020/03/21, According to the modification of android P, prevent SPI error
 	//pm_runtime_enable(dev);
 //#endif
@@ -1150,7 +1150,7 @@ static int __device_suspend_noirq(struct device *dev, pm_message_t state, bool a
 	TRACE_DEVICE(dev);
 	TRACE_SUSPEND(0);
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP.bug. 2020/03/21, According to the modification of android P, prevent SPI error
 	__pm_runtime_disable(dev, false);
 //#endif
@@ -1313,7 +1313,7 @@ static int __device_suspend_late(struct device *dev, pm_message_t state, bool as
 	TRACE_DEVICE(dev);
 	TRACE_SUSPEND(0);
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP.bug. 2020/03/21, According to the modification of android P, prevent SPI error
 	//__pm_runtime_disable(dev, false);
 //#endif	

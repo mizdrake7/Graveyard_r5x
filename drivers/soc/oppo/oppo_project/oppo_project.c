@@ -396,7 +396,7 @@ static void update_manifest(struct proc_dir_entry *parent)
 }
 */
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 static int __init update_feature(void)
 {
     unsigned int i = 0;

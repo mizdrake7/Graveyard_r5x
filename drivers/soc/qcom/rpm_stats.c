@@ -26,7 +26,7 @@
 #define RPM_STATS_NUM_REC	2
 #define MSM_ARCH_TIMER_FREQ	19200000
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/05/23 add for get sys/power/oppo/oppo_rpm_stats
 struct kobject *rpmstats_kobj_oppo = NULL;
 #endif
@@ -259,7 +259,7 @@ static int msm_rpmstats_create_sysfs(struct platform_device *pdev,
 	struct kobject *rpmstats_kobj = NULL;
 	struct msm_rpmstats_kobj_attr *rpms_ka = NULL;
 	int ret = 0;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Nanwei.Deng@BSP.Power.Basic 2018/05/23 add for get sys/power/oppo/oppo_rpm_stats
 	struct msm_rpmstats_kobj_attr *rpms_ka_oppo = NULL;
 #endif
@@ -288,7 +288,7 @@ static int msm_rpmstats_create_sysfs(struct platform_device *pdev,
 	rpms_ka->ka.store = NULL;
 
 	ret = sysfs_create_file(rpmstats_kobj, &rpms_ka->ka.attr);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //shunzhou.jiang@BSP.Power.Basic 2020/03/09 add for get /sys/power/system_sleep/oppo_rpmh_stats
 
 	rpms_ka_oppo = kzalloc(sizeof(*rpms_ka_oppo), GFP_KERNEL);

@@ -22,8 +22,8 @@
 #ifndef __ILITEK_H
 #define __ILITEK_H
 
-#ifndef ODM_WT_EDIT
-#define ODM_WT_EDIT
+#ifndef CONFIG_ODM_WT_EDIT
+#define CONFIG_ODM_WT_EDIT
 #endif
 
 #include <linux/module.h>
@@ -144,7 +144,7 @@
 
 #define UPDATE_FW_PATH			"/vendor/firmware/tp/19631/"
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 #define OPPO_FIRMWARE_NAME_PATH_AUO				"vendor/firmware/tp/19631/"
 #define OPPO_FIRMWARE_NAME_PATH_INXG			"vendor/firmware/tp/20667/"
 #define OPPO_FIRMWARE_NAME_PATH_INX				"vendor/firmware/tp/19743/"
@@ -162,7 +162,7 @@
 #define POWER_STATUS_PATH		"/sys/class/power_supply/battery/status"
 #define DUMP_FLASH_PATH			"/sdcard/flash_dump"
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 #define OPPO_SIGN_AUO                  "tp/19631/ilitek_fw_xl_signed.bin"
 #define OPPO_SIGN_INXG		           "tp/20667/ilitek_fw_inx_signed.bin"
@@ -711,20 +711,20 @@ struct ilitek_tddi_dev {
 
 	struct work_struct resume_work_queue;
 	u16 touch_count;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	//liuaho1@ODM_WT.BSP.TP.FUNCTION.2019/5/4, add ear phone function
 	unsigned long headset_state;
 	struct work_struct headset_work_queue;
 	struct notifier_block notifier_headset;
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	//liuaho1@ODM_WT.BSP.TP.FUNCTION.2019/5/29, add usb function
 	struct work_struct usb_work_queue;
 	struct notifier_block notifier_usb;
 #endif
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/6/12, add function status value
 	unsigned long usb_state;
 	u8 gameSwitch;
@@ -824,7 +824,7 @@ struct ili_gesture_info{
 	uint8_t clockwise;
 };
 
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP.FUNCTION.2019/04/29,Ilitek ICs adjust
 typedef enum {
 	XL = 0,
@@ -839,7 +839,7 @@ struct upgrade_ili_fw_info {
 	u32 fw_len;
 	char *firmware_bin_name;
 	char *mp_ini_name;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 //Bin.Su@ODM_WT.BSP.TP,2019/06/05,Add sign firmware function begain
 	char *oppo_sign_bin;
 #endif

@@ -1,6 +1,6 @@
 /***************************************************************
 ** Copyright (C),  2018,  OPPO Mobile Comm Corp.,  Ltd
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** File : dsi_oppo_support.h
 ** Description : display driver private management
 ** Version : 1.0
@@ -32,13 +32,13 @@ enum oppo_display_support_list {
 	OPPO_HUAXING_HX83112A_DISPALY_FHD_PLUS_VIDEO_PANEL=3,
 	OPPO_HLT_HX83112A_DISPALY_FHD_PLUS_VIDEO_PANEL=4,
 	OPPO_TM_NT36672A_DISPALY_FHD_PLUS_VIDEO_PANEL=5,
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, add CABC cmd used for power saving
 	TRULY_AUO_ILI9881H_DISPALY_HDP_VIDEO_PANEL=6,
 	HLT_BOE_NT36525B_DISPALY_HDP_VIDEO_PANEL=7,
 	INNOLUX_INX_ILI9881H_DISPALY_HDP_VIDEO_PANEL,
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 	OPPO_DISPLAY_UNKNOW,
 };
 

@@ -27,7 +27,7 @@
 #include "step-chg-jeita.h"
 #include "storm-watch.h"
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun Chen  PSW.BSP.CHG  2018/04/25  OPPO_CHARGE */
 #include <soc/oppo/boot_mode.h>
 #include <soc/oppo/device_info.h>
@@ -40,7 +40,7 @@
 #include <linux/gpio.h>
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*Kun.Zhang  PWS.BSP.CHG  2019/04/08  add for charge*/
 struct oppo_chg_chip *g_oppo_chip = NULL;
 struct smb_charger *g_smb_chip = NULL;
@@ -101,7 +101,7 @@ static void smbchg_set_chargerid_switch_val(int value)
 	pr_err("%s: %s: " fmt, chg->name,	\
 		__func__, ##__VA_ARGS__)	\
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/15, sjc Add for OTG debug */
 #define smblib_dbg(chg, reason, fmt, ...)			\
 	do{							\
@@ -423,7 +423,7 @@ static void smblib_notify_extcon_props(struct smb_charger *chg, int id)
 	}
 }
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/06/21, modify for adb port show slow*/
 static void smblib_notify_device_mode(struct smb_charger *chg, bool enable)
 #else
@@ -605,7 +605,7 @@ static const struct apsd_result smblib_apsd_results[] = {
 		.bit	= OCP_CHARGER_BIT,
 		.pst	= POWER_SUPPLY_TYPE_USB_DCP
 	},
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 // wenbin.liu@BSP.CHG.Basic, 2017/11/17
 // Add for float charger to DCP
         [FLOAT] = {
@@ -663,7 +663,7 @@ static const struct apsd_result *smblib_get_apsd_result(struct smb_charger *chg)
 
 	if (apsd_stat & QC_CHARGER_BIT) {
 		/* since its a qc_charger, either return HVDCP3 or HVDCP2 */
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/25, sjc Modify for charging */
                 if (result != &smblib_apsd_results[HVDCP3]) {
                         result = &smblib_apsd_results[HVDCP2];
@@ -799,7 +799,7 @@ int smblib_set_charge_param(struct smb_charger *chg,
 	int rc = 0;
 	u8 val_raw;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-25  reduce log */
         int value_old, value_new;
 
@@ -836,7 +836,7 @@ int smblib_set_charge_param(struct smb_charger *chg,
 
 	smblib_dbg(chg, PR_REGISTER, "%s = %d (0x%02x)\n",
 		   param->name, val_u, val_raw);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-25  debug */
         rc = smblib_get_charge_param(chg, param, &value_new);
         if (rc < 0) {
@@ -1205,7 +1205,7 @@ const struct apsd_result *smblib_update_usb_type(struct smb_charger *chg)
 {
 	const struct apsd_result *apsd_result = smblib_get_apsd_result(chg);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-25  debug */
         chg_debug("[plugin]***********  type_name = %s, real_type = %d **************\n",
                         apsd_result->name, chg->real_charger_type);
@@ -1451,7 +1451,7 @@ int smblib_rerun_apsd_if_required(struct smb_charger *chg)
 	if (!val.intval)
 		return 0;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/06/19, sjc Add to rerun apsd */
         apsd_result = smblib_get_apsd_result(chg);
         if ((apsd_result->pst != POWER_SUPPLY_TYPE_UNKNOWN)
@@ -1509,7 +1509,7 @@ static int set_sdp_current(struct smb_charger *chg, int icl_ua)
 	default:
 		return -EINVAL;
 	}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/20, sjc Add for charging */
         if (icl_ua <= USBIN_150MA) {
                 icl_options = 0;
@@ -1564,7 +1564,7 @@ int smblib_set_icl_current(struct smb_charger *chg, int icl_ua)
 	if (suspend)
 		return smblib_set_usb_suspend(chg, true);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/11, sjc Add for charging */
         int boot_mode = get_boot_mode();
         if (boot_mode == MSM_BOOT_MODE__RF || boot_mode == MSM_BOOT_MODE__WLAN) {
@@ -2004,7 +2004,7 @@ int smblib_vbus_regulator_enable(struct regulator_dev *rdev)
 	struct smb_charger *chg = rdev_get_drvdata(rdev);
 	int rc;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/08/29, sjc Add for using gpio as OTG ID */
         struct oppo_chg_chip *chip = g_oppo_chip;
 
@@ -2503,7 +2503,7 @@ int smblib_set_prop_system_temp_level(struct smb_charger *chg,
 	if (chg->system_temp_level == 0)
 		return vote(chg->fcc_votable, THERMAL_DAEMON_VOTER, false, 0);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-19  avoid limit FCC */
         vote(chg->fcc_votable, THERMAL_DAEMON_VOTER, true,
                         chg->thermal_mitigation[chg->system_temp_level]);
@@ -2827,7 +2827,7 @@ int smblib_disable_hw_jeita(struct smb_charger *chg, bool disable)
 	 * Disable h/w base JEITA compensation if s/w JEITA is enabled
 	 */
 
-#ifdef VENDOR_EDIT /*zhangkun@BSP.CHG.Basic, 2019/03/230 Modify for disable JEITA*/
+#ifdef CONFIG_PRODUCT_REALME_TRINKET /*zhangkun@BSP.CHG.Basic, 2019/03/230 Modify for disable JEITA*/
 mask = JEITA_EN_HARDLIMIT_BIT | JEITA_EN_COLD_SL_FCV_BIT
 #else
 	mask = JEITA_EN_COLD_SL_FCV_BIT
@@ -3341,7 +3341,7 @@ int smblib_get_prop_usb_present(struct smb_charger *chg,
 	return 0;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/04/05, sjc Add for charging */
 /*  when set USBIN_SUSPEND_BIT, use present instead of online */
         static bool usb_online_status = false;
@@ -3357,7 +3357,7 @@ int smblib_get_prop_usb_online(struct smb_charger *chg,
 		return rc;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/04/05, sjc Add for charging */
         if (usb_online_status == true) {
                 rc = smblib_read(chg, USBIN_BASE + INT_RT_STS_OFFSET, &stat);
@@ -3386,7 +3386,7 @@ int smblib_get_prop_usb_online(struct smb_charger *chg,
 	smblib_dbg(chg, PR_REGISTER, "POWER_PATH_STATUS = 0x%02x\n",
 		   stat);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-06-07  avoid flash shoot cause USB connect off */
         if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB_CDP
                         || chg->real_charger_type == POWER_SUPPLY_TYPE_USB) {
@@ -5303,12 +5303,12 @@ void smblib_usb_plugin_hard_reset_locked(struct smb_charger *chg)
 
 	vbus_rising = (bool)(stat & USBIN_PLUGIN_RT_STS_BIT);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-25  debug */
         chg_debug("*****************usb_plugin: [%d]*****************\n", vbus_rising);
 #endif
 	if (vbus_rising) {
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-04-25  POPO_CHARGE */
                 oppo_vooc_reset_fastchg_after_usbout();
                 if (oppo_vooc_get_fastchg_started() == false && g_oppo_chip) {
@@ -5338,7 +5338,7 @@ void smblib_usb_plugin_hard_reset_locked(struct smb_charger *chg)
 		if (chg->fcc_stepper_enable)
 			vote(chg->fcc_votable, FCC_STEPPER_VOTER,
 							true, 1500000);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/25, sjc Add for charging */
         if (vbus_rising) {
                 cancel_delayed_work_sync(&chg->chg_monitor_work);
@@ -5369,7 +5369,7 @@ void smblib_usb_plugin_locked(struct smb_charger *chg)
 	}
 
 	vbus_rising = (bool)(stat & USBIN_PLUGIN_RT_STS_BIT);
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-06-28  avoid flash current ripple when flash work */
         smblib_set_opt_switcher_freq(chg, vbus_rising ? chg->chg_freq.freq_5V :
                                                 chg->chg_freq.freq_removal);
@@ -5380,7 +5380,7 @@ void smblib_usb_plugin_locked(struct smb_charger *chg)
         }
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-25  debug */
         chg_debug("*****************usb_plugin: [%d]****************\n", vbus_rising);
 #endif
@@ -5411,7 +5411,7 @@ void smblib_usb_plugin_locked(struct smb_charger *chg)
 		if (rc < 0)
 			smblib_err(chg, "Couldn't stop SW thermal regulation WA, rc=%d\n",
 				rc);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/22, sjc Add for charging */
                 oppo_vooc_reset_fastchg_after_usbout();
                 if (oppo_vooc_get_fastchg_started() == false && g_oppo_chip) {
@@ -5475,7 +5475,7 @@ void smblib_usb_plugin_locked(struct smb_charger *chg)
 
 		smblib_update_usb_type(chg);
 	}
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/25, sjc Add for charging */
         if (vbus_rising) {
                 cancel_delayed_work_sync(&chg->chg_monitor_work);
@@ -5686,7 +5686,7 @@ static void smblib_handle_apsd_done(struct smb_charger *chg, bool rising)
 	switch (apsd_result->bit) {
 	case SDP_CHARGER_BIT:
 	case CDP_CHARGER_BIT:
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/05/11, sjc Delete for charging*/
         case FLOAT_CHARGER_BIT:
 #endif
@@ -5694,7 +5694,7 @@ static void smblib_handle_apsd_done(struct smb_charger *chg, bool rising)
 			smblib_notify_device_mode(chg, true);
 		break;
 	case OCP_CHARGER_BIT:
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/05/11, sjc Add for charging*/
         case FLOAT_CHARGER_BIT:
 #endif
@@ -5704,7 +5704,7 @@ static void smblib_handle_apsd_done(struct smb_charger *chg, bool rising)
 		break;
 	}
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-15  recognize CDP */
         if (apsd_result->bit == CDP_CHARGER_BIT) {
                 vote(chg->usb_icl_votable, DEFAULT_100MA_VOTER, false, 0);
@@ -5712,7 +5712,7 @@ static void smblib_handle_apsd_done(struct smb_charger *chg, bool rising)
 #endif
 	smblib_dbg(chg, PR_INTERRUPT, "IRQ: apsd-done rising; %s detected\n",
 		   apsd_result->name);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-25  debug */
         chg_debug("[plugin]apsd-done, type_name = %s\n", apsd_result->name);
 #endif
@@ -5726,7 +5726,7 @@ irqreturn_t usb_source_change_irq_handler(int irq, void *data)
 	u8 stat;
 
 /* PD session is ongoing, ignore BC1.2 and QC detection */
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/06/19, sjc Modify to rerun apsd */
         u8 reg_value = 0;
 #endif
@@ -5740,7 +5740,7 @@ irqreturn_t usb_source_change_irq_handler(int irq, void *data)
 	}
 	smblib_dbg(chg, PR_INTERRUPT, "APSD_STATUS = 0x%02x\n", stat);
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-06-20  debug */
         chg_debug("[plugin]APSD_STATUS_REG = 0x%02x, apsd_rerun_done = %d\n", stat, chg->uusb_apsd_rerun_done);
 #endif
@@ -5750,7 +5750,7 @@ irqreturn_t usb_source_change_irq_handler(int irq, void *data)
 		/*
 		 * Force re-run APSD to handle slow insertion related
 		 * charger-mis-detection.*/
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/06/19, sjc Modify to rerun apsd */
                 chg->uusb_apsd_rerun_done = true;
                 smblib_rerun_apsd(chg);
@@ -5771,7 +5771,7 @@ irqreturn_t usb_source_change_irq_handler(int irq, void *data)
 
 	smblib_handle_apsd_done(chg,
 		(bool)(stat & APSD_DTC_STATUS_DONE_BIT));
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/01/25, sjc Add for charging */
         if ((bool)(stat & APSD_DTC_STATUS_DONE_BIT)) {
                 oppo_chg_wake_update_work();
@@ -6146,7 +6146,7 @@ static void smblib_handle_rp_change(struct smb_charger *chg, int typec_mode)
 						chg->typec_mode, typec_mode);
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/07/31, sjc Add for using gpio as OTG ID*/
 irqreturn_t usbid_change_handler(int irq, void *data)
 {
@@ -6658,7 +6658,7 @@ static void smblib_bb_removal_work(struct work_struct *work)
 	vote(chg->awake_votable, BOOST_BACK_VOTER, false, 0);
 }
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/01/19, sjc Delete for charging */
 #define BOOST_BACK_UNVOTE_DELAY_MS              750
 #define BOOST_BACK_STORM_COUNT                  3
@@ -6668,7 +6668,7 @@ irqreturn_t switcher_power_ok_irq_handler(int irq, void *data)
 {
 	struct smb_irq_data *irq_data = data;
 	struct smb_charger *chg = irq_data->parent_data;
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/01/19, sjc Delete for charging */
         struct storm_watch *wdata = &irq_data->storm_data;
 #endif
@@ -6693,7 +6693,7 @@ irqreturn_t switcher_power_ok_irq_handler(int irq, void *data)
 		return IRQ_HANDLED;
 
 	if (is_storming(&irq_data->storm_data)) {
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2018/01/19, sjc Modiy for charging */
                 /* This could be a weak charger reduce ICL */
                 if (!is_client_vote_enabled(chg->usb_icl_votable,
@@ -6982,7 +6982,7 @@ static void smblib_uusb_otg_work(struct work_struct *work)
 	u8 stat;
 	bool otg;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/07/31, sjc Modify for using gpio as OTG ID*/
         struct oppo_chg_chip *chip = g_oppo_chip;
         union power_supply_propval ret = {0,};
@@ -7423,7 +7423,7 @@ static void jeita_update_work(struct work_struct *work)
 
 	pnode = of_batterydata_get_best_profile(batt_node,
 					val.intval / 1000, NULL);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-10  use oppo battery */
         if (IS_ERR(pnode)) {
                 chg_err("Failed to detect valid battery profile, try nonstd profile\n");
@@ -7444,7 +7444,7 @@ static void jeita_update_work(struct work_struct *work)
         }
 #endif
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-10  use oppo battery*/
 	rc = of_property_read_u32_array(pnode, "qcom,jeita-hard-thresholds",
 				jeita_hard_thresholds, 2);
@@ -7467,7 +7467,7 @@ static void jeita_update_work(struct work_struct *work)
 		}
 	}
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun.Chen  PSW.BSP.CHG  2018-05-10  use oppo battery */
 	rc = of_property_read_u32_array(pnode, "qcom,jeita-soft-thresholds",
 				chg->jeita_soft_thlds, 2);
@@ -7586,7 +7586,7 @@ out:
 	chg->jeita_configured = JEITA_CFG_FAILURE;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/25, sjc Add for charging */
 static int oppo_chg_get_fv_monitor(struct oppo_chg_chip *chip)
 {
@@ -8139,7 +8139,7 @@ int smblib_init(struct smb_charger *chg)
 	INIT_DELAYED_WORK(&chg->pl_enable_work, smblib_pl_enable_work);
 	INIT_DELAYED_WORK(&chg->uusb_otg_work, smblib_uusb_otg_work);
 	INIT_DELAYED_WORK(&chg->bb_removal_work, smblib_bb_removal_work);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
     /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/25, sjc Add for charging */
             INIT_DELAYED_WORK(&chg->chg_monitor_work, oppo_chg_monitor_work);
 #endif

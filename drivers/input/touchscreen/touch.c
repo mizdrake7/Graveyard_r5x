@@ -1,6 +1,6 @@
 /***************************************************
  * File:touch.c
- * VENDOR_EDIT
+ * CONFIG_PRODUCT_REALME_TRINKET
  * Copyright (c)  2008- 2030  Oppo Mobile communication Corp.ltd.
  * Description:
  *             tp dev
@@ -116,7 +116,7 @@ TP_USED_IC __init tp_judge_ic_match(void)
         }
         pr_err("[TP] Driver does not match the project\n");
         break;
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //fengkui@BSP.kernel.drvier, 2019/11/27, Modify for oppo touch bring up (19571 T0 branch)
     case 19171:
     case 19175:
@@ -133,7 +133,7 @@ TP_USED_IC __init tp_judge_ic_match(void)
         g_tp_prj_id = 19571;
         if (strstr(tp_ic_name, "nf_hx83112a") && strstr(saved_command_line, "dsi_hx83112a_boe_vid_display")) {
             g_tp_dev_vendor = TP_BOE;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Kui.Feng@BSP.kernel.Touch, 2019/12/19, Add for touch firmware headfile update && firmware info
 	    tp_used_index = hx83112a_boe;
 #endif
@@ -141,7 +141,7 @@ TP_USED_IC __init tp_judge_ic_match(void)
         }
         if (strstr(tp_ic_name, "nf_hx83112a") && strstr(saved_command_line, "dsi_hx83112a_dongshan_vid_display")) {
 	    g_tp_dev_vendor =TP_JDI;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Kui.Feng@BSP.kernel.Touch, 2019/12/19, Add for touch firmware headfile update && firmware info
 	    tp_used_index = hx83112a_jdi;
 #endif
@@ -149,7 +149,7 @@ TP_USED_IC __init tp_judge_ic_match(void)
         }
         if (strstr(tp_ic_name, "nf_hx83112a") && strstr(saved_command_line, "dsi_hx83112a_huaxing_vid_display")) {
             g_tp_dev_vendor =TP_HUAXING;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Kui.Feng@BSP.kernel.Touch, 2019/12/19, Add for touch firmware headfile update && firmware info
             tp_used_index = hx83112a_huaxing;
 #endif
@@ -157,7 +157,7 @@ TP_USED_IC __init tp_judge_ic_match(void)
         }
         if (strstr(tp_ic_name, "nf_nt36672a") && strstr(saved_command_line, "dsi_nt36672a_tm_vid_display")) {
             g_tp_dev_vendor = TP_TIANMA;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Kui.Feng@BSP.kernel.Touch, 2019/12/19, Add for touch firmware headfile update && firmware info
 	    tp_used_index = nt36672a_tianma;
 #endif
@@ -166,7 +166,7 @@ TP_USED_IC __init tp_judge_ic_match(void)
 //#endif
         if (strstr(tp_ic_name, "nf_hx83112a") && strstr(saved_command_line, "dsi_hx83112a_hlt_vid_display")) {
             g_tp_dev_vendor =TP_HLT;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Kui.Feng@BSP.kernel.Touch, 2019/12/19, Add for touch firmware headfile update && firmware info
             tp_used_index = hx83112a_hlt;
 #endif
@@ -289,7 +289,7 @@ int tp_util_get_vendor(struct hw_resource *hw_res, struct panel_info *panel_data
 	case 19376:
 	memcpy(panel_data->manufacture_info.version, "0xbd2830000", 11);
 	break;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //Kui.Feng@BSP.kernel.Touch, 2019/12/19, Add for touch firmware headfile update && firmware info
 	case 19171:
 	case 19175:

@@ -10,10 +10,10 @@
 
 #include <asm/current.h>
 #include <uapi/linux/wait.h>
-#ifdef VENDOR_EDIT//Fanhong.Kong@ProDrv.CHG,add 2018/12/19 for DeathHealer kernel 4.14
+#ifdef CONFIG_PRODUCT_REALME_TRINKET//Fanhong.Kong@ProDrv.CHG,add 2018/12/19 for DeathHealer kernel 4.14
 #include <linux/signal.h>
 #include <linux/sched.h>
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 typedef struct wait_queue_entry wait_queue_entry_t;
 
@@ -233,7 +233,7 @@ void __wake_up_sync(struct wait_queue_head *wq_head, unsigned int mode, int nr);
 
 extern void init_wait_entry(struct wait_queue_entry *wq_entry, int flags);
 
-#ifdef VENDOR_EDIT//Fanhong.Kong@ProDrv.CHG,add 2018/12/19 for DeathHealer kernel 4.14
+#ifdef CONFIG_PRODUCT_REALME_TRINKET//Fanhong.Kong@ProDrv.CHG,add 2018/12/19 for DeathHealer kernel 4.14
 /*signal.h include wait.h,copy from signal.h and renamed,other wise it would redefined*/
 /*
 static inline int signal_pending(struct task_struct *p)
@@ -267,12 +267,12 @@ static inline int hung_long_fatal_signal_pending(struct task_struct *p)
 	return hung_long_signal_pending(p) && __hung_long_fatal_signal_pending(p);
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/02/02, DeathHealer, set the task to be killed */
 #define PF_OPPO_KILLING	0x00000001
 #endif
 
-//#ifdef VENDOR_EDIT //fangpan@Swdp.shanghai,2015/11/12
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET //fangpan@Swdp.shanghai,2015/11/12
 static inline int hung_long_and_fatal_signal_pending(struct task_struct *p)
 {
 #ifdef CONFIG_DETECT_HUNG_TASK
@@ -282,7 +282,7 @@ static inline int hung_long_and_fatal_signal_pending(struct task_struct *p)
 #endif
 }
 //#endif
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 /*
  * The below macro ___wait_event() has an explicit shadow of the __ret
  * variable when used from the wait_event_*() macros.
@@ -294,7 +294,7 @@ static inline int hung_long_and_fatal_signal_pending(struct task_struct *p)
  * on purpose; we use long where we can return timeout values and int
  * otherwise.
  */
-//#ifdef VENDOR_EDIT //fangpan@Swdp.shanghai,2015/11/12
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET //fangpan@Swdp.shanghai,2015/11/12
 #define ___wait_event(wq_head, condition, state, exclusive, ret, cmd)		\
 ({										\
 	__label__ __out;							\

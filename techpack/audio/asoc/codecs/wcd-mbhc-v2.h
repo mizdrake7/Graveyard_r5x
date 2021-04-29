@@ -17,11 +17,11 @@
 #include <linux/power_supply.h>
 #include "wcdcal-hwdep.h"
 #include <sound/jack.h>
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP headset function begain
 #include <linux/headset_notifier.h>
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP headset function end
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 #define TOMBAK_MBHC_NC	0
 #define TOMBAK_MBHC_NO	1
@@ -144,7 +144,7 @@ do {                                                    \
 				  SND_JACK_BTN_4 | SND_JACK_BTN_5)
 #define OCP_ATTEMPT 20
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*xiang.fei@Multimedia.AudioDriver.HeadsetDet, 2017/04/10, Modify for headphone detect*/
 #define HS_DETECT_PLUG_TIME_MS (3 * 1000)
 #else
@@ -614,7 +614,7 @@ struct wcd_mbhc {
 	bool force_linein;
 	struct device_node *fsa_np;
 	struct notifier_block fsa_nb;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	/*pangbin1@wingtech.com, 2019/8/16, add for plug and unplug frequently*/
 	unsigned delayed_time;
 	unsigned long last_unplug_time;

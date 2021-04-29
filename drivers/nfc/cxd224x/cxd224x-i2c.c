@@ -42,14 +42,14 @@
 #include <linux/of_gpio.h>
 
 #include "cxd224x.h"
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //wenjie.Liu@CN.NFC.Basic.Hardware.1189038, 2017/12/21,
 //Add for : nfc_chip deviceinfo
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 #include <soc/oppo/device_info.h>
 #include <soc/oppo/oppo_project.h>
 #endif
-//#endif /* VENDOR_EDIT */
+//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #ifdef CONFIG_WAKELOCK
 #include <linux/wakelock.h>
@@ -89,14 +89,14 @@
 /* RESET */
 #define RESET_ASSERT_MS (1)
 
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 //wenjie.Liu@CN.NFC.Basic.Hardware.1189038, 2017/12/21,
 //Add for : nfc_chip deviceinfo,
 struct manufacture_info nfc_chip_sony_info = {
 	.version = "cxd224x-i2c",
 	.manufacture = "sony",
 };
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 struct cxd224x_dev {
 	wait_queue_head_t read_wq;
@@ -492,7 +492,7 @@ static int cxd224x_parse_dt(struct device *dev,
 	dev_info(dev, "%s,%d debug \n", __func__, __LINE__);
 	pdata->rst_gpio =
 		of_get_named_gpio_flags(dev->of_node, "sony,nfc_rst", 0, NULL);
-	//#ifndef VENDOR_EDIT
+	//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	//wenjie.Liu@CN.NFC.Basic.Hardware, 2018/06/04,
 	//Modify for :coverity 58847 Unsigned compared against 0
 	/*
@@ -501,7 +501,7 @@ static int cxd224x_parse_dt(struct device *dev,
 		goto dt_err;
 	}
 	*/
-	//#else /* VENDOR_EDIT */
+	//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 	if (pdata->rst_gpio <= 0) {
 		pr_err("failed to get \"nfc_rst\"\n");
 		goto dt_err;
@@ -515,7 +515,7 @@ static int cxd224x_parse_dt(struct device *dev,
 	dev_info(dev, "%s,%d debug \n", __func__, __LINE__);
 	pdata->wake_gpio =
 		of_get_named_gpio_flags(dev->of_node, "sony,nfc_wake", 0, NULL);
-	//#ifndef VENDOR_EDIT
+	//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	//wenjie.Liu@CN.NFC.Basic.Hardware, 2018/06/04,
 	//Modify for :coverity 58847 Unsigned compared against 0
 	/*
@@ -524,7 +524,7 @@ static int cxd224x_parse_dt(struct device *dev,
 		goto dt_err;
 	}
 	*/
-	//#else /* VENDOR_EDIT */
+	//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 	if (pdata->wake_gpio <= 0) {
 		pr_err("failed to get \"nfc_wake\"\n");
 		goto dt_err;
@@ -536,12 +536,12 @@ static int cxd224x_parse_dt(struct device *dev,
                 goto dt_err;
         }
 
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //ruhong.huang@CN.NFC.Basic.hardware, 2019/04/28,
 //Modify for nfcc hw check
         dev_err(dev, "%s: irq : %d, ven : %d, rst : %d, wake_gpio: %d clkreq_gpio: %d\n",
                 __func__, pdata->irq_gpio, pdata->en_gpio, pdata->rst_gpio, pdata->wake_gpio, pdata->clkreq_gpio);
-//#endif /* VENDOR_EDIT */
+//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	return 0;
 
@@ -574,7 +574,7 @@ static int cxd224x_probe(struct i2c_client *client,
 	platform_data =
 		kzalloc(sizeof(struct cxd224x_platform_data), GFP_KERNEL);
 
-	//#ifndef VENDOR_EDIT
+	//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	//wenjie.Liu@CN.NFC.Basic.Hardware, 2018/06/04,
 	//Modify for :coverity bugid: 58846 Resource leak
 	/*
@@ -583,12 +583,12 @@ static int cxd224x_probe(struct i2c_client *client,
 		return -ENOMEM;
 	}
 	*/
-	//#else /* VENDOR_EDIT */
+	//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 	if (!platform_data) {
 		dev_err(&client->dev, "failed to allocate memory\n");
 		return -ENOMEM;
 	}
-	//#endif /* VENDOR_EDIT */
+	//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 
 	ret = cxd224x_parse_dt(&client->dev, platform_data);
@@ -623,15 +623,15 @@ static int cxd224x_probe(struct i2c_client *client,
 	if (client->irq < 0) {
 		dev_err(&client->dev, "%s, failed to allocate irq=%d\n",
 			__func__, client->irq);
-		//#ifndef VENDOR_EDIT
+		//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 		//wenjie.Liu@CN.NFC.Basic.Hardware, 2018/06/04,
 		//Modify for :coverity bugid: 58846 Resource leak
 		/*
 		return -ENODEV;
 		*/
-		//#else /* VENDOR_EDIT */
+		//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 		goto err_exit;
-		//#endif /* VENDOR_EDIT */
+		//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	}
 	dev_err(&client->dev, "%s, irq(%d)\n", __func__, client->irq);
 
@@ -642,17 +642,17 @@ static int cxd224x_probe(struct i2c_client *client,
 		goto err_exit;
 	en_gpio_ok = 1;
 	ret = gpio_direction_output(platform_data->en_gpio, 0);
-	//#ifndef VENDOR_EDIT
+	//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	//wenjie.Liu@CN.NFC.Basic.Hardware, 2018/06/04,
 	//Modify for :coverity bugid: 58846 Resource leak
 	/*
 	if (ret)
 		return -ENODEV;
 	*/
-	//#else /* VENDOR_EDIT */
+	//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 	if (ret)
 		goto err_exit;
-	//#endif /* VENDOR_EDIT */
+	//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 #endif
 
@@ -664,17 +664,17 @@ static int cxd224x_probe(struct i2c_client *client,
 	rst_gpio_ok = 1;
 	ret = gpio_direction_output(platform_data->rst_gpio,
 				    ~CXDNFC_RST_ACTIVE & 0x1);
-	//#ifndef VENDOR_EDIT
+	//#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	//wenjie.Liu@CN.NFC.Basic.Hardware, 2018/06/04,
 	//Modify for :coverity bugid: 58846 Resource leak
 	/*
 	if (ret)
 		return -ENODEV;
 	*/
-	//#else /* VENDOR_EDIT */
+	//#else /* CONFIG_PRODUCT_REALME_TRINKET */
 	if (ret)
 		goto err_exit;
-	//#endif /* VENDOR_EDIT */
+	//#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	dev_err(&client->dev, "%s, xrst deassert\n", __func__);
 #endif
 
@@ -749,9 +749,9 @@ static int cxd224x_probe(struct i2c_client *client,
 	i2c_set_clientdata(client, cxd224x_dev);
 //wenjie.Liu@CN.NFC.Basic.Hardware.1189038, 2017/12/21,
 //Add for : nfc_chip deviceinfo
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 	register_device_proc("nfc", nfc_chip_sony_info.version, nfc_chip_sony_info.manufacture);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 	dev_err(&client->dev,
 		 "%s, probing cxd224x driver exited successfully\n", __func__);
 	return 0;

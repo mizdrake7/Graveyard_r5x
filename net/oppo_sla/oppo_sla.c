@@ -1,6 +1,6 @@
 /***********************************************************
 ** Copyright (C), 2008-2018, OPPO Mobile Comm Corp., Ltd.
-** VENDOR_EDIT
+** CONFIG_PRODUCT_REALME_TRINKET
 ** File: - oppo_sla.c
 ** Description: sla
 **

@@ -3442,7 +3442,7 @@ again:
 	BUG();
 }
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
 /* Kui.Zhang@PSW.BSP.Kernel.Performance, 2019-02-26,
  * collect reclaimed_shrinked task schedule record
  */
@@ -3591,7 +3591,7 @@ static void __sched notrace __schedule(bool preempt)
 
 		trace_sched_switch(preempt, prev, next);
 
-#if defined(VENDOR_EDIT) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
+#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
 		/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2019-02-26,
 		 * collect reclaimed_shrinked task schedule record
 		 */
@@ -7028,7 +7028,7 @@ unlock_mutex:
 	return ret;
 }
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //cuixiaogang@SRC.hypnus.2018.07.11. add for change up/down migrate
 int sched_get_updown_migrate(unsigned int *up_pct, unsigned int *down_pct)
 {
@@ -7077,7 +7077,7 @@ int sched_set_updown_migrate(unsigned int *up_pct, unsigned int *down_pct)
 	return 0;
 }
 EXPORT_SYMBOL(sched_set_updown_migrate);
-#endif /* VENDOR_EDIT */
+#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 #endif
 
 static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
@@ -7648,7 +7648,7 @@ void sched_exit(struct task_struct *p)
 
 __read_mostly bool sched_predl = 1;
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*fanhui@PhoneSW.BSP, 2016-06-23, get current task on one cpu*/
 struct task_struct *oppo_get_cpu_task(int cpu)
 {

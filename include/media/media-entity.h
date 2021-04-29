@@ -287,7 +287,7 @@ struct media_entity {
 			u32 minor;
 		} dev;
 	} info;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	u32 revision;
 	u32 group_id;
 #endif

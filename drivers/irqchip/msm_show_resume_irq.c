@@ -15,12 +15,12 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 //PengNan@CHG.BSP modified for sleep debug 2016/09/13
 int msm_show_resume_irq_mask = 1;
 #else
 int msm_show_resume_irq_mask;
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 module_param_named(
 	debug_mask, msm_show_resume_irq_mask, int, 0664);

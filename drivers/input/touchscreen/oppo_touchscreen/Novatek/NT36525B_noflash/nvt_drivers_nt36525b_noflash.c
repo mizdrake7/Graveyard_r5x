@@ -1,6 +1,6 @@
 /*****************************************************************************************
  * Copyright (c)  2008- 2019  Oppo Mobile communication Corp.ltd.
- * VENDOR_EDIT
+ * CONFIG_PRODUCT_REALME_TRINKET
  * File       : novatek_drivers_nt36525b.c
  * Description: Source file for novatek nt36525b driver
  * Version   : 1.0

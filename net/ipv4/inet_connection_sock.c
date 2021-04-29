@@ -1126,7 +1126,7 @@ struct dst_entry *inet_csk_update_pmtu(struct sock *sk, u32 mtu)
 	}
 	dst->ops->update_pmtu(dst, sk, NULL, mtu, true);
 
-	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Rongzheng.tang@PSW.CN.WiFi.Network.internet.1066205, 2016/11/03,
 	//Add for [873764] when receives ICMP_FRAG_NEEDED, reduces the mtu of net_device.
 	pr_err("%s: current_mtu = %d , frag_mtu = %d \n", __func__, dst->dev->mtu, dst_mtu(dst));
@@ -1134,7 +1134,7 @@ struct dst_entry *inet_csk_update_pmtu(struct sock *sk, u32 mtu)
 	if(dst->dev->mtu > dst_mtu(dst) && dst_mtu(dst) > 1280) {
 		dst->dev->mtu = dst_mtu(dst);
 	}
-	#endif /* VENDOR_EDIT */
+	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	dst = __sk_dst_check(sk, 0);
 	if (!dst)

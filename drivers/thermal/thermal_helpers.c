@@ -167,7 +167,7 @@ void thermal_cdev_update(struct thermal_cooling_device *cdev)
 {
 	struct thermal_instance *instance;
 	unsigned long current_target = 0, min_target = ULONG_MAX;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	unsigned long stale_target;
 #endif
 
@@ -181,7 +181,7 @@ void thermal_cdev_update(struct thermal_cooling_device *cdev)
 	/* Make sure cdev enters the deepest cooling state */
 	current_target = cdev->sysfs_cur_state_req;
 	min_target = cdev->sysfs_min_state_req;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	cdev->ops->get_cur_state(cdev, &stale_target);
 #endif
 	list_for_each_entry(instance, &cdev->thermal_instances, cdev_node) {
@@ -199,7 +199,7 @@ void thermal_cdev_update(struct thermal_cooling_device *cdev)
 	}
 	trace_cdev_update_start(cdev);
 	cdev->ops->set_cur_state(cdev, current_target);
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	if (stale_target != current_target) {
 		pr_err("%s: cdev=%s, old_target=%d, target=%d.\n",
 			__func__, cdev->type, stale_target, current_target);

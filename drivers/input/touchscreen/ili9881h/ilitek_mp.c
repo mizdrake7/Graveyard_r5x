@@ -2773,7 +2773,7 @@ static void mp_show_result(const char *csv_path)
 
 	if (ERR_ALLOC_MEM(f)) {
 		ipio_err("Failed to open CSV file");
-		#ifdef ODM_WT_EDIT
+		#ifdef CONFIG_ODM_WT_EDIT
 		//Bin.Su@ODM_WT.BSP.TP,2019/08/01,creat result files when open CSV_LCM fail
 		if (core_mp.final_result == MP_FAIL) {
 			sprintf(csv_name, "%s/%s_%s.csv", "/sdcard", get_date_time_str(), ret_fail_name);

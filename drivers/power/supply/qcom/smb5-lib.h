@@ -86,7 +86,7 @@ enum print_reason {
 #define MAIN_FCC_VOTER			"MAIN_FCC_VOTER"
 #define DCIN_AICL_VOTER			"DCIN_AICL_VOTER"
 #define OVERHEAT_LIMIT_VOTER		"OVERHEAT_LIMIT_VOTER"
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 // Kun.Zhang@BSP.CHG.Basic, 2019/04/09  add for charge
 #define DEFAULT_100MA_VOTER     "DEFAULT_100MA_VOTER"
 #endif
@@ -103,7 +103,7 @@ enum print_reason {
 #define SDP_100_MA			100000
 #define SDP_CURRENT_UA			500000
 #define CDP_CURRENT_UA			1500000
-#ifndef VENDOR_EDIT
+#ifndef CONFIG_PRODUCT_REALME_TRINKET
 // wenbin.liu@BSP.CHG.Basic, 2017/11/27 
 // Delete for oppo dcp 2A 
 #define DCP_CURRENT_UA                  1500000
@@ -382,7 +382,7 @@ struct smb_iio {
 	struct iio_channel	*connector_temp_chan;
 	struct iio_channel	*sbux_chan;
 	struct iio_channel	*vph_v_chan;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
     /* tongfeng.Huang@BSP.CHG.Basic, 2018/11/02,  Add for charging chargerid adc*/
         struct iio_channel  *chgid_v_chan;
 #endif
@@ -421,7 +421,7 @@ struct smb_charger {
 	struct power_supply		*dc_psy;
 	struct power_supply		*bms_psy;
 	struct power_supply		*usb_main_psy;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/07, sjc Add for charging*/
 	struct power_supply		*ac_psy;
 #endif
@@ -478,7 +478,7 @@ struct smb_charger {
 	struct delayed_work	pl_enable_work;
 	struct delayed_work	uusb_otg_work;
 	struct delayed_work	bb_removal_work;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Jianchao.Shi@BSP.CHG.Basic, 2017/03/25, sjc Add for charging */
         struct delayed_work     chg_monitor_work;
 #endif
@@ -630,7 +630,7 @@ struct smb_charger {
 	int			last_wls_vout;
 	/* wireless */
 	int			wireless_vout;
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
     /* Jianchao.Shi@BSP.CHG.Basic, 2017/08/10, sjc Add for charging */
         int         pre_current_ma;
         bool        is_dpdm_on_usb;
@@ -638,7 +638,7 @@ struct smb_charger {
         struct work_struct  dpdm_set_work;
 #endif
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
     /* tongfeng.Huang@BSP.CHG.Basic, 2018/09/27, sjc Add for set uart pinctrl to read chargerID */   
         int         shipmode_id_gpio;
         struct pinctrl      *shipmode_id_pinctrl;
@@ -646,7 +646,7 @@ struct smb_charger {
 #endif
 };
 
-#ifdef VENDOR_EDIT
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* Yichun Chen@BSP.CHG.Basic, 2018/04/25, Add for OPPO_CHARGE */
 enum skip_reason {
 	REASON_OTG_ENABLED	= BIT(0),
@@ -702,7 +702,7 @@ struct qcom_pmic {
 	bool			hc_mode_flag;
 	/* copy form msm8976_pmic end */
 };
-#endif /*VENDOR_EDIT*/
+#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 
 int smblib_read(struct smb_charger *chg, u16 addr, u8 *val);
@@ -718,7 +718,7 @@ int smblib_get_aicl_cont_threshold(struct smb_chg_param *param, u8 val_raw);
 int smblib_enable_charging(struct smb_charger *chg, bool enable);
 int smblib_set_charge_param(struct smb_charger *chg,
 			    struct smb_chg_param *param, int val_u);
-#ifdef VENDOR_EDIT  /*zhangkun add for qpnp-smb5.c oppo*/
+#ifdef CONFIG_PRODUCT_REALME_TRINKET  /*zhangkun add for qpnp-smb5.c oppo*/
 int smblib_set_opt_switcher_freq(struct smb_charger *chg, int fsw_khz);
 int smblib_set_charge_param(struct smb_charger *chg,
 			    struct smb_chg_param *param, int val_u);

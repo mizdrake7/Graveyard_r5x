@@ -779,7 +779,7 @@ int diag_cmd_add_reg(struct diag_cmd_reg_entry_t *new_entry, uint8_t proc,
 		     int pid)
 {
 	struct diag_cmd_reg_t *new_item = NULL;
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	//+Changli.Chen@ODM_WT.Conn.Bluetooth.Basic.1372106,2019/04/16 add for fix BT sometimes coupling fail
 	struct diag_cmd_reg_t *temp_item = NULL;
 	struct diag_cmd_reg_entry_t *temp_entry = NULL;
@@ -810,7 +810,7 @@ int diag_cmd_add_reg(struct diag_cmd_reg_entry_t *new_entry, uint8_t proc,
 	INIT_LIST_HEAD(&new_item->link);
 
 	mutex_lock(&driver->cmd_reg_mutex);
-#ifdef ODM_WT_EDIT
+#ifdef CONFIG_ODM_WT_EDIT
 	//+Changli.Chen@ODM_WT.Conn.Bluetooth.Basic.1372106,2019/04/16 add for fix BT sometimes coupling fail
 	if(proc > 0) {
 		temp_entry = diag_cmd_search(new_entry, proc);

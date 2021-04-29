@@ -144,7 +144,7 @@
 			};
 		};
 	};
-//#ifdef VENDOR_EDIT
+//#ifdef CONFIG_PRODUCT_REALME_TRINKET
 /*LiYue@BSP.CHG.Basic, 2019/07/04, add for usb connector temp check*/
 /*	conn-therm-adc {
 		polling-delay-passive = <0>;

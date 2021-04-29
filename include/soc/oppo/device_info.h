@@ -33,11 +33,11 @@ int register_device_proc_cam(char *name, char *version);
 int register_devinfo(char *name, struct manufacture_info *info);
 bool check_id_match(const char *label, const char *id_match, int id);
 
-//#ifdef ODM_WT_EDIT
+//#ifdef CONFIG_ODM_WT_EDIT
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP devinfo begain
 int register_tp_proc(char *name, char *version, char *manufacture ,char *fw_path);
 //Bo.Zhang@ODM_WT.BSP.TP,2020/04/05, added for TP devinfo end
-//#endif /* ODM_WT_EDIT */
+//#endif /* CONFIG_ODM_WT_EDIT */
 
 
 #endif
