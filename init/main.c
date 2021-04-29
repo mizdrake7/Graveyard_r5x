@@ -98,7 +98,7 @@
 
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
 // Kun.Hu@TECH.BSP.Stability.PHOENIX_PROJECT 2019/06/11, Add for phoenix project
-#include "../../../../../vendor/oppo/oppo_phoenix/kernel/oppo_phoenix/oppo_phoenix.h"
+#include "../drivers/soc/oppo/oppo_phoenix/oppo_phoenix.h"
 #endif  //CONFIG_PRODUCT_REALME_TRINKET
 
 static int kernel_init(void *);
