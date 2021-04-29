@@ -2,7 +2,6 @@ obj-$(CONFIG_QPNP_FG_GEN3)     += qpnp-fg-gen3.o fg-memif.o fg-util.o
 obj-$(CONFIG_QPNP_FG_GEN4)     += qpnp-fg-gen4.o fg-memif.o fg-util.o fg-alg.o  pmic-voter.o
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
 #/* shanliangliang@CHG.BSP.charge, 2020/03/06, Add for oppo_gauge */
-$(warning simon $(SHIPPING_API_LEVEL))
 ##ifeq ($(SHIPPING_API_LEVEL), 28)
 obj-$(CONFIG_OPPO_QPNP_QG)     += qpnp-qg.o pmic-voter.o qg-util.o qg-soc.o qg-sdam.o qg-battery-profile.o qg-profile-lib.o fg-alg.o
 ##else
