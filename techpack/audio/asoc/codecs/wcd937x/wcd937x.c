@@ -32,6 +32,8 @@
 #include "../msm-cdc-pinctrl.h"
 #include <dt-bindings/sound/audio-codec-port-types.h>
 #include "../msm-cdc-supply.h"
+#include <linux/gpio.h>
+#include <linux/of_gpio.h>
 
 #define WCD9370_VARIANT 0
 #define WCD9375_VARIANT 5
@@ -41,6 +43,23 @@
 
 #define WCD937X_VERSION_1_0 1
 #define WCD937X_VERSION_ENTRY_SIZE 32
+
+//#ifdef VENDOR_EDIT
+//Feng.Zhou@Mutilmedia.AudioDriver, 2019/11/23, Add for bring up spk/rcv
+//extern unsigned char aw87339_spk_audio_kspk(void);
+//extern unsigned char aw87339_rcv_audio_drcv(void);
+//extern unsigned char aw87339_rcv_audio_kspk(void);
+//extern unsigned char aw87339_spk_audio_off(void);
+//extern unsigned char aw87339_rcv_audio_off(void);
+
+//static int aw87339_kspk_control = 0;
+//static int aw87339_drcv_control = 0;
+//static int aw87339_drcv_kspk_control = 0;
+
+//static const char *const ext_kspk_amp_function[] = { "Off", "On" };
+//static const char *const ext_drcv_amp_function[] = { "Off", "On" };
+//static const char *const ext_drcv_kspk_amp_function[] = { "Off", "On" };
+//#endif /* VENDOR_EDIT */
 
 enum {
 	CODEC_TX = 0,
@@ -1593,6 +1612,84 @@ static int wcd937x_ear_pa_gain_put(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
+//#ifdef VENDOR_EDIT
+//Feng.Zhou@Mutilmedia.AudioDriver, 2019/11/23, Add for bring up spk/rcv
+/*static int ext_kspk_amp_get(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	ucontrol->value.integer.value[0] = aw87339_kspk_control;
+	pr_debug("%s: aw87339_kspk_control = %d\n", __func__,
+		aw87339_kspk_control);
+	return 0;
+}
+
+static int ext_kspk_amp_put(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	if(ucontrol->value.integer.value[0] == aw87339_kspk_control)
+		return 1;
+	aw87339_kspk_control = ucontrol->value.integer.value[0];
+	if(ucontrol->value.integer.value[0]) {
+		aw87339_spk_audio_kspk();
+	} else {
+		aw87339_spk_audio_off();
+	}
+	pr_debug("%s: value.integer.value = %d\n", __func__,
+		ucontrol->value.integer.value[0]);
+	return 0;
+}
+
+static int ext_drcv_amp_get(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	ucontrol->value.integer.value[0] = aw87339_drcv_control;
+	pr_debug("%s: aw87339_drcv_control = %d\n", __func__,
+		aw87339_drcv_control);
+	return 0;
+}
+
+static int ext_drcv_amp_put(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	if(ucontrol->value.integer.value[0] == aw87339_drcv_control)
+		return 1;
+	aw87339_drcv_control = ucontrol->value.integer.value[0];
+	if(ucontrol->value.integer.value[0]) {
+		aw87339_rcv_audio_drcv();
+	} else {
+		aw87339_rcv_audio_off();
+	}
+	pr_debug("%s: value.integer.value = %d\n", __func__,
+		ucontrol->value.integer.value[0]);
+	return 0;
+}
+
+static int ext_drcv_kspk_amp_get(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	ucontrol->value.integer.value[0] = aw87339_drcv_kspk_control;
+	pr_debug("%s: aw87339_drcv_kspk_control = %d\n", __func__,
+		aw87339_drcv_kspk_control);
+	return 0;
+}
+
+static int ext_drcv_kspk_amp_put(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	if(ucontrol->value.integer.value[0] == aw87339_drcv_kspk_control)
+		return 1;
+	aw87339_drcv_kspk_control = ucontrol->value.integer.value[0];
+	if(ucontrol->value.integer.value[0]) {
+		aw87339_rcv_audio_kspk();
+	} else {
+		aw87339_rcv_audio_off();
+	}
+	pr_debug("%s: value.integer.value = %d\n", __func__,
+		ucontrol->value.integer.value[0]);
+	return 0;
+}*/
+//#endif /* VENDOR_EDIT */
+
 static int wcd937x_get_compander(struct snd_kcontrol *kcontrol,
 				 struct snd_ctl_elem_value *ucontrol)
 {
@@ -1681,6 +1778,43 @@ static int wcd937x_codec_enable_vdd_buck(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+//ifdef ODM_WT_EDIT
+//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/19, Modify for speaker
+#define AW_PA_MODE 3
+static int ext_spk_pa_enable(struct snd_soc_dapm_widget *w,
+						struct snd_kcontrol *kcontrol,
+						int event)
+{
+	struct snd_soc_codec *codec = snd_soc_dapm_to_codec(w->dapm);
+	struct wcd937x_priv *wcd937x = snd_soc_codec_get_drvdata(codec);
+	struct wcd937x_pdata *pdata = NULL;
+	int ret;
+
+	pdata = dev_get_platdata(wcd937x->dev);
+	if (!pdata->ext_pa_gpio) {
+		pr_err("%s: Invalid gpio: %d\n", __func__, pdata->ext_pa_gpio);
+		return false;
+	}
+
+	dev_dbg(codec->dev, "%s: %s event = %d\n", __func__, w->name, event);
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		for(ret = 0; ret < AW_PA_MODE; ret++) {
+			gpio_direction_output(pdata->ext_pa_gpio, false);
+			gpio_direction_output(pdata->ext_pa_gpio, true);
+		}
+		usleep_range(13000, 13000 + 2000);
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		gpio_direction_output(pdata->ext_pa_gpio, false);
+		usleep_range(3000, 3000 + 2000);
+		break;
+	}
+	return 0;
+}
+//endif ODM_WT_EDIT
+
 static const char * const rx_hph_mode_mux_text[] = {
 	"CLS_H_INVALID", "CLS_H_HIFI", "CLS_H_LP", "CLS_AB", "CLS_H_LOHIFI",
 	"CLS_H_ULP", "CLS_AB_HIFI",
@@ -1698,6 +1832,23 @@ static const struct soc_enum rx_hph_mode_mux_enum =
 	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(rx_hph_mode_mux_text),
 			    rx_hph_mode_mux_text);
 
+//#ifdef VENDOR_EDIT
+//Feng.Zhou@Mutilmedia.AudioDriver, 2019/11/23, Add for bring up spk/rcv
+/*
+static const struct soc_enum msm_snd_enum[] = {
+	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(ext_kspk_amp_function),
+				ext_kspk_amp_function),
+	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(ext_drcv_amp_function),
+				ext_drcv_amp_function),
+	#ifdef VENDOR_EDIT
+	//Feng.Zhou@Mutilmedia.AudioDriver, 2019/12/11, Add for putting rcv as spk
+	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(ext_drcv_kspk_amp_function),
+				ext_drcv_kspk_amp_function),
+	#endif
+};
+*/
+//#endif /* VENDOR_EDIT */
+
 static SOC_ENUM_SINGLE_EXT_DECL(wcd937x_ear_pa_gain_enum,
 				wcd937x_ear_pa_gain_text);
 
@@ -1710,6 +1861,21 @@ static const struct snd_kcontrol_new wcd937x_snd_controls[] = {
 		wcd937x_get_compander, wcd937x_set_compander),
 	SOC_SINGLE_EXT("HPHR_COMP Switch", SND_SOC_NOPM, 1, 1, 0,
 		wcd937x_get_compander, wcd937x_set_compander),
+//#ifdef VENDOR_EDIT
+	//Feng.Zhou@Mutilmedia.AudioDriver, 2019/11/23, Add for bring up spk/rcv
+	/*
+	SOC_ENUM_EXT("Ext_Speaker_Amp_spkmode", msm_snd_enum[0],
+		ext_kspk_amp_get, ext_kspk_amp_put),
+	SOC_ENUM_EXT("Ext_Receiver_Amp_rcvmode", msm_snd_enum[1],
+		ext_drcv_amp_get, ext_drcv_amp_put),
+	#ifdef VENDOR_EDIT
+	//Feng.Zhou@Mutilmedia.AudioDriver, 2019/12/11, Add for putting rcv as spk
+	SOC_ENUM_EXT("Ext_Receiver_Amp_spkmode", msm_snd_enum[2],
+		ext_drcv_kspk_amp_get, ext_drcv_kspk_amp_put),
+	#endif
+	*/
+	/* VENDOR_EDIT */
+//#endif /* VENDOR_EDIT */
 
 	SOC_SINGLE_TLV("HPHL Volume", WCD937X_HPH_L_EN, 0, 20, 1, line_gain),
 	SOC_SINGLE_TLV("HPHR Volume", WCD937X_HPH_R_EN, 0, 20, 1, line_gain),
@@ -1792,6 +1958,92 @@ static const struct snd_kcontrol_new tx_adc2_mux =
 
 static const struct snd_kcontrol_new rx_rdac3_mux =
 	SOC_DAPM_ENUM("RDAC3_MUX Mux", rdac3_enum);
+
+//#ifdef VENDOR_EDIT
+//Jianqing.Liao@PSW.MM.AudioDriver.Codec, 2019/09/04, Add for AW87339 dapm
+/*static const char * const ext_spkl_text[] = {
+	"Off", "On"
+};
+static const char * const ext_spkr_text[] = {
+	"Off", "On"
+};
+static const char * const ext_rcv_text[] = {
+	"Off", "On"
+};
+
+static const struct soc_enum ext_spkl_enum =
+	SOC_ENUM_SINGLE(SND_SOC_NOPM, 0,
+		ARRAY_SIZE(ext_spkl_text), ext_spkl_text);
+
+static const struct soc_enum ext_spkr_enum =
+	SOC_ENUM_SINGLE(SND_SOC_NOPM, 0,
+		ARRAY_SIZE(ext_spkr_text), ext_spkr_text);
+
+static const struct soc_enum ext_rcv_enum =
+	SOC_ENUM_SINGLE(SND_SOC_NOPM, 0,
+		ARRAY_SIZE(ext_rcv_text), ext_rcv_text);
+
+static const struct snd_kcontrol_new ext_spkl_mux =
+	SOC_DAPM_ENUM("SPKL Switch Mux", ext_spkl_enum);
+
+static const struct snd_kcontrol_new ext_spkr_mux =
+	SOC_DAPM_ENUM("SPKR Switch Mux", ext_spkr_enum);
+
+static const struct snd_kcontrol_new ext_rcv_mux =
+	SOC_DAPM_ENUM("RCV Switch Mux", ext_rcv_enum);
+
+static int aw87339_kspk_enable_rcv_pa(struct snd_soc_dapm_widget *w,
+					struct snd_kcontrol *kcontrol,
+					int event){
+	pr_err("%s wname: %s event: %d\n", __func__,w->name, event);
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		aw87339_rcv_audio_kspk();
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		aw87339_rcv_audio_off();
+		break;
+	};
+
+	return 0;
+}
+
+static int aw87339_kspk_enable_spk_pa(struct snd_soc_dapm_widget *w,
+					struct snd_kcontrol *kcontrol,
+					int event){
+	pr_err("%s wname: %s event: %d\n", __func__,w->name, event);
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		aw87339_spk_audio_kspk();
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		aw87339_spk_audio_off();
+		break;
+	};
+
+	return 0;
+}
+
+static int aw87339_drcv_enable_rcv_pa(struct snd_soc_dapm_widget *w,
+					struct snd_kcontrol *kcontrol,
+					int event){
+	pr_err("%s wname: %s event: %d\n", __func__,w->name, event);
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMU:
+		aw87339_rcv_audio_drcv();
+		break;
+	case SND_SOC_DAPM_PRE_PMD:
+		aw87339_rcv_audio_off();
+		break;
+	};
+
+	return 0;
+}*/
+//#endif /* VENDOR_EDIT */
+
 
 static const struct snd_soc_dapm_widget wcd937x_dapm_widgets[] = {
 
@@ -1922,6 +2174,20 @@ static const struct snd_soc_dapm_widget wcd937x_dapm_widgets[] = {
 	SND_SOC_DAPM_OUTPUT("AUX"),
 	SND_SOC_DAPM_OUTPUT("HPHL"),
 	SND_SOC_DAPM_OUTPUT("HPHR"),
+	//ifdef ODM_WT_EDIT
+	//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/19, Modify for speaker
+	SND_SOC_DAPM_SPK("Ext PA", ext_spk_pa_enable),
+	//endif ODM_WT_EDIT
+
+//#ifdef VENDOR_EDIT
+//Jianqing.Liao@PSW.MM.AudioDriver.Codec, 2019/09/04, Add for AW87339 dapm
+	//SND_SOC_DAPM_SPK("AW87339 SPKL", aw87339_kspk_enable_rcv_pa),
+	//SND_SOC_DAPM_SPK("AW87339 SPKR", aw87339_kspk_enable_spk_pa),
+	//SND_SOC_DAPM_SPK("AW87339 RCV", aw87339_drcv_enable_rcv_pa),
+	//SND_SOC_DAPM_MUX("SPKL Switch", SND_SOC_NOPM, 0, 0, &ext_spkl_mux),
+	//SND_SOC_DAPM_MUX("SPKR Switch", SND_SOC_NOPM, 0, 0, &ext_spkr_mux),
+	//SND_SOC_DAPM_MUX("RCV Switch", SND_SOC_NOPM, 0, 0, &ext_rcv_mux),
+//#endif /* VENDOR_EDIT */
 
 };
 
@@ -2034,13 +2300,35 @@ static const struct snd_soc_dapm_route wcd937x_audio_map[] = {
 	{"AUX_RDAC", "Switch", "RDAC4"},
 	{"AUX PGA", NULL, "AUX_RDAC"},
 	{"AUX", NULL, "AUX PGA"},
+        //ifdef ODM_WT_EDIT
+        //Gong.Chen@ODM_WT.mm.audiodriver.Machine, 2019/04/08, Modify for speaker
+        {"Ext PA", NULL, "AUX"},
+        //endif ODM_WT_EDIT
 
+        //ifdef VENDOR_EDIT
+        //Gong.Chen@ODM_WT.mm.audiodriver.Machine, 2019/04/08, Modify for speaker
+        //{"SpkrMonoL IN", NULL, "AUX"},
+	//endif ODM_WT_EDIT
+//#ifdef VENDOR_EDIT
+//Jianqing.Liao@PSW.MM.AudioDriver.Codec, 2019/09/04, Add for AW87339 dapm
+	//{"SPKR Switch", "On", "AUX"},
+	//{"AW87339 SPKR", NULL, "SPKR Switch"},
+//#endif
 	{"RDAC3_MUX", "RX3", "RX3"},
 	{"RDAC3_MUX", "RX1", "RX1"},
 	{"RDAC3", NULL, "RDAC3_MUX"},
 	{"EAR_RDAC", "Switch", "RDAC3"},
 	{"EAR PGA", NULL, "EAR_RDAC"},
 	{"EAR", NULL, "EAR PGA"},
+
+//#ifdef VENDOR_EDIT
+//Jianqing.Liao@PSW.MM.AudioDriver.Codec, 2019/09/04, Add for AW87339 dapm
+	//{"SPKL Switch", "On", "EAR"},
+	//{"AW87339 SPKL", NULL, "SPKL Switch"},
+
+	//{"RCV Switch", "On", "EAR"},
+	//{"AW87339 RCV", NULL, "RCV Switch"},
+//#endif
 };
 
 static const struct snd_soc_dapm_route wcd9375_audio_map[] = {
@@ -2296,6 +2584,16 @@ static int wcd937x_soc_codec_probe(struct snd_soc_codec *codec)
 	snd_soc_dapm_ignore_suspend(dapm, "AUX");
 	snd_soc_dapm_ignore_suspend(dapm, "HPHL");
 	snd_soc_dapm_ignore_suspend(dapm, "HPHR");
+	//ifdef ODM_WT_EDIT
+	//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/19, Modify for speaker
+	snd_soc_dapm_ignore_suspend(dapm, "Ext PA");
+	//endif ODM_WT_EDIT
+//#ifdef VENDOR_EDIT
+//Jianqing.Liao@PSW.MM.AudioDriver.Codec, 2019/09/04, Add for AW87339 dapm
+	//snd_soc_dapm_ignore_suspend(dapm, "AW87339 SPKL");
+	//snd_soc_dapm_ignore_suspend(dapm, "AW87339 SPKR");
+	//snd_soc_dapm_ignore_suspend(dapm, "AW87339 RCV");
+//#endif
 	snd_soc_dapm_sync(dapm);
 
 	wcd_cls_h_init(&wcd937x->clsh_info);
@@ -2592,6 +2890,15 @@ struct wcd937x_pdata *wcd937x_populate_dt_data(struct device *dev)
 	pdata->tx_slave = of_parse_phandle(dev->of_node, "qcom,tx-slave", 0);
 	wcd937x_dt_parse_micbias_info(dev, &pdata->micbias);
 
+	//ifdef ODM_WT_EDIT
+	//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/23, Modify for speaker
+	pdata->ext_pa_gpio = of_get_named_gpio(dev->of_node, "qcom,ext-pa-gpio", 0);
+	if (pdata->ext_pa_gpio > 0) {
+		if (gpio_request(pdata->ext_pa_gpio, "pa_gpio") < 0)
+			pr_err("%s ext_pa_gpio request failed!\n", __func__);
+	}
+	//endif ODM_WT_EDIT
+
 	return pdata;
 }
 
@@ -2686,7 +2993,10 @@ static int wcd937x_bind(struct device *dev)
 	 * soundwire auto enumeration of slave devices as
 	 * as per HW requirement.
 	 */
-	usleep_range(5000, 5010);
+	#ifdef VENDOR_EDIT
+        /* Wang.kun@MM.AudioDriver.Machine.2156142, 2019/07/18, add for sound card bind */
+	usleep_range(100000, 100010);
+	#endif /* VENDOR EDIT */
 	wcd937x->wakeup = wcd937x_wakeup;
 
 	ret = component_bind_all(dev, wcd937x);

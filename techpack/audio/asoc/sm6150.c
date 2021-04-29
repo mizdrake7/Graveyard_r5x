@@ -46,6 +46,18 @@
 #include "codecs/bolero/wsa-macro.h"
 #include "codecs/wcd937x/wcd937x.h"
 
+//#ifdef VENDOR_EDIT
+//He.Lu@Mutilmedia.AudioDriver, 2019/12/18, Add for homer
+//#include "codecs/sia81xx/sia81xx_aux_dev_if.h"
+//#endif
+
+#ifdef VENDOR_EDIT
+#ifdef CONFIG_OPPO_KEVENT_UPLOAD
+/*Jianfeng.Qiu@PSW.MM.AudioDriver.Stability, 2019/02/03, Add for audio driver kevent log*/
+#include <asoc/oppo_mm_audio_kevent.h>
+#endif /* CONFIG_OPPO_KEVENT_UPLOAD */
+#endif /* VENDOR_EDIT */
+
 #define DRV_NAME "sm6150-asoc-snd"
 
 #define __CHIPSET__ "SM6150 "
@@ -651,7 +663,12 @@ static int msm_aux_codec_init(struct snd_soc_component *component);
 static struct wcd_mbhc_config wcd_mbhc_cfg = {
 	.read_fw_bin = false,
 	.calibration = NULL,
+	#ifndef VENDOR_EDIT
+	/*huanli.chang@Multimedia.AudioDriver.HeadsetDet, 2019/10/22, Modify for headset detect*/
 	.detect_extn_cable = true,
+	#else
+	.detect_extn_cable = false,
+	#endif
 	.mono_stero_detection = false,
 	.swap_gnd_mic = NULL,
 	.hs_ext_micbias = true,
@@ -664,7 +681,12 @@ static struct wcd_mbhc_config wcd_mbhc_cfg = {
 	.key_code[6] = 0,
 	.key_code[7] = 0,
 	.linein_th = 5000,
+	#ifndef VENDOR_EDIT
+	/*huanli.chang@PSW.MM.AudioDriver.HeadsetDET,2019/10/22,  Disable qcom moisture det*/
 	.moisture_en = true,
+	#else
+	.moisture_en = false,
+	#endif
 	.mbhc_micbias = MIC_BIAS_2,
 	.anc_micbias = MIC_BIAS_2,
 	.enable_anc_mic_detect = false,
@@ -5070,7 +5092,12 @@ static int msm_int_audrx_init(struct snd_soc_pcm_runtime *rtd)
 	struct snd_soc_dapm_context *dapm = snd_soc_codec_get_dapm(codec);
 	struct snd_card *card;
 	struct snd_info_entry *entry;
+//#ifdef VENDOR_EDIT
+/* HanHuiqun@PSW.MM.AudioDriver.Machine,2019/04/03, Add for audio bringup*/
+
 	struct snd_soc_component *aux_comp;
+
+//#endif /* VENDOR_EDIT */
 	struct msm_asoc_mach_data *pdata =
 				snd_soc_card_get_drvdata(rtd->card);
 
@@ -5115,6 +5142,9 @@ static int msm_int_audrx_init(struct snd_soc_pcm_runtime *rtd)
 	 */
 	dev_dbg(codec->dev, "%s: Number of aux devices: %d\n",
 		__func__, rtd->card->num_aux_devs);
+//#ifdef VENDOR_EDIT
+/* HanHuiqun@PSW.MM.AudioDriver.Machine,2019/04/03, Add for audio bringup*/
+
 	if (rtd->card->num_aux_devs &&
 	    !list_empty(&rtd->card->aux_comp_list)) {
 		list_for_each_entry(aux_comp, &rtd->card->aux_comp_list,
@@ -5129,6 +5159,8 @@ static int msm_int_audrx_init(struct snd_soc_pcm_runtime *rtd)
 			}
 		}
 	}
+
+//#endif /* VENDOR_EDIT */
 	card = rtd->card->snd_card;
 	if (!pdata->codec_root) {
 		entry = snd_info_create_subdir(card->module, "codecs",
@@ -5183,7 +5215,17 @@ static void *def_wcd_mbhc_cal(void)
 		return NULL;
 
 #define S(X, Y) ((WCD_MBHC_CAL_PLUG_TYPE_PTR(wcd_mbhc_cal)->X) = (Y))
-	S(v_hs_max, 1600);
+	//ifdef ODM_WT_EDIT
+	//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/19, Modify for headset
+	//#ifndef VENDOR_EDIT
+	/* Le.Li@PSW.MM.AudioDriver.HeadsetDet.AD8, 2019/04/15,
+	* Modify the threshold value of mic irq.
+	*/
+	//S(v_hs_max, 1600);
+	//#else
+	S(v_hs_max, 1700);
+	//#endif
+	//endif ODM_WT_EDIT
 #undef S
 #define S(X, Y) ((WCD_MBHC_CAL_BTN_DET_PTR(wcd_mbhc_cal)->X) = (Y))
 	S(num_btn, WCD_MBHC_DEF_BUTTONS);
@@ -5193,14 +5235,29 @@ static void *def_wcd_mbhc_cal(void)
 	btn_high = ((void *)&btn_cfg->_v_btn_low) +
 		(sizeof(btn_cfg->_v_btn_low[0]) * btn_cfg->num_btn);
 
+//#ifndef VENDOR_EDIT
+/* Zhao.Pan@PSW.MM.AudioDriver.HeadsetDet, 2018/12/13, modify for headset button det */
 	btn_high[0] = 75;
-	btn_high[1] = 150;
+	//ifdef ODM_WT_EDIT
+	//Yue.Li@ODM_WT.mm.audiodriver.Machine, 2020/03/27, Modify for headset follow P
+	btn_high[1] = 130;
+	//endif ODM_WT_EDIT
 	btn_high[2] = 237;
 	btn_high[3] = 500;
 	btn_high[4] = 500;
 	btn_high[5] = 500;
 	btn_high[6] = 500;
 	btn_high[7] = 500;
+//#else /* VENDOR_EDIT */
+//	btn_high[0] = 112;
+//	btn_high[1] = 113;
+//	btn_high[2] = 237;
+//	btn_high[3] = 438;
+//	btn_high[4] = 438;
+//	btn_high[5] = 438;
+//	btn_high[6] = 438;
+//	btn_high[7] = 438;
+//#endif /* VENDOR_EDIT */
 
 	return wcd_mbhc_cal;
 }
@@ -5848,6 +5905,13 @@ static int msm_mi2s_snd_startup(struct snd_pcm_substream *substream)
 	struct snd_soc_card *card = rtd->card;
 	struct msm_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
 
+	#ifdef VENDOR_EDIT
+	#ifdef CONFIG_OPPO_KEVENT_UPLOAD
+	/*Jianfeng.Qiu@PSW.MM.AudioDriver.Stability, 2019/02/03, Add for audio driver kevent log*/
+	unsigned char payload[256] = "";
+	#endif /* CONFIG_OPPO_KEVENT_UPLOAD */
+	#endif /* VENDOR_EDIT */
+
 	dev_dbg(rtd->card->dev,
 		"%s: substream = %s  stream = %d, dai name %s, dai ID %d\n",
 		__func__, substream->name, substream->stream,
@@ -5900,6 +5964,16 @@ static int msm_mi2s_snd_startup(struct snd_pcm_substream *substream)
 			if (ret < 0) {
 				pr_err("%s: afe lpass mclk failed, err:%d\n",
 					__func__, ret);
+
+				#ifdef VENDOR_EDIT
+				#ifdef CONFIG_OPPO_KEVENT_UPLOAD
+				/*Jianfeng.Qiu@PSW.MM.AudioDriver.Stability, 2019/02/03, Add for audio driver kevent log*/
+				scnprintf(payload, sizeof(payload), "EventID@@%d$$mi2s_set_clk_fail$$index@@%d$$path@@%d$$err@@%d",
+					OPPO_MM_AUDIO_EVENT_ID_CLK_FAIL, index, substream->stream, ret);
+				upload_mm_audio_kevent_data(payload);
+				#endif /* CONFIG_OPPO_KEVENT_UPLOAD */
+				#endif /* VENDOR_EDIT */
+
 				goto clk_off;
 			}
 			mi2s_mclk[index].enable = 1;
@@ -6582,6 +6656,10 @@ static struct snd_soc_dai_link msm_common_dai_links[] = {
 		.cpu_dai_name = "TX3_CDC_DMA_HOSTLESS",
 		.platform_name = "msm-pcm-hostless",
 		.dynamic = 1,
+		#ifdef VENDOR_EDIT
+		/*Jianfeng.Qiu@PSW.MM.AudioDriver.Machine, 2017/02/20, Add for loopback test*/
+		.dpcm_playback = 1,
+		#endif /* VENDOR_EDIT */
 		.dpcm_capture = 1,
 		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
 			    SND_SOC_DPCM_TRIGGER_POST},
@@ -6707,6 +6785,7 @@ static struct snd_soc_dai_link msm_int_compress_capture_dai[] = {
 };
 
 static struct snd_soc_dai_link msm_bolero_fe_dai_links[] = {
+//#ifndef VENDOR_EDIT
 	{/* hw:x,37 */
 		.name = LPASS_BE_WSA_CDC_DMA_TX_0,
 		.stream_name = "WSA CDC DMA0 Capture",
@@ -6720,6 +6799,24 @@ static struct snd_soc_dai_link msm_bolero_fe_dai_links[] = {
 		.no_host_mode = SND_SOC_DAI_LINK_NO_HOST,
 		.ops = &msm_cdc_dma_be_ops,
 	},
+//#else /* VENDOR_EDIT */
+	/*Jianfeng.Qiu@PSW.MM.AudioDriver.Machine, 2019/07/18, Add for Primary MI2S Hostless, add to the end*/
+//	{/* Primary MI2S */
+//		.name = "Primary MI2S TX_Hostless",
+//		.stream_name = "Primary MI2S_TX Hostless Capture",
+//		.cpu_dai_name = "PRI_MI2S_TX_HOSTLESS",
+//		.platform_name = "msm-pcm-hostless",
+//		.dynamic = 1,
+//		.dpcm_capture = 1,
+//		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
+//				SND_SOC_DPCM_TRIGGER_POST},
+//		.no_host_mode = SND_SOC_DAI_LINK_NO_HOST,
+//		.ignore_suspend = 1,
+//		.ignore_pmdown_time = 1,
+//		.codec_dai_name = "snd-soc-dummy-dai",
+//		.codec_name = "snd-soc-dummy",
+//	},
+//#endif /* VENDOR_EDIT */
 };
 
 static struct snd_soc_dai_link msm_tasha_fe_dai_links[] = {
@@ -7525,6 +7622,26 @@ static struct snd_soc_dai_link ext_disp_be_dai_link[] = {
 		.ignore_suspend = 1,
 	},
 };
+//#ifdef VENDOR_EDIT
+/* huanli.chang@PSW.MM.AudioDriver.SmartPA, 2019/10/16, Add for tfa98xx */
+//static struct snd_soc_dai_link tfa98xx_be_dai_links[] = {
+//	{
+//		.name = LPASS_BE_PRI_MI2S_RX,
+//		.stream_name = "Primary MI2S Playback",
+//		.cpu_dai_name = "msm-dai-q6-mi2s.0",
+//		.platform_name = "msm-pcm-routing",
+//		.codec_name = "tfa98xx.0-0034",
+//		.codec_dai_name = "tfa98xx-aif-0-34",
+//		.no_pcm = 1,
+//		.dpcm_playback = 1,
+//		.id = MSM_BACKEND_DAI_PRI_MI2S_RX,
+//		.be_hw_params_fixup = msm_be_hw_params_fixup,
+//		.ops = &msm_mi2s_be_ops,
+//		.ignore_suspend = 1,
+//		.ignore_pmdown_time = 1,
+//	},
+//};
+//#endif /* VENDOR_EDIT */
 
 static struct snd_soc_dai_link msm_mi2s_be_dai_links[] = {
 	{
@@ -8288,6 +8405,16 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev)
 	const struct of_device_id *match;
 	u32 tasha_codec = 0;
 
+	//#ifdef VENDOR_EDIT
+	/* huanli.chang@PSW.MM.AudioDriver.Machine, 2019/10/16,
+	 * Add for custom audio.
+	 */
+	//int i;
+	//const char *product_name = NULL;
+	//const char *oppo_speaker_type = "oppo,speaker-pa";
+	//struct snd_soc_dai_link *temp_link;
+	//#endif /* VENDOR_EDIT */
+
 	match = of_match_node(sm6150_asoc_machine_of_match, dev->of_node);
 	if (!match) {
 		dev_err(dev, "%s: No DT match found for sound card\n",
@@ -8404,6 +8531,24 @@ static struct snd_soc_card *populate_snd_card_dailinks(struct device *dev)
 				__func__);
 		} else {
 			if (mi2s_audio_intf) {
+//				#ifdef VENDOR_EDIT
+//				/* huanli.chang@PSW.MM.AudioDriver.SmartPA, 2019/10/16, Add for tfa98xx */
+//				if (!of_property_read_string(dev->of_node, oppo_speaker_type,
+//						&product_name)) {
+//					pr_info("%s: custom speaker product %s\n", __func__, product_name);
+//					for (i = 0; i < ARRAY_SIZE(msm_mi2s_be_dai_links); i++) {
+//						temp_link = &msm_mi2s_be_dai_links[i];
+//						if (temp_link->id == MSM_BACKEND_DAI_PRI_MI2S_RX) {
+//							if (!strcmp(product_name, "nxp")) {
+//								pr_info("%s: use nxp dailink replace\n", __func__);
+//								memcpy(temp_link, &tfa98xx_be_dai_links[0],
+//									sizeof(tfa98xx_be_dai_links[0]));
+//								break;
+//							}
+//						}
+//					}
+//				}
+//				#endif /* VENDOR_EDIT */
 				memcpy(msm_sm6150_dai_links + total_links,
 					msm_mi2s_be_dai_links,
 					sizeof(msm_mi2s_be_dai_links));
@@ -8597,7 +8742,12 @@ static int msm_init_aux_dev(struct platform_device *pdev,
 	int found = 0;
 	int codecs_found = 0;
 	int ret = 0;
-
+//#ifdef VENDOR_EDIT
+    //He.Lu@Mutilmedia.AudioDriver, 2019/12/18, Add for homer
+    /* add by gift for sia81xx */
+//    int sia81xx_aux_num = 0;
+//    int sia81xx_codec_conf_num = 0;
+//#endif
 	/* Get maximum WSA device count for this platform */
 	ret = of_property_read_u32(pdev->dev.of_node,
 				   "qcom,wsa-max-devs", &wsa_max_devs);
@@ -8805,7 +8955,14 @@ codec_aux_dev:
 aux_dev_register:
 	card->num_aux_devs = wsa_max_devs + codec_max_aux_devs;
 	card->num_configs = wsa_max_devs + codec_max_aux_devs;
-
+//#ifdef VENDOR_EDIT
+    //Feng.Zhou@Mutilmedia.AudioDriver, 2019/12/11, Add for putting rcv as spk
+    /* add by gift for sia81xx */
+//    sia81xx_aux_num = soc_sia81xx_get_aux_num(pdev);
+//    sia81xx_codec_conf_num = soc_sia81xx_get_codec_conf_num(pdev);
+//    card->num_aux_devs += sia81xx_aux_num;
+//    card->num_configs += sia81xx_codec_conf_num;
+//#endif
 	/* Alloc array of AUX devs struct */
 	msm_aux_dev = devm_kcalloc(&pdev->dev, card->num_aux_devs,
 				       sizeof(struct snd_soc_aux_dev),
@@ -8855,7 +9012,13 @@ aux_dev_register:
 		msm_codec_conf[i].of_node =
 				wsa881x_dev_info[i].of_node;
 	}
-
+//#ifdef VENDOR_EDIT
+    //He.Lu@Mutilmedia.AudioDriver, 2019/12/18, Add for homer
+    /* add by gift for sia81xx */
+//    soc_sia81xx_init(pdev, msm_aux_dev + 1, sia81xx_aux_num,
+//    msm_codec_conf + 1, sia81xx_codec_conf_num);
+    /* end sia81xx */
+//#endif
 	for (i = 0; i < codec_aux_dev_cnt; i++) {
 		msm_aux_dev[wsa_max_devs + i].name = "aux_codec";
 		msm_aux_dev[wsa_max_devs + i].codec_name = NULL;
@@ -9061,12 +9224,14 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	struct msm_asoc_mach_data *pdata;
 	const char *mbhc_audio_jack_type = NULL;
 	int ret;
-
+	#ifdef VENDOR_EDIT
+	/* HanHuiqun@PSW.MM.AudioDriver.Machine,2019/04/03, Add for log*/
+	pr_info("%s: *** Enter\n", __func__);
+	#endif /* VENDOR_EDIT */
 	if (!pdev->dev.of_node) {
 		dev_err(&pdev->dev, "No platform supplied from device tree\n");
 		return -EINVAL;
 	}
-
 	pdata = devm_kzalloc(&pdev->dev,
 			sizeof(struct msm_asoc_mach_data), GFP_KERNEL);
 	if (!pdata)
@@ -9223,7 +9388,10 @@ static int msm_asoc_machine_probe(struct platform_device *pdev)
 	if (ret)
 		pr_err("%s: Registration with SND event FWK failed ret = %d\n",
 			__func__, ret);
-
+	#ifdef VENDOR_EDIT
+	/* HanHuiqun@PSW.MM.AudioDriver.Machine,2019/04/03, Add for log*/
+	pr_info("%s: sound card register success.\n", __func__);
+	#endif /* VENDOR_EDIT */
 err:
 	return ret;
 }
