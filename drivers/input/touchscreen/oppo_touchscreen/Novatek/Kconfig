@@ -1,2 +1,0 @@
-
-source "drivers/input/touchscreen/oppo_touchscreen/Novatek/NT36525B_noflash/Kconfig"
