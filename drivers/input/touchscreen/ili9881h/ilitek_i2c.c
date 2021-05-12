@@ -241,6 +241,7 @@ int ilitek_tddi_interface_dev_init(struct ilitek_hwif_info *hwif)
 	info->bus_driver.driver.of_match_table = hwif->of_match_table;
 
 	info->bus_driver.probe = ilitek_i2c_probe;
+	info->bus_driver.probe_type = PROBE_PREFER_ASYNCHRONOUS;
 	info->bus_driver.remove = ilitek_i2c_remove;
 	info->bus_driver.id_table = tp_i2c_id;
 
