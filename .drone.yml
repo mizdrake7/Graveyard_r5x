@@ -14,6 +14,8 @@ steps:
         from_secret: CHAT_ID
       KERNAME:
         from_secret: KERNEL_NAME
+      TYPE:
+        from_secret: TYPE
       DEFCONFIG: vendor/RMX1911_defconfig
       DEVICE: RMX1911
       SUPPORTED: 5, 5s, 5i
