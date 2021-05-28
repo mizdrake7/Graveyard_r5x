@@ -170,10 +170,6 @@ struct mmc_request {
 	struct mmc_host		*host;
 	struct mmc_cmdq_req	*cmdq_req;
 	struct request *req;
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-//yh@PSW.BSP.Storage.Emmc, 2018-09-30, Add for monitor cmdq driver wait time
-	ktime_t cmdq_request_time_start;
-#endif
 
 	/* Allow other commands during this ongoing data transfer or busy wait */
 	bool			cap_cmd_during_tfr;

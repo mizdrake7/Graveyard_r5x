@@ -39,12 +39,6 @@
 #include "sched.h"
 #include "tune.h"
 #include "walt.h"
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// wenbin.liu@PSW.BSP.MM, 2018/05/02
-// Add for get cpu load
-#include <soc/oppo/oppo_healthinfo.h>
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
-
 
 #ifdef CONFIG_SMP
 static inline bool task_fits_max(struct task_struct *p, int cpu);
@@ -979,12 +973,6 @@ update_stats_wait_start(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	schedstat_set(se->statistics.wait_start, wait_start);
 }
 
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// wenbin.liu@PSW.BSP.MM, 2018/05/09
-// Add for cat io_wait stats
-extern void ohm_schedstats_record(int sched_type, int fg, u64 delta);
-#endif 
-
 static inline void
 update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 {
@@ -1007,15 +995,6 @@ update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 			schedstat_set(se->statistics.wait_start, delta);
 			return;
 		}
-#if defined (CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// wenbin.liu@PSW.BSP.MM, 2018/05/26
-// Add for get sched latency stat
-    		ohm_schedstats_record(OHM_SCHED_SCHEDLATENCY, task_is_fg(p), (delta >> 20));
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
-        update_stuck_trace_info(p, UIFIRST_TRACE_RUNNABLE, 0, delta);
-#endif
 		trace_sched_stat_wait(p, delta);
 	}
 
