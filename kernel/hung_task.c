@@ -27,12 +27,6 @@
 #include <trace/events/sched.h>
 #include <linux/sched/sysctl.h>
 
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// jiheng.xie@PSW.TECH.KERNEL, 2018/12/28
-// Add for iowait hung monitor
-#include <soc/oppo/oppo_healthinfo.h>
-#endif
-
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
 /* fanhui@PhoneSW.BSP, 2016/02/02, DeathHealer, record the hung task killing
  * format: task_name,reason. e.g. system_server,uninterruptible for 60 secs
@@ -320,16 +314,8 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
 	return can_cont;
 }
 
-#if defined (CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
+#if defined (CONFIG_PRODUCT_REALME_TRINKET)
 // wenbin.liu@PSW.PLATFORM.KERNEL, 2018/12/19
-// Add for iowait hung ctrl set by QualityProtect APK RUS
-extern bool ohm_iopanic_mon_ctrl;
-extern bool ohm_iopanic_mon_logon;
-extern bool ohm_iopanic_mon_trig;
-extern unsigned int  iowait_hung_cnt;
-extern unsigned int  iowait_panic_cnt;
-extern void ohm_action_trig(int type);
-#else
 bool ohm_iopanic_mon_ctrl = true;
 bool ohm_iopanic_mon_logon = false;
 bool ohm_iopanic_mon_trig = false;
