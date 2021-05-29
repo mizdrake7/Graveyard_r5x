@@ -37,7 +37,3 @@ proc-$(CONFIG_PROC_PAGE_MONITOR)	+= page.o
 #Hailong.Liu@TECH.Kernel.CPU, 2019/10/24, stat cpu usage on each tick.
 proc-y	+= task_cpustats.o
 #endif /* CONFIG_PRODUCT_REALME_TRINKET */
-#Huacai.Zhou@PSW.BSP.kernel.Peformance, 2018/06/18, add foreground process opt support
-proc-$(CONFIG_OPPO_FG_OPT)	+= fg_uid.o
-#endif /* CONFIG_PRODUCT_REALME_TRINKET */
-
