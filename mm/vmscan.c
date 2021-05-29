@@ -124,13 +124,6 @@ struct scan_control {
 	 * on memory until last task zap it.
 	 */
 	struct vm_area_struct *target_vma;
-
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
-	/* robin.ren@PSW.BSP.Kernel.Performance, 2019-03-13,
-	 * use mm_walk to regonize the behaviour of process reclaim.
-	 */
-	struct mm_walk *walk;
-#endif
 };
 
  /*
@@ -173,12 +166,6 @@ int kswapd_threads_current = DEF_KSWAPD_THREADS_PER_NODE;
  * From 0 .. 100.  Higher means more swappy.
  */
 int vm_swappiness = 60;
-#ifdef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@psw.bsp.kernel 20170720 add for add direct_vm_swappiness
-/*
- * Direct reclaim swappiness, exptct 0 - 60. Higher means more swappy and slower.
- */
-int direct_vm_swappiness = 60;
-#endif
 
 /*
  * The total number of pages which are beyond the high watermark within all
@@ -1016,13 +1003,6 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 		enum page_references references = PAGEREF_RECLAIM;
 		bool dirty, writeback;
 
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
-		/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-12-25, check whether the
-		 * reclaim process should cancel*/
-		if (sc->walk && is_reclaim_should_cancel(sc->walk))
-			break;
-#endif
-
 		cond_resched();
 
 		page = lru_to_page(page_list);
@@ -1449,14 +1429,8 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
 }
 
 #ifdef CONFIG_PROCESS_RECLAIM
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-12-25, record the scaned task*/
-unsigned long reclaim_pages_from_list(struct list_head *page_list,
-			struct vm_area_struct *vma, struct mm_walk *walk)
-#else
 unsigned long reclaim_pages_from_list(struct list_head *page_list,
 					struct vm_area_struct *vma)
-#endif
 {
 	struct scan_control sc = {
 		.gfp_mask = GFP_KERNEL,
@@ -1465,10 +1439,6 @@ unsigned long reclaim_pages_from_list(struct list_head *page_list,
 		.may_unmap = 1,
 		.may_swap = 1,
 		.target_vma = vma,
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-		/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-12-25, record the scaned task*/
-		.walk = walk,
-#endif
 	};
 
 	unsigned long nr_reclaimed;
@@ -1722,13 +1692,7 @@ int isolate_lru_page(struct page *page)
 	int ret = -EBUSY;
 
 	VM_BUG_ON_PAGE(!page_count(page), page);
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
-	/* Kui.Zhang@PSW.TEC.Kernel.Performance, 2019-01-08, Because process reclaim is doing page by
-	 * page, so there many compound pages are relcaimed, so too many warning msg on this case. */
-	WARN_RATELIMIT((!current_is_reclaimer() && PageTail(page)), "trying to isolate tail page");
-#else
 	WARN_RATELIMIT(PageTail(page), "trying to isolate tail page");
-#endif
 
 	if (PageLRU(page)) {
 		struct zone *zone = page_zone(page);
@@ -2359,11 +2323,6 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
 	unsigned long anon, file;
 	unsigned long ap, fp;
 	enum lru_list lru;
-#ifdef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@psw.bsp.kernel 20170720 add for add direct_vm_swappiness
-	if (!current_is_kswapd()) {
-		swappiness = direct_vm_swappiness;
-	}
-#endif
 	/* If we have no swap space, do not bother scanning anon pages. */
 #ifndef CONFIG_PRODUCT_REALME_TRINKET //yixue.ge@psw.bsp.kernel.driver 20170810 modify for reserver some zram disk size
 	if (!sc->may_swap || mem_cgroup_get_nr_swap_pages(memcg) <= 0) {

@@ -105,11 +105,3 @@ obj-$(CONFIG_HARDENED_USERCOPY) += usercopy.o
 obj-$(CONFIG_PERCPU_STATS) += percpu-stats.o
 obj-$(CONFIG_HMM) += hmm.o
 obj-$(CONFIG_PROCESS_RECLAIM)	+= process_reclaim.o
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
-#/* Kui.Zhang@TEC.Kernel.Performance, 2019-03-13, add new interface for process memory reclaim*/
-obj-$(CONFIG_PROCESS_RECLAIM) += process_mm_reclaim.o
-#endif /*defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_VIRTUAL_RESERVE_MEMORY)*/
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
-#/* Kui.Zhang@TEC.Kernel.Performance, 2019-03-13, add new interface for process memory reclaim*/
-obj-$(CONFIG_PROCESS_RECLAIM) += process_mm_reclaim.o
-#endif /*defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_VIRTUAL_RESERVE_MEMORY)*/
