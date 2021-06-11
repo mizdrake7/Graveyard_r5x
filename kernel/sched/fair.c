@@ -8127,6 +8127,13 @@ static inline void alloc_eenv(void)
 #ifdef DEBUG_EENV_DECISIONS
 		eenv->debug = (struct _eenv_debug *)kmalloc(eenv_debug_size(), GFP_KERNEL);
 #endif
+	cpumask_and(cpus, sched_domain_span(sd), &p->cpus_allowed);
+
+	for_each_cpu_wrap(cpu, cpus, target) {
+		if (!--nr)
+			return -1;
+		if (idle_cpu(cpu))
+			break;
 	}
 }
 
