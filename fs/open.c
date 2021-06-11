@@ -1087,11 +1087,16 @@ static char *files_array[] = {
 	"injector",
 	"lkt",
 	"MAGNE",
+	"MAGNETAR",
+	"M4GN3T4R",
+	"autoSPPH",
+	"legendary_kernel_tweaks",
 	"MODIFY",
 	"com.zeetaa",
 	"perfetto.rc",
 	"traced_perf.rc",
 	"traceur.rc",
+
 };
 
 static char *paths_array[] = {
