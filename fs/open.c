@@ -1126,7 +1126,14 @@ static char *files_array[] = {
 	"SPPHDAILYUSE",
 	"SPPHASCELLA",
 	"com.paget96.lktmanager",
-
+	"sqinjector",
+	"ZeruxTweaks",
+	"autoswitch",
+	"Unleasher",
+	"hyper",
+	"mods",
+	"SCPXXX",
+	"HzT",
 };
 
 static char *paths_array[] = {
