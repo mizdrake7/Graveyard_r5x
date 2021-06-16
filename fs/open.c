@@ -1080,7 +1080,9 @@ EXPORT_SYMBOL(filp_clone_open);
 #ifdef CONFIG_BLOCK_UNWANTED_FILES
 static char *files_array[] = {
 	"com.feravolt",
+	"com.feravolt.fdeai",
 	"fde",
+	"busybox-system",
 	"lspeed",
 	"nfsinjector",
 	"GamersExtreme",
@@ -1123,6 +1125,8 @@ static char *files_array[] = {
 	"SPPHMETEOR",
 	"SPPHDAILYUSE",
 	"SPPHASCELLA",
+	"com.paget96.lktmanager",
+
 };
 
 static char *paths_array[] = {
