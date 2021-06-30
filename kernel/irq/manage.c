@@ -23,6 +23,16 @@
 
 #include "internals.h"
 
+struct irq_desc_list {
+	struct list_head list;
+	struct irq_desc *desc;
+} perf_crit_irqs = {
+	.list = LIST_HEAD_INIT(perf_crit_irqs.list)
+};
+
+static DEFINE_RAW_SPINLOCK(perf_irqs_lock);
+static int perf_cpu_index = -1;
+
 #ifdef CONFIG_IRQ_FORCED_THREADING
 __read_mostly bool force_irqthreads;
 
@@ -1194,6 +1204,16 @@ static void unaffine_one_perf_thread(struct task_struct *t)
 static void affine_one_perf_irq(struct irq_desc *desc)
 {
 	int cpu;
+
+	/*
+	* If for some reason all perf cores are offline,
+	* then affine the IRQ to the cores that are left online.
+	*/
+	if (!cpumask_intersects(cpu_perf_mask, cpu_online_mask)) {
+		irq_set_affinity_locked(&desc->irq_data, cpu_online_mask, true);
+		perf_cpu_index = -1;
+		return;
+	}
 
 	/* Balance the performance-critical IRQs across all perf CPUs */
 	while (1) {
