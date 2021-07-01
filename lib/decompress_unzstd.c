@@ -16,7 +16,8 @@
  * uncompressible. Thus, we must look for worst-case expansion when the
  * compressor is encoding uncompressible data.
  *
- * The structure of the .zst file in case of a compresed kernel is as follows.
+
+ * The structure of the .zst file in case of a compressed kernel is as follows.
 
  * Maximum sizes (as bytes) of the fields are in parenthesis.
  *
@@ -57,8 +58,7 @@
 /*
  * Preboot environments #include "path/to/decompress_unzstd.c".
  * All of the source files we depend on must be #included.
-
- * zstd's only source dependeny is xxhash, which has no source
+ * zstd's only source dependency is xxhash, which has no source
 
  * dependencies.
  *
