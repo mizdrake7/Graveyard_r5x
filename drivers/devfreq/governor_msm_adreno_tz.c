@@ -653,9 +653,6 @@ static int tz_handler(struct devfreq *devfreq, unsigned int event, void *data)
 		cancel_delayed_work_sync(&unboost_work);
 		tz_devfreq_g = NULL;
 		/* Queue the stop work before the TZ is stopped */
-		//if (partner_gpu_profile && partner_gpu_profile->bus_devfreq)
-		//	queue_work(workqueue,
-		//		&gpu_profile->partner_stop_event_ws);
 		spin_lock(&suspend_lock);
 		suspend_start = 0;
 		spin_unlock(&suspend_lock);
