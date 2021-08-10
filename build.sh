@@ -1,5 +1,5 @@
 SECONDS=0 # builtin bash timer
-ZIPNAME="YNTKTS_$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="Trashed_$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/r5x/proton-clang"
 DEFCONFIG="vendor/RMX1911_defconfig"
 
