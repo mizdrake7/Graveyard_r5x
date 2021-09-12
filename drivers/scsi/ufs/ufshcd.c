@@ -11377,7 +11377,6 @@ out_remove_scsi_host:
 	scsi_remove_host(hba->host);
 exit_gating:
 	pm_qos_remove_request(&hba->pm_qos.req);
-	ufshcd_exit_manual_gc(hba);
 	ufshcd_exit_clk_gating(hba);
 	ufshcd_exit_latency_hist(hba);
 out_disable:
