@@ -4187,7 +4187,6 @@ int msm_vidc_comm_cmd(void *instance, union msm_v4l2_cmd *cmd)
 		mutex_lock(&inst->eosbufs.lock);
 		list_add_tail(&binfo->list, &inst->eosbufs.list);
 		mutex_unlock(&inst->eosbufs.lock);
-
 		rc = msm_vidc_send_pending_eos_buffers(inst);
 		if (rc) {
 			dprintk(VIDC_ERR,
