@@ -705,6 +705,7 @@
 //LiYue@BSP.CHG.Basic, 2019/08/06, add for batt_rm
 	qcom,cl-feedback-on;
 //#endif
+	qcom,cl-disable = <1>;
 };
 
 &pmi632_charger {
