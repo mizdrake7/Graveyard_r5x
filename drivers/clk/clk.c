@@ -3457,8 +3457,8 @@ static int __init clk_debug_init(void)
 	if (!d)
 		return -ENOMEM;
 
-	d = debugfs_create_file("trace_clocks", 0444, rootdir, &all_lists,
-				&clk_state_fops);
+//	d = debugfs_create_file("trace_clocks", 0444, rootdir, &all_lists,
+//				&clk_gate_ops);
 	if (!d)
 		return -ENOMEM;
 
