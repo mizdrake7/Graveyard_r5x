@@ -176,11 +176,6 @@ static int max_kswapd_threads = MAX_KSWAPD_THREADS;
 
 static int two_hundred_fifty_five = 255;
 
-#ifdef CONFIG_SCHED_WALT
-const int sched_user_hint_max = 1000;
-static unsigned int ns_per_sec = NSEC_PER_SEC;
-static unsigned int one_hundred_thousand = 100000;
-#endif
 /* this is needed for the proc_doulongvec_minmax of vm_dirty_bytes */
 static unsigned long dirty_bytes_min = 2 * PAGE_SIZE;
 
@@ -336,6 +331,7 @@ static struct ctl_table sysctl_base_table[] = {
 	{ }
 };
 
+#ifdef CONFIG_SCHED_DEBUG
 static int min_sched_granularity_ns = 100000;		/* 100 usecs */
 static int max_sched_granularity_ns = NSEC_PER_SEC;	/* 1 second */
 static int min_wakeup_granularity_ns;			/* 0 usecs */
@@ -387,24 +383,6 @@ static struct ctl_table kern_table[] = {
 	},
 #endif
 #ifdef CONFIG_SCHED_WALT
-	{
-		.procname	= "sched_user_hint",
-		.data           = &sysctl_sched_user_hint,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler	= walt_proc_user_hint_handler,
-		.extra1		= &zero,
-		.extra2		= (void *)&sched_user_hint_max,
-	},
-	{
-		.procname	= "sched_window_stats_policy",
-		.data		= &sysctl_sched_window_stats_policy,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler   = proc_dointvec_minmax,
-		.extra1		= &zero,
-		.extra2		= &four,
-	},
 	{
 		.procname       = "sched_cpu_high_irqload",
 		.data           = &sysctl_sched_cpu_high_irqload,
@@ -523,43 +501,6 @@ static struct ctl_table kern_table[] = {
 		.procname	= "fg_io_opt",
 		.data		= &sysctl_fg_io_opt,
 		.maxlen		= sizeof(int),
-	{
-		.procname	= "sched_latency_ns",
-		.data		= &sysctl_sched_latency,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler	= sched_proc_update_handler,
-		.extra1		= &min_sched_granularity_ns,
-		.extra2		= &max_sched_granularity_ns,
-	},
-	{
-		.procname	= "sched_wakeup_granularity_ns",
-		.data		= &sysctl_sched_wakeup_granularity,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler	= sched_proc_update_handler,
-		.extra1		= &min_wakeup_granularity_ns,
-		.extra2		= &max_wakeup_granularity_ns,
-	},
-	{
-		.procname	= "sched_upmigrate_boosted",
-		.data		= &sysctl_sched_capacity_margin_up_boosted,
-		.maxlen		= sizeof(unsigned int) * MAX_MARGIN_LEVELS,
-		.mode		= 0644,
-		.proc_handler	= sched_updown_migrate_handler_boosted,
-	},
-	{
-		.procname	= "sched_downmigrate_boosted",
-		.data		= &sysctl_sched_capacity_margin_down_boosted,
-		.maxlen		= sizeof(unsigned int) * MAX_MARGIN_LEVELS,
-		.mode		= 0644,
-		.proc_handler	= sched_updown_migrate_handler_boosted,
-	},
-#ifdef CONFIG_SMP
-	{
-		.procname	= "sched_tunable_scaling",
-		.data		= &sysctl_sched_tunable_scaling,
-		.maxlen		= sizeof(enum sched_tunable_scaling),
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec,
 },
@@ -629,13 +570,13 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= proc_dointvec,
 	},
 	{
-		.procname	= "sched_latency_ns",
-		.data		= &sysctl_sched_latency,
+		.procname	= "sched_wakeup_granularity_ns",
+		.data		= &sysctl_sched_wakeup_granularity,
 		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= sched_proc_update_handler,
-		.extra1		= &min_sched_granularity_ns,
-		.extra2		= &max_sched_granularity_ns,
+		.extra1		= &min_wakeup_granularity_ns,
+		.extra2		= &max_wakeup_granularity_ns,
 	},
 #ifdef CONFIG_SMP
 	{
@@ -654,16 +595,6 @@ static struct ctl_table kern_table[] = {
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec,
 	},
-	{
-		.procname	= "sched_wakeup_granularity_ns",
-		.data		= &sysctl_sched_wakeup_granularity,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0644,
-		.proc_handler	= sched_proc_update_handler,
-		.extra1		= &min_wakeup_granularity_ns,
-		.extra2		= &max_wakeup_granularity_ns,
-	},
-#ifdef CONFIG_SMP
 	{
 		.procname	= "sched_nr_migrate",
 		.data		= &sysctl_sched_nr_migrate,
@@ -3644,23 +3575,6 @@ int sched_boost_handler(struct ctl_table *table, int write,
 		return ret;
 
 	pr_debug("%s set sb to %i\n", current->comm, *data);
-
-#ifdef CONFIG_DYNAMIC_STUNE_BOOST
-	if (is_battery_saver_on())
-		return ret;
-
-	if (*data == 1) {
-		do_stune_boost("top-app", 5, &boost_slot_ta);
-		do_stune_boost("foreground", 2, &boost_slot_fg);
-	} else if (*data == 3) {
-		do_stune_boost("top-app", 3, &boost_slot_ta);
-		do_stune_boost("foreground", 0, &boost_slot_fg);
-	} else {
-		reset_stune_boost("top-app", boost_slot_ta);
-		reset_stune_boost("foreground", boost_slot_fg);
-	}
-#endif
-
 	return ret;
 }
 #endif
