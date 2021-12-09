@@ -1780,7 +1780,7 @@ SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
 
 	/* flush delayed_fput to put mnt_count */
 	if (user_request)
-		flush_delayed_fput_wait();
+		flush_delayed_mntput_wait();
 
 	retval = do_umount(mnt, flags);
 dput_and_out:
@@ -1797,7 +1797,7 @@ dput_and_out:
 		 * and makes mnt_count zero, we need to guarantee to register
 		 * delayed_mntput by waiting for delayed_fput work again.
 		 */
-		flush_delayed_fput_wait();
+		//flush_delayed_fput_wait();
 
 		/* flush delayed_mntput_work to put sb->s_active */
 		flush_delayed_mntput_wait();

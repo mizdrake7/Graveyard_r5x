@@ -397,6 +397,7 @@ void flush_delayed_fput(void)
 
 static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
 
+void flush_delayed_fput_wait(void);
 void fput_many(struct file *file, unsigned int refs)
 {
 	if (atomic_long_sub_and_test(refs, &file->f_count)) {
