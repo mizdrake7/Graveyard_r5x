@@ -2584,7 +2584,7 @@ out:
  * The caller must acquire the policy_rwlock before calling this function.
  */
 static inline int __security_genfs_sid(const char *fstype,
-				       char *path,
+				       const char *path,
 				       u16 orig_sclass,
 				       u32 *sid)
 {
@@ -2644,7 +2644,7 @@ out:
  * it afterward.
  */
 int security_genfs_sid(const char *fstype,
-		       char *path,
+		       const char *path,
 		       u16 orig_sclass,
 		       u32 *sid)
 {

@@ -223,7 +223,7 @@ int security_get_allow_unknown(void);
 
 int security_fs_use(struct super_block *sb);
 
-int security_genfs_sid(const char *fstype, char *name, u16 sclass,
+int security_genfs_sid(const char *fstype, const char *path, u16 sclass,
 	u32 *sid);
 
 #ifdef CONFIG_NETLABEL
