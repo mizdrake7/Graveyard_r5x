@@ -30,6 +30,20 @@ void swake_up_locked(struct swait_queue_head *q)
 }
 EXPORT_SYMBOL(swake_up_locked);
 
+void swake_up_all_locked(struct swait_queue_head *q)
+{
+	struct swait_queue *curr;
+
+	while (!list_empty(&q->task_list)) {
+
+		curr = list_first_entry(&q->task_list, typeof(*curr),
+					task_list);
+		wake_up_process(curr->task);
+		list_del_init(&curr->task_list);
+	}
+}
+EXPORT_SYMBOL(swake_up_all_locked);
+
 void swake_up(struct swait_queue_head *q)
 {
 	unsigned long flags;
