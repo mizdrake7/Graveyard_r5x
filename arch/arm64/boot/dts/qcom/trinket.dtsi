@@ -1349,7 +1349,6 @@
 		//#endif
 		qcom,pet-time = <9360>;
 		qcom,ipi-ping;
-		qcom,wakeup-enable;
 		qcom,scandump-sizes = <0x40000>;
 	};
 
