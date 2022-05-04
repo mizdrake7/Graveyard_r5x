@@ -768,6 +768,7 @@ static int enter_state(suspend_state_t state)
 	}
 #endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
+	pm_wakeup_clear(true);
 	if (state == PM_SUSPEND_TO_IDLE)
 		s2idle_begin();
 
