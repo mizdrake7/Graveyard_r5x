@@ -306,7 +306,7 @@ s32 *key_buf;
 s32 *frame1_cbk700, *frame1_cbk250, *frame1_cbk200;
 s32 *cap_dac, *cap_raw;
 int g_ini_items;
-extern mp_test_result;
+extern int mp_test_result;
 extern struct upgrade_ili_fw_info *ili_fw;
 extern unsigned char* CTPM_FW;
 
