@@ -10,6 +10,8 @@
 * Revision 1.0    2016-06-22    fanhui@PhoneSW.BSP	Created file
 ***********************************************************************************/
 
+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
 #include <linux/irq.h>
 #include <linux/percpu.h>
 #include <linux/sched.h>
@@ -131,7 +133,7 @@ static void sort_irqs_delta(void)
 static void print_top10_irqs(void)
 {
 	sort_irqs_delta();
-	printk(KERN_INFO "Top10 irqs since last: %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; Total: %u\n",
+	pr_debug("Top10 irqs since last: %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; %d:%u; Total: %u\n",
 		irqno_sort[0], o_irq_counter.irqs_delta[irqno_sort[0]], irqno_sort[1], o_irq_counter.irqs_delta[irqno_sort[1]],
 		irqno_sort[2], o_irq_counter.irqs_delta[irqno_sort[2]], irqno_sort[3], o_irq_counter.irqs_delta[irqno_sort[3]],
 		irqno_sort[4], o_irq_counter.irqs_delta[irqno_sort[4]], irqno_sort[5], o_irq_counter.irqs_delta[irqno_sort[5]],
@@ -145,7 +147,7 @@ void dump_cpu_online_mask(void)
 	struct cpumask avail_mask;
 	cpumask_andnot(&avail_mask, cpu_online_mask, cpu_isolated_mask);
 	scnprintf(alive_mask_buf, MASK_SIZE, "%*pb1", cpumask_pr_args(&avail_mask));
-	printk(KERN_INFO "cpu avail mask %s\n", alive_mask_buf);
+	pr_debug("cpu avail mask %s\n", alive_mask_buf);
 }
 
 void get_cpu_ping_mask(cpumask_t *pmask)
@@ -160,15 +162,15 @@ void get_cpu_ping_mask(cpumask_t *pmask)
 		if (cpu_idle_pc_state[cpu] || cpu_isolated(cpu))
 			cpumask_clear_cpu(cpu, pmask);
 	}
-	printk(KERN_INFO "[wdog_util]cpu avail mask: 0x%lx; ping mask: 0x%lx; irqs since last: %u\n",
+	pr_debug("[wdog_util]cpu avail mask: 0x%lx; ping mask: 0x%lx; irqs since last: %u\n",
 		*cpumask_bits(&avail_mask), *cpumask_bits(pmask), o_irq_counter.all_irqs_delta);
 }
 
 void print_smp_call_cpu(void)
 {
-	printk(KERN_INFO "cpu of last smp_call_function_any: %d\n",
+	pr_debug("cpu of last smp_call_function_any: %d\n",
 		smp_call_any_cpu);
-	printk(KERN_INFO "cpumask of last smp_call_function_many: 0x%lx\n",
+	pr_debug("cpumask of last smp_call_function_many: 0x%lx\n",
 		smp_call_many_cpumask);
 }
 
