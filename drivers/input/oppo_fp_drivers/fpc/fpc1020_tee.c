@@ -42,9 +42,21 @@
 #include "../include/oppo_fp_common.h"
 
 #undef dev_info
-#define dev_info dev_err
+#define dev_info(x, ...)
 #undef dev_dbg
-#define dev_dbg dev_err
+#define dev_dbg(x, ...)
+#undef dev_err
+#define dev_err(x, ...)
+#undef pr_info
+#define pr_info(x, ...)
+#undef pr_debug
+#define pr_debug(x, ...)
+#undef pr_error
+#define pr_error(x, ...)
+#undef printk
+#define printk(x, ...)
+#undef printk_deferred
+#define printk_deferred(x, ...)
 
 #define   FPC1020_RESET_LOW_US                              1000
 #define   FPC1020_RESET_HIGH1_US                            100
@@ -191,7 +203,7 @@ static int fpc1020_enable_irq(struct fpc1020_data *fpc1020, bool enable)
                         enable_irq(gpio_to_irq(fpc1020->irq_gpio));
                         enable_irq_wake(gpio_to_irq(fpc1020->irq_gpio));
                         fpc1020->irq_enabled = 1;
-                        dev_info(fpc1020->dev, "%s: enable\n", __func__);
+                        dev_dbg(fpc1020->dev, "%s: enable\n", __func__);
                 } else {
                         /*dev_info(fpc1020->dev, "%s: no need enable\n", __func__);*/
                 }
@@ -200,7 +212,7 @@ static int fpc1020_enable_irq(struct fpc1020_data *fpc1020, bool enable)
                         disable_irq_wake(gpio_to_irq(fpc1020->irq_gpio));
                         disable_irq_nosync(gpio_to_irq(fpc1020->irq_gpio));
                         fpc1020->irq_enabled = 0;
-                        dev_info(fpc1020->dev, "%s: disable\n", __func__);
+                        dev_dbg(fpc1020->dev, "%s: disable\n", __func__);
                 } else {
                         /*dev_info(fpc1020->dev, "%s: no need disable\n", __func__);*/
                 }
@@ -350,7 +362,7 @@ static const struct attribute_group attribute_group = {
 static irqreturn_t fpc1020_irq_handler(int irq, void *handle)
 {
         struct fpc1020_data *fpc1020 = handle;
-        dev_info(fpc1020->dev, "%s\n", __func__);
+        dev_dbg(fpc1020->dev, "%s\n", __func__);
 
         /* Make sure 'wakeup_enabled' is updated before using it
          ** since this is interrupt context (other thread...) */
@@ -385,7 +397,7 @@ static int fpc1020_probe(struct platform_device *pdev)
         }
 
         fpc1020->dev = dev;
-        dev_info(fpc1020->dev, "-->%s\n", __func__);
+        dev_dbg(fpc1020->dev, "-->%s\n", __func__);
         dev_set_drvdata(dev, fpc1020);
 
         if (!np) {
@@ -399,7 +411,7 @@ static int fpc1020_probe(struct platform_device *pdev)
                 rc = -EINVAL;
                 goto ERR_BEFORE_WAKELOCK;
         }
-        dev_info(dev, "found fpc sensor\n");
+        dev_dbg(dev, "found fpc sensor\n");
 
         wake_lock_init(&fpc1020->ttw_wl, WAKE_LOCK_SUSPEND, "fpc_ttw_wl");
         wake_lock_init(&fpc1020->fpc_wl, WAKE_LOCK_SUSPEND, "fpc_wl");
@@ -448,7 +460,7 @@ static int fpc1020_probe(struct platform_device *pdev)
                 goto ERR_AFTER_WAKELOCK;
         }
 
-        dev_info(fpc1020->dev, "%s: ok\n", __func__);
+        dev_dbg(fpc1020->dev, "%s: ok\n", __func__);
         return 0;
 
 ERR_AFTER_WAKELOCK:
