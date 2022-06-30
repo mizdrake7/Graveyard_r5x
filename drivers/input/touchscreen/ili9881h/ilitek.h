@@ -196,24 +196,24 @@ extern s32 ipio_debug_level;
 extern s32 oppo_debug_level;
 #define ipio_info(fmt, arg...)						\
 ({									\
-	pr_info("ILITEK[INFO]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
+	pr_info_once("ILITEK[INFO]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
 })									\
 
 #define ipio_err(fmt, arg...)						\
 ({									\
-	pr_err("ILITEK[ERR]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
+	pr_err_once("ILITEK[ERR]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
 })									\
 
 #define ipio_debug(level, fmt, arg...)					\
 do {									\
 	if (level & ipio_debug_level)					\
-	pr_info("ILITEK[DEBUG]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
+	pr_info_once("ILITEK[DEBUG]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
 } while (0)
 
 #define oppo_debug(level, fmt, arg...)					\
 	do {									\
 		if (level == oppo_debug_level)					\
-		pr_info("OPPO[DEBUG]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
+		pr_info_once("OPPO[DEBUG]: (%s, %d): " fmt, __func__, __LINE__, ##arg);	\
 	} while (0)
 
 #define ERR_ALLOC_MEM(X)	((IS_ERR(X) || X == NULL) ? 1 : 0)

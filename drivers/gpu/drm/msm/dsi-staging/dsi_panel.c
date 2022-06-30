@@ -544,7 +544,7 @@ static int dsi_panel_power_on(struct dsi_panel *panel)
 	int rc = 0;
 //#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, Add lcd log
-	pr_info("LCD_LOG : %s , begin\n", __func__);
+	pr_debug("LCD_LOG : %s , begin\n", __func__);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, Add lcd log
 //#endif /* CONFIG_ODM_WT_EDIT */
 	rc = dsi_pwr_enable_regulator(&panel->power_info, true);
@@ -609,7 +609,7 @@ error_disable_vregs:
 exit:
 //#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, Add lcd log
-	pr_info("LCD_LOG : %s , end\n", __func__);
+	pr_debug("LCD_LOG : %s , end\n", __func__);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, Add lcd log
 //#endif /* CONFIG_ODM_WT_EDIT */
 	return rc;
@@ -620,7 +620,7 @@ static int dsi_panel_power_off(struct dsi_panel *panel)
 	int rc = 0;
 //#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd.1941873, Start 2019/05/24, Add lcd log
-	pr_info("LCD_LOG : %s , begin\n", __func__);
+	pr_debug("LCD_LOG : %s , begin\n", __func__);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd.1941873, 2019/05/24, Add lcd log
 //#endif /* CONFIG_ODM_WT_EDIT */
 /*
@@ -644,7 +644,7 @@ static int dsi_panel_power_off(struct dsi_panel *panel)
 		pr_err("[%s] failed to enable vregs, rc=%d\n", panel->name, rc);
 //#ifdef CONFIG_ODM_WT_EDIT
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., Start 2020/03/09, Add lcd log
-	pr_info("LCD_LOG : %s , end\n", __func__);
+	pr_debug("LCD_LOG : %s , end\n", __func__);
 //Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, Add lcd log
 //#endif /* CONFIG_ODM_WT_EDIT */
 
@@ -917,7 +917,7 @@ static int dsi_panel_update_backlight(struct dsi_panel *panel,
 		return -EINVAL;
 	}
 
-	pr_err("dsi_panel_update_backlight---lvl:%d\n", bl_lvl);
+	pr_debug("dsi_panel_update_backlight---lvl:%d\n", bl_lvl);
 	dsi = &panel->mipi_device;
 	
 #ifdef CONFIG_KLAPSE
