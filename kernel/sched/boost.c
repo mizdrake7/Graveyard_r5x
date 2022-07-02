@@ -294,11 +294,3 @@ done:
 	mutex_unlock(&boost_mutex);
 	return ret;
 }
-
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-//qinyonghui@swdp. 2019/05.07. Migrate from sched.h to boost.c for hypnus
-int sched_boost(void)
-{
-	return sysctl_sched_boost;
-}
-#endif /* CONFIG_PRODUCT_REALME_TRINKET */

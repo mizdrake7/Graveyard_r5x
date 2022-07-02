@@ -7270,57 +7270,6 @@ unlock_mutex:
 
 	return ret;
 }
-
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-//cuixiaogang@SRC.hypnus.2018.07.11. add for change up/down migrate
-int sched_get_updown_migrate(unsigned int *up_pct, unsigned int *down_pct)
-{
-	int i;
-
-	if (!up_pct || !down_pct)
-		return -EINVAL;
-
-	mutex_lock(&mutex);
-	for (i = 0; i < MAX_CLUSTERS - 1; i++) {
-		up_pct[i] = SCHED_FIXEDPOINT_SCALE * 100
-			/ sysctl_sched_capacity_margin_up[i];
-		down_pct[i] = SCHED_FIXEDPOINT_SCALE * 100
-			/ sysctl_sched_capacity_margin_down[i];
-	}
-	mutex_unlock(&mutex);
-
-	return 0;
-}
-EXPORT_SYMBOL(sched_get_updown_migrate);
-
-int sched_set_updown_migrate(unsigned int *up_pct, unsigned int *down_pct)
-{
-	int i;
-
-	if (!up_pct || !down_pct)
-		return -EINVAL;
-
-	mutex_lock(&mutex);
-
-	for (i = 0; i < MAX_CLUSTERS - 1; i++) {
-		sysctl_sched_capacity_margin_up[i]
-			= SCHED_FIXEDPOINT_SCALE * 100 / up_pct[i];
-		sysctl_sched_capacity_margin_down[i]
-			= SCHED_FIXEDPOINT_SCALE * 100 / down_pct[i];
-	}
-
-	sched_update_updown_migrate_values(sysctl_sched_capacity_margin_up,
-						 MAX_CLUSTERS - 1);
-
-	sched_update_updown_migrate_values(sysctl_sched_capacity_margin_down,
-						 MAX_CLUSTERS - 1);
-
-	mutex_unlock(&mutex);
-
-	return 0;
-}
-EXPORT_SYMBOL(sched_set_updown_migrate);
-#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 #endif
 
 static inline struct task_group *css_tg(struct cgroup_subsys_state *css)
