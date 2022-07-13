@@ -30,10 +30,6 @@
 #define NETLINK_CRYPTO		21	/* Crypto layer */
 #define NETLINK_SMC		22	/* SMC monitoring */
 #define NETLINK_SOCKEV		23	/* Socket Administrative Events */
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HANS)
-// Kun.Zhou@ROM.Framework, 2019/09/23, add for hans freeze manager
-#define NETLINK_OPPO_HANS       28      /* Socket for freezing solution*/
-#endif
 #define NETLINK_INET_DIAG	NETLINK_SOCK_DIAG
 
 #ifndef CONFIG_PRODUCT_REALME_TRINKET
