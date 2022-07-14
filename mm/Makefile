@@ -109,10 +109,6 @@ obj-$(CONFIG_PROCESS_RECLAIM)	+= process_reclaim.o
 #/* Kui.Zhang@TEC.Kernel.Performance, 2019-03-13, add new interface for process memory reclaim*/
 obj-$(CONFIG_PROCESS_RECLAIM) += process_mm_reclaim.o
 #endif /*defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_VIRTUAL_RESERVE_MEMORY)*/
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-#/* Huacai.Zhou@PSW.BSP.Kernel.MM, 2018-07-07, add alloc wait monitor support*/
-obj-$(CONFIG_OPPO_MEM_MONITOR) += memory_monitor.o
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 #if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
 #/* Kui.Zhang@TEC.Kernel.Performance, 2019-03-13, add new interface for process memory reclaim*/
 obj-$(CONFIG_PROCESS_RECLAIM) += process_mm_reclaim.o
