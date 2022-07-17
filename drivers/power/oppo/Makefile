@@ -13,3 +13,8 @@ obj-y	+= oppo_gauge.o
 obj-y	+= oppo_vooc.o
 obj-y	+= oppo_adapter.o
 obj-y	+= oppo_short.o
+
+# Undo compiler optimizations to workaround buggy code
+ccflags-remove-y := -O2 -O3 $(CC_FLAGS_LTO)
+
+ccflags-y += -Os
