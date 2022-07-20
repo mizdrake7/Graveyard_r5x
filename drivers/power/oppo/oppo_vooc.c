@@ -35,13 +35,7 @@
 #define VOOC_NOTIFY_ADAPTER_MODEL_FACTORY            0x5e
 
 extern int charger_abnormal_log;
-extern int enable_charger_log;
-#define vooc_xlog_printk(num, fmt, ...) \
-        do { \
-                if (enable_charger_log >= (int)num) { \
-                        printk(KERN_NOTICE pr_fmt("[OPPO_CHG][%s]"fmt), __func__, ##__VA_ARGS__);\
-        } \
-} while (0)
+#define vooc_xlog_printk(num, ...) chg_debug(__VA_ARGS__)
 
 
 static struct oppo_vooc_chip *g_vooc_chip = NULL;
