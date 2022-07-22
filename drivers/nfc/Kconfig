@@ -87,3 +87,11 @@ config NFC_CXD224X
 
           To compile this driver as a module, choose m here. The module will
           be called cxd224x-i2c.
+
+config NFC_PN553
+        tristate "NXP NCI based NFC Controller Driver for PN553"
+        depends on I2C
+        help
+          This enables the NFC driver for NQx based devices.
+          This is for i2c connected version. NCI protocol logic
+          resides in the usermode and it has no other NFC dependencies.
