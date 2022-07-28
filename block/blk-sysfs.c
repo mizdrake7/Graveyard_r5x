@@ -396,21 +396,6 @@ static ssize_t queue_poll_delay_store(struct request_queue *q, const char *page,
 	return count;
 }
 
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
-// Add for ioqueue
-static ssize_t queue_show_ohm_inflight(struct request_queue *q, char *page)
-{
-	ssize_t ret;
-
-	ret = sprintf(page, "async:%d\n", q->in_flight[0]);
-	ret += sprintf(page + ret, "sync:%d\n", q->in_flight[1]);
-	ret += sprintf(page + ret, "bg:%d\n", q->in_flight[2]);
-	ret += sprintf(page + ret, "fg:%d\n", q->in_flight[3]);
-	return ret;
-}
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
-
 static ssize_t queue_poll_show(struct request_queue *q, char *page)
 {
 	return queue_var_show(test_bit(QUEUE_FLAG_POLL, &q->queue_flags), page);
@@ -659,15 +644,6 @@ static struct queue_sysfs_entry queue_iostats_entry = {
 	.store = queue_store_iostats,
 };
 
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
-// Add for ioqueue
-static struct queue_sysfs_entry queue_ohm_inflight_entry = {
-	.attr = {.name = "ohm_inflight", .mode = S_IRUGO },
-	.show = queue_show_ohm_inflight,
-};
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
-
 static struct queue_sysfs_entry queue_random_entry = {
 	.attr = {.name = "add_random", .mode = S_IRUGO | S_IWUSR },
 	.show = queue_show_random,
@@ -738,11 +714,6 @@ static struct attribute *default_attrs[] = {
 	&queue_nomerges_entry.attr,
 	&queue_rq_affinity_entry.attr,
 	&queue_iostats_entry.attr,
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
-// Add for ioqueue
-	&queue_ohm_inflight_entry.attr,
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 	&queue_random_entry.attr,
 	&queue_poll_entry.attr,
 	&queue_wc_entry.attr,

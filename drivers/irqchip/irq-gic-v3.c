@@ -70,12 +70,6 @@ extern u64 wakeup_source_count_all;
 extern int modem_wakeup_src_count[MODEM_WAKEUP_SRC_NUM];
 extern char modem_wakeup_src_string[MODEM_WAKEUP_SRC_NUM][10];
 #endif /* CONFIG_PRODUCT_REALME_TRINKET */
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
-/* Kui.Zhang@PSW.TEC.Kernel.Performance, 2019/02/27
- * collect interrupt doing time during process reclaim, only effect in age test
- */
-#include <linux/sched/clock.h>
-#endif
 
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
 //liuhd@PSW.CN.WiFi.Hardware.1202765,2017/12/10,add for the irq of wlan when system wakeuped by wlan
@@ -640,16 +634,6 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
 static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
 {
 	u32 irqnr;
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
-	/* Kui.Zhang@PSW.TEC.Kernel.Performance, 2019/02/27
-	 * collect interrupt doing time during process reclaim, only effect in age test
-	 */
-	struct task_struct *task = current;
-	unsigned long long start_ns = 0;
-
-	if (task && (task->flags & PF_RECLAIM_SHRINK))
-		start_ns = sched_clock();
-#endif
 
 	do {
 		irqnr = gic_read_iar();
@@ -695,14 +679,6 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
 			continue;
 		}
 	} while (irqnr != ICC_IAR1_EL1_SPURIOUS);
-
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
-	/* Kui.Zhang@PSW.TEC.Kernel.Performance, 2019/02/27
-	 * collect interrupt doing time during process reclaim, only effect in age test
-	 */
-	if ((task == current) && (task->flags & PF_RECLAIM_SHRINK))
-		task->reclaim_intr_ns += (unsigned long)(sched_clock() - start_ns);
-#endif
 }
 
 static void gic_dist_init(void)

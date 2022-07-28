@@ -4199,15 +4199,7 @@ static int binder_wait_for_work(struct binder_thread *thread,
 			list_add(&thread->waiting_thread_node,
 				 &proc->waiting_threads);
 		binder_inner_proc_unlock(proc);
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
-        current->in_binder = 1;
-#endif
         schedule();
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
-        current->in_binder = 0;
-#endif
 		binder_inner_proc_lock(proc);
 		list_del_init(&thread->waiting_thread_node);
 		if (signal_pending(current)) {

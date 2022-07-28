@@ -1844,26 +1844,6 @@ static int current_may_throttle(void)
 		bdi_write_congested(current->backing_dev_info);
 }
 
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-/*Huacai.Zhou@PSW.BSP.Kernel.MM, 2018-04-28, fix direct reclaim slow issue*/
-extern bool is_fg(int uid);
-static inline int get_current_adj(void)
-{
-#ifdef CONFIG_OPPO_FG_OPT
-	int cur_uid;
-#endif
-
-	if (current->signal->oom_score_adj < 0)
-		return 0;
-#ifdef CONFIG_OPPO_FG_OPT
-	cur_uid = current_uid().val;
-	if (is_fg(cur_uid))
-		return 0;
-#endif
-	return current->signal->oom_score_adj;
-}
-#endif /*VENDOR*/
-
 /*
  * shrink_inactive_list() is a helper for shrink_node().  It returns the number
  * of reclaimed pages
@@ -2013,14 +1993,8 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
 	 * is congested. Allow kswapd to continue until it starts encountering
 	 * unqueued dirty pages or cycling through the LRU too quickly.
 	 */
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-/*Huacai.Zhou@PSW.BSP.Kernel.MM, 2018-04-28, fix direct reclaim slow issue*/
-	if (!sc->hibernation_mode && !current_is_kswapd() &&
-	    current_may_throttle() && get_current_adj())
-#else
 	if (!sc->hibernation_mode && !current_is_kswapd() &&
 	    current_may_throttle())
-#endif
 		wait_iff_congested(pgdat, BLK_RW_ASYNC, HZ/10);
 
 	trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,

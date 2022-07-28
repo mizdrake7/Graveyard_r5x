@@ -2833,11 +2833,6 @@ struct reclaim_param {
 	/* pages reclaimed */
 	int nr_reclaimed;
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
-#ifdef CONFIG_PROCESS_RECLAIM_ENHANCE
-	/* Kui.Zhang@PSW.BSP.Kernel.Performance, 2018-11-07,
-	 * flag that relcaim inactive pages only */
-	bool inactive_lru;
-#endif
 	/* robin.ren@PSW.BSP.Kernel.Performance, 2019-03-13,
 	 * the target reclaimed process
 	 */

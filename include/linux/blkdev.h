@@ -551,14 +551,7 @@ struct request_queue {
 	struct list_head	tag_busy_list;
 
 	unsigned int		nr_sorted;
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
-// Modify for ioqueue
-	unsigned int		in_flight[4];
-#else
 	unsigned int		in_flight[2];
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
-
 
 	/*
 	 * Number of active block driver functions for which blk_drain_queue()

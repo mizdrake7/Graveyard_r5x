@@ -209,34 +209,6 @@ extern int sysctl_uifirst_enabled;
 extern int sysctl_launcher_boost_enabled;
 #endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
-struct uifirst_d_state {
-    u64 iowait_ns;
-    u64 downread_ns;
-    u64 downwrite_ns;
-    u64 mutex_ns;
-    u64 other_ns;
-    int cnt;
-};
-
-struct uifirst_s_state{
-    u64 binder_ns;
-    u64 epoll_ns;
-    u64 futex_ns;
-    u64 other_ns;
-    int cnt;
-};
-
-struct oppo_uifirst_monitor_info {
-    u64 runnable_state;
-    u64 ltt_running_state; /* ns */
-    u64 big_running_state; /* ns */
-    struct uifirst_d_state d_state;
-    struct uifirst_s_state s_state;
-};
-#endif
-
 /* Task command name length: */
 #define TASK_COMM_LEN			16
 
@@ -1430,34 +1402,9 @@ struct task_struct {
 	/* Used by LSM modules for access restriction: */
 	void				*security;
 #endif
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM)
-	/* Kui.Zhang@TEC.Kernel.Performance, 2019/03/04
-	* Record process reclaim infor
-	*/
-	union reclaim_limit reclaim;
-#endif
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_PROCESS_RECLAIM) && defined(CONFIG_OPPO_SPECIAL_BUILD)
-	   /* Kui.Zhang@TEC.Kernel.Performance, 2019/03/05
-	    * record the time used of process reclaim
-	    */
-	   unsigned long reclaim_ns;
-	   unsigned long reclaim_run_ns;
-	   unsigned long reclaim_intr_ns;
-#endif
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
 	int static_ux;
 #endif /* CONFIG_PRODUCT_REALME_TRINKET */
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
-    int stuck_trace;
-    struct oppo_uifirst_monitor_info oppo_stuck_info;
-    unsigned in_mutex:1;
-    unsigned in_downread:1;
-    unsigned in_downwrite:1;
-    unsigned in_futex:1;
-    unsigned in_binder:1;
-    unsigned in_epoll:1;
-#endif
 	/*
 	 * New fields for task_struct should be added above here, so that
 	 * they are included in the randomized portion of task_struct.

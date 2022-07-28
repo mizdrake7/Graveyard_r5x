@@ -45,12 +45,6 @@
 #include <linux/moduleparam.h>
 #include <linux/pkeys.h>
 #include <linux/oom.h>
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-/* Kui.Zhang@TEC.Kernel.Performance, 2019/06/06
- * collect svm_oom log
- */
-#include <soc/oppo/oppo_healthinfo.h>
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 #include <linux/sched/mm.h>
 #include <linux/uaccess.h>

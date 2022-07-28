@@ -49,17 +49,6 @@
 struct dentry *blk_debugfs_root;
 #endif
 
-/*Hank.liu@TECH.BSP Kernel IO Latency  2019-03-21,io information*/
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-extern void ohm_iolatency_record(struct request * req,unsigned int nr_bytes, int fg, u64 delta_ms);
-extern unsigned long ufs_outstanding;
-static u64 latency_count;
-static u32 io_print_count;
-bool       io_print_flag;
-#define    PRINT_LATENCY     500*1000
-#define    COUNT_TIME      24*60*60*1000
-#endif
-
 EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_remap);
 EXPORT_TRACEPOINT_SYMBOL_GPL(block_rq_remap);
 EXPORT_TRACEPOINT_SYMBOL_GPL(block_bio_complete);
@@ -2649,10 +2638,6 @@ struct request *blk_peek_request(struct request_queue *q)
 			 * not be passed by new incoming requests
 			 */
 			rq->rq_flags |= RQF_STARTED;
-/*Hank.liu@PSW.BSP Kernel IO Latency  2019-03-19,request start ktime */
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-			rq-> block_io_start = ktime_get();
-#endif
 			trace_block_rq_issue(q, rq);
 		}
 
@@ -2736,11 +2721,6 @@ static void blk_dequeue_request(struct request *rq)
 		q->in_flight[rq_is_sync(rq)]++;
 		set_io_start_time_ns(rq);
 	}
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// jiheng.xie@PSW.Tech.BSP.Performance, 2019/03/11
-// Add for ioqueue
-		ohm_ioqueue_add_inflight(q, rq);
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 }
 
 /**
@@ -2821,47 +2801,7 @@ bool blk_update_request(struct request *req, blk_status_t error,
 		unsigned int nr_bytes)
 {
 	int total_bytes;
-  #if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-/*Hank.liu@TECH.BSP Kernel IO Latency	2019-03-19,request complete ktime*/
-	ktime_t now;
-	u64 delta_us;
-	char rwbs[RWBS_LEN];
-#endif
-  
 	trace_block_rq_complete(req, blk_status_to_errno(error), nr_bytes);
-	/*Hank.liu@TECH.BSP Kernel IO Latency	2019-03-19,request complete ktime*/
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-		if(req->tag >= 0 && req->block_io_start > 0)
-		{
-			io_print_flag = false;
-			now = ktime_get();
-			delta_us = ktime_us_delta(now, req->block_io_start);
-			ohm_iolatency_record(req, nr_bytes, current_is_fg(), ktime_us_delta(now, req->block_io_start));
-			trace_block_time(req->q, req, delta_us, nr_bytes);
-			
-			if(delta_us > PRINT_LATENCY) { 
-				if((ktime_to_ms(now)) < COUNT_TIME){
-					latency_count ++;
-				}else{
-					latency_count = 0;
-				}
-				io_print_flag = true;
-				blk_fill_rwbs(rwbs,req->cmd_flags, nr_bytes);
-		
-				/*if log is continuous, printk the first log.*/
-				if(!io_print_count)
-				  pr_info("[IO Latency]UID:%u,slot:%d,outstanding=0x%lx,IO_Type:%s,Block IO/Flash Latency:(%llu/%llu)LBA:%llu,length:%d size:%d,count=%lld\n",
-						(from_kuid_munged(current_user_ns(),current_uid())),
-						req->tag,ufs_outstanding,rwbs,delta_us,req->flash_io_latency,
-						(unsigned long long)blk_rq_pos(req),
-						nr_bytes >> 9,blk_rq_bytes(req),latency_count);
-				io_print_count++;
-			}
-		
-			if(!io_print_flag && io_print_count)
-				io_print_count = 0;
-		}
-#endif
 
 	if (!req->bio)
 		return false;

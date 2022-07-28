@@ -844,19 +844,8 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 		}
 
 		spin_unlock(&lock->wait_lock);
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
-        if (state & TASK_UNINTERRUPTIBLE) {
-            current->in_mutex = 1;
-        }
-#endif
 		schedule_preempt_disabled();
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
-// Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
-        if (state & TASK_UNINTERRUPTIBLE) {
-            current->in_mutex = 0;
-        }
-#endif
+
 		/*
 		 * ww_mutex needs to always recheck its position since its waiter
 		 * list is not FIFO ordered.

@@ -44,11 +44,6 @@
 #include <trace/events/ion.h>
 #include <soc/qcom/secure_buffer.h>
 
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO) && defined (CONFIG_OPPO_MEM_MONITOR)
-//Jiheng.Xie@TECH.BSP.Performance, 2019/07/11, add for ion wait monitor
-#include <linux/memory_monitor.h>
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
-
 #ifdef CONFIG_PRODUCT_REALME_TRINKET
 // wenbin.liu@PSW.BSP.MM, 2018/07/11
 // Add for ion used cnt
@@ -1083,10 +1078,6 @@ struct dma_buf *ion_alloc_dmabuf(size_t len, unsigned int heap_id_mask,
 	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
 	struct dma_buf *dmabuf;
 	char task_comm[TASK_COMM_LEN];
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO) && defined (CONFIG_OPPO_MEM_MONITOR)
-//Jiheng.Xie@TECH.BSP.Performance, 2019/07/11, add for ion wait monitor
-	unsigned long oppo_ionwait_start = jiffies;
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	pr_debug("%s: len %zu heap_id_mask %u flags %x\n", __func__,
 		 len, heap_id_mask, flags);
@@ -1132,10 +1123,6 @@ struct dma_buf *ion_alloc_dmabuf(size_t len, unsigned int heap_id_mask,
 		_ion_buffer_destroy(buffer);
 		kfree(exp_info.exp_name);
 	}
-#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO) && defined (CONFIG_OPPO_MEM_MONITOR)
-//Jiheng.Xie@TECH.BSP.Performance, 2019/07/11, add for ion wait monitor
-	oppo_ionwait_monitor(jiffies_to_msecs(jiffies - oppo_ionwait_start));
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 
 	return dmabuf;
 }
