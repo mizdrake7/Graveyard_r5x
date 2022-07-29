@@ -51,9 +51,6 @@ obj-y += irq/
 obj-y += rcu/
 obj-y += livepatch/
 
-
-#ChenYong@Rom.Framework,2019/01/15, add for kevent action upload,root action upload to user layer
-obj-$(CONFIG_OPPO_KEVENT_UPLOAD) += oppo_kevent_upload.o
 obj-$(CONFIG_CHECKPOINT_RESTORE) += kcmp.o
 obj-$(CONFIG_FREEZER) += freezer.o
 obj-$(CONFIG_PROFILING) += profile.o

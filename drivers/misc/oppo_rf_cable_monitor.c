@@ -26,7 +26,6 @@
 #include <linux/of_gpio.h>
 #include <linux/kobject.h>
 #include <linux/pm_wakeup.h>
-#include <linux/oppo_kevent.h>
 
 #define RF_CABLE_OUT           0
 #define RF_CABLE_IN            1
@@ -101,32 +100,6 @@ static bool rf_cable_1_support = false;
 static bool rf_pds_0_support = false;
 static bool rf_pds_1_support = false;
 
-//====================================
-static int kevent_usermsg(struct rf_cable_data *rf_data)
-{
-    #define BUF_SIZE 256
-    char page[BUF_SIZE] = {0};
-    int len = 0;
-    struct kernel_packet_info *user_msg_info = (struct kernel_packet_info *)page;
-
-    if (!rf_data || !the_rf_format) {
-        pr_err("%s the_rf_data null\n", __func__);
-        return 0;
-    }
-    pr_err("%s rf_pds status changed \n", __func__);
-    memset(page,0,256);
-    //set type and tag event id
-    user_msg_info->type = 2;
-    strncpy(user_msg_info->log_tag, "psw_network", sizeof(user_msg_info->log_tag)-1);
-    strncpy(user_msg_info->event_id, "20190704", sizeof(user_msg_info->event_id)-1);
-    len += snprintf(user_msg_info->payload,BUF_SIZE - 1 - sizeof(struct kernel_packet_info) ,
-        "rf_pds_gpio_sts: [%d,%d]",rf_data->rf_pds_gpio_sts[0],rf_data->rf_pds_gpio_sts[1]);
-    user_msg_info->payload_length = len + 1;
-    kevent_send_to_user(user_msg_info);
-    msleep(20);
-    return 0;
-}
-//=====================================
 static ssize_t cable_read_proc(struct file *file, char __user *buf, size_t count, loff_t *off)
 {
     char page[128] = {0};
@@ -184,7 +157,6 @@ static ssize_t pds_read_proc(struct file *file, char __user *buf, size_t count, 
 
     if(the_rf_format->rf_pds_sts != the_rf_data->rf_pds_sts)
     {
-        kevent_usermsg(the_rf_data);
         the_rf_format->rf_pds_sts = the_rf_data->rf_pds_sts;
     }
 
@@ -248,7 +220,6 @@ static irqreturn_t cable_interrupt(int irq, void *_dev)
     the_rf_format->rf_cable_sts = rf_data->rf_cable_sts;
     if(the_rf_format->rf_pds_sts != rf_data->rf_pds_sts)
     {
-        kevent_usermsg(rf_data);
         the_rf_format->rf_pds_sts = rf_data->rf_pds_sts;
     }
 

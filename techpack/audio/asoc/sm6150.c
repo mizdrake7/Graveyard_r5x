@@ -50,13 +50,6 @@
 //#include "codecs/sia81xx/sia81xx_aux_dev_if.h"
 //#endif
 
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-#ifdef CONFIG_OPPO_KEVENT_UPLOAD
-/*Jianfeng.Qiu@PSW.MM.AudioDriver.Stability, 2019/02/03, Add for audio driver kevent log*/
-#include <asoc/oppo_mm_audio_kevent.h>
-#endif /* CONFIG_OPPO_KEVENT_UPLOAD */
-#endif /* CONFIG_PRODUCT_REALME_TRINKET */
-
 #define DRV_NAME "sm6150-asoc-snd"
 
 #define __CHIPSET__ "SM6150 "
@@ -5879,13 +5872,6 @@ static int msm_mi2s_snd_startup(struct snd_pcm_substream *substream)
 	struct snd_soc_card *card = rtd->card;
 	struct msm_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
 
-	#ifdef CONFIG_PRODUCT_REALME_TRINKET
-	#ifdef CONFIG_OPPO_KEVENT_UPLOAD
-	/*Jianfeng.Qiu@PSW.MM.AudioDriver.Stability, 2019/02/03, Add for audio driver kevent log*/
-	unsigned char payload[256] = "";
-	#endif /* CONFIG_OPPO_KEVENT_UPLOAD */
-	#endif /* CONFIG_PRODUCT_REALME_TRINKET */
-
 	dev_dbg(rtd->card->dev,
 		"%s: substream = %s  stream = %d, dai name %s, dai ID %d\n",
 		__func__, substream->name, substream->stream,
@@ -5938,15 +5924,6 @@ static int msm_mi2s_snd_startup(struct snd_pcm_substream *substream)
 			if (ret < 0) {
 				pr_err("%s: afe lpass mclk failed, err:%d\n",
 					__func__, ret);
-
-				#ifdef CONFIG_PRODUCT_REALME_TRINKET
-				#ifdef CONFIG_OPPO_KEVENT_UPLOAD
-				/*Jianfeng.Qiu@PSW.MM.AudioDriver.Stability, 2019/02/03, Add for audio driver kevent log*/
-				scnprintf(payload, sizeof(payload), "EventID@@%d$$mi2s_set_clk_fail$$index@@%d$$path@@%d$$err@@%d",
-					OPPO_MM_AUDIO_EVENT_ID_CLK_FAIL, index, substream->stream, ret);
-				upload_mm_audio_kevent_data(payload);
-				#endif /* CONFIG_OPPO_KEVENT_UPLOAD */
-				#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 				goto clk_off;
 			}
