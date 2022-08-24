@@ -340,6 +340,7 @@
 
 		CPU_COST_0: core-cost0 {
 			busy-cost-data = <
+                                614400  48
 				864000	68
 				1017600	79
 				1305600 114
@@ -353,6 +354,7 @@
 
 		CPU_COST_1: core-cost1 {
 			busy-cost-data = <
+                                652800  111
 				902400	154
 				1401600	289
 				1536000 344
@@ -366,6 +368,7 @@
 
 		CLUSTER_COST_0: cluster-cost0 {
 			busy-cost-data = <
+                                614400  8
 				864000	9
 				1017600	12
 				1305600	18
@@ -379,6 +382,7 @@
 
 		CLUSTER_COST_1: cluster-cost1 {
 			busy-cost-data = <
+                                652800  46
 				902400	52
 				1401600	88
 				1536000	100
@@ -994,6 +998,7 @@
 		reg-names = "osm_pwrcl_base", "osm_perfcl_base";
 		#clock-cells = <1>;
 		qcom,cpufreq-table-0 =
+                        <614400>,
 			<864000>,
 			<1017600>,
 			<1305600>,
@@ -1001,6 +1006,7 @@
 			<1804800>;
 
 		qcom,cpufreq-table-4 =
+                        <652800>,
 			<902400>,
 			<1401600>,
 			<1536000>,
