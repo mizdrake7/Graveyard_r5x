@@ -351,16 +351,17 @@ static int help(struct sk_buff *skb, unsigned int protoff,
 		}
 	}
 
-	else{
-		/*Parsing NICK command from client to create an entry
-		 * strlen("NICK xxxxxx")
-		 * 5+strlen("xxxxxx")=1 (minimum length of nickname)
-		 */
-		data = ib_ptr;
-		data_limit = ib_ptr + skb->len - dataoff;
-		while (data < data_limit - (5 + MINLENNICK)) {
-			if (memcmp(data, "NICK ", 5)) {
-				data++;
+			pr_debug("DCC bound ip/port: %pI4:%u\n",
+				 &dcc_ip, dcc_port);
+
+			/* dcc_ip can be the internal OR external (NAT'ed) IP */
+			tuple = &ct->tuplehash[dir].tuple;
+			if ((tuple->src.u3.ip != dcc_ip &&
+			     ct->tuplehash[!dir].tuple.dst.u3.ip != dcc_ip) ||
+			    dcc_port == 0) {
+				net_warn_ratelimited("Forged DCC command from %pI4: %pI4:%u\n",
+						     &tuple->src.u3.ip,
+						     &dcc_ip, dcc_port);
 				continue;
 			}
 			data += 5;
