@@ -10,6 +10,7 @@ ccflags-y += -Idrivers/gpu/drm/msm
 #Hongzhu.Su@ODM_WT.MM.Display.Lcd., End 2020/03/09, add CABC cmd used for power saving
 #endif /* CONFIG_ODM_WT_EDIT */
 
+ccflags-y += -O3
 drm-y       :=	drm_auth.o drm_bufs.o drm_cache.o \
 		drm_context.o drm_dma.o \
 		drm_file.o drm_gem.o drm_ioctl.o drm_irq.o \
