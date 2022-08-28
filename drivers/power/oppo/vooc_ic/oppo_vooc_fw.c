@@ -523,7 +523,7 @@ void oppo_vooc_delay_reset_mcu_init(struct oppo_vooc_chip *chip)
 
 static void oppo_vooc_delay_reset_mcu(struct oppo_vooc_chip *chip)
 {
-        schedule_delayed_work(&chip->delay_reset_mcu_work, round_jiffies_relative(msecs_to_jiffies(1500)));
+       queue_delayed_work(system_power_efficient_wq, &chip->delay_reset_mcu_work, round_jiffies_relative(msecs_to_jiffies(1500)));
 }
 
 static bool is_allow_fast_chg_real(struct oppo_vooc_chip *chip)
