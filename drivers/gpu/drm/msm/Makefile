@@ -164,6 +164,9 @@ msm_drm-$(CONFIG_DRM_MSM_DSI_STAGING) += dsi-staging/dsi_phy.o \
 				dsi-staging/oppo_display_private_api.o\
 				dsi-staging/dsi_display_test.o
 
+CFLAGS_REMOVE_dsi_panel.o += -mgeneral-regs-only
+CFLAGS_dsi_panel.o += -mno-implicit-float
+
 msm_drm-$(CONFIG_DSI_PARSER) += dsi-staging/dsi_parser.o
 
 msm_drm-$(CONFIG_DRM_MSM_DSI_PLL) += dsi/pll/dsi_pll.o \
