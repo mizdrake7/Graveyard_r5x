@@ -135,7 +135,9 @@ enum {
 };
 
 /* User knob to enable/disable adaptive lmk feature */
-static int enable_adaptive_lmk = ADAPTIVE_LMK_DISABLED;
+static int enable_adaptive_lmk = 0;
+/* Kill adaptive LMK sys param, so init script can't enable it */
+/* module_param_named(enable_adaptive_lmk, enable_adaptive_lmk, int, 0644); */
 
 /*
  * This parameter controls the behaviour of LMK when vmpressure is in
