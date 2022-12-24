@@ -4,7 +4,7 @@
 # Copyright (C) 2020-2021 Adithya R.
 
 SECONDS=0 # builtin bash timer
-ZIPNAME="Graveyard-Tombstone-r5x-$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="Graveyard-v15-r5x-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/tc/xRageTC-clang"
 AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/RMX1911_defconfig"
@@ -24,8 +24,8 @@ exit 1
 fi
 fi
 
-export KBUILD_BUILD_USER=Madmiz
-export KBUILD_BUILD_HOST=Stable
+export KBUILD_BUILD_USER=MAdMiZ
+export KBUILD_BUILD_HOST=BlackArch
 
 if [[ $1 = "-r" || $1 = "--regen" ]]; then
 make O=out ARCH=arm64 $DEFCONFIG savedefconfig
