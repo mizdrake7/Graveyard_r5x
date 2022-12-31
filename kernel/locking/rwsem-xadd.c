@@ -286,12 +286,6 @@ __rwsem_down_read_failed_common(struct rw_semaphore *sem, int state)
 			raw_spin_unlock_irq(&sem->wait_lock);
 			break;
 		}
-		//#ifdef CONFIG_PRODUCT_REALME_TRINKET fangpan@Swdp.shanghai,2015/11/12
-		if (hung_long_and_fatal_signal_pending(current)) {
-			list_del(&waiter.list);
-			break;
-		}
-		//#endif
 #if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_OPPO_HEALTHINFO)
 // Liujie.Xie@TECH.Kernel.Sched, 2019/08/29, add for stuck monitor
         current->in_downread = 1;
