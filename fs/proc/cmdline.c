@@ -75,6 +75,7 @@ static void patch_sar_flags(char *cmd)
 {
 	patch_flag_remove_flag(cmd, "root=PARTUUID=");
 	patch_flag_remove_flag(cmd, "rootwait");
+	patch_flag_remove_flag(cmd, "androidboot.realmebootstate=");
 	/* This flag is skip_initramfs, Omit the last 2 characters to avoid getting patched by Magisk */
 	patch_flag_remove_flag(cmd, "skip_initram");
 }
