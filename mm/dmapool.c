@@ -161,8 +161,10 @@ static void pool_check_block(struct dma_pool *pool, void *retval,
 }
 
 static bool pool_page_err(struct dma_pool *pool, struct dma_page *page,
-			  void *vaddr, dma_addr_t dma)
+			  void *vaddr, dma_addr_t dma, gfp_t mem_flags)
 {
+	if (mem_flags & __GFP_ZERO)
+		memset(vaddr, 0, pool->size);
 	return false;
 }
 
