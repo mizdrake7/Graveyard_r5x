@@ -153,7 +153,6 @@ int freeze_processes(void)
 		__usermodehelper_set_disable_depth(UMH_DISABLED);
 		pr_cont("done.");
 	}
-	pr_cont("\n");
 	BUG_ON(in_atomic());
 
 #ifndef CONFIG_ANDROID
@@ -191,7 +190,6 @@ int freeze_kernel_threads(void)
 	if (!error)
 		pr_cont("done.");
 
-	pr_cont("\n");
 	BUG_ON(in_atomic());
 
 	if (error)
