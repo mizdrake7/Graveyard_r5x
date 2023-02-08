@@ -273,6 +273,7 @@ static void irq_cpu_rmap_release(struct kref *ref)
 
 	glue->rmap->obj[glue->index] = NULL;
 	cpu_rmap_put(glue->rmap);
+	glue->rmap->obj[glue->index] = NULL;
 	kfree(glue);
 }
 
