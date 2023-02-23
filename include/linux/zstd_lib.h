@@ -2977,5 +2977,7 @@ ZSTDLIB_STATIC_API size_t ZSTD_insertBlock    (ZSTD_DCtx* dctx, const void* bloc
 
 ZSTDLIB_API size_t ZSTD_startingInputLength(ZSTD_format_e format);
 
+ZSTDLIB_API size_t ZSTD_startingInputLength(ZSTD_format_e format);
+
 #endif   /* ZSTD_H_ZSTD_STATIC_LINKING_ONLY */
 
