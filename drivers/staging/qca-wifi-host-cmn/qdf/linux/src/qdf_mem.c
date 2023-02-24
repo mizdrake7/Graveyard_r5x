@@ -37,7 +37,7 @@
 #ifdef CONFIG_MCL
 #include <host_diag_core_event.h>
 #else
-#define host_log_low_resource_failure(code) do {} while (0)
+#define host_log_low_resource_failure(code) ((void)0)
 #endif
 
 #if defined(CONFIG_CNSS)
