@@ -83,16 +83,6 @@ static void sdhci_dump_state(struct sdhci_host *host)
 
 void sdhci_dumpregs(struct sdhci_host *host)
 {
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-//Hexiaosen@PSW.BSP. 2019-11-20 modify for disable sdcard log
-	static int flag = 0;
-
-	if(flag < 5)
-		flag++;
-	else
-		return;
-#endif
-
 	MMC_TRACE(host->mmc,
 		"%s: 0x04=0x%08x 0x06=0x%08x 0x0E=0x%08x 0x30=0x%08x 0x34=0x%08x 0x38=0x%08x\n",
 		__func__,
@@ -1178,7 +1168,7 @@ static void __sdhci_finish_mrq(struct sdhci_host *host, struct mmc_request *mrq)
 
 	WARN_ON(i >= SDHCI_MAX_MRQS);
 
-	tasklet_schedule(&host->finish_tasklet);
+	tasklet_hi_schedule(&host->finish_tasklet);
 }
 
 static void sdhci_finish_mrq(struct sdhci_host *host, struct mmc_request *mrq)
@@ -1281,17 +1271,6 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
 	unsigned long timeout;
 
 	WARN_ON(host->cmd);
-
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-//yh@bsp, 2015-10-21 Add for special card compatible
-	if(host->mmc->card_stuck_in_programing_status && ((cmd->opcode == MMC_WRITE_MULTIPLE_BLOCK) || (cmd->opcode == MMC_WRITE_BLOCK)))          
-	{
-		pr_info("blocked write cmd:%s\n", mmc_hostname(host->mmc));
-		cmd->error = -EIO;
-		sdhci_finish_mrq(host, cmd->mrq);
-		return;
-	}
-#endif /* CONFIG_PRODUCT_REALME_TRINKET */
 
 	/* Initially, a command has no error */
 	cmd->error = 0;
@@ -1515,10 +1494,9 @@ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
 
 			clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
 			pre_val = sdhci_get_preset_value(host);
-			div = (pre_val & SDHCI_PRESET_SDCLK_FREQ_MASK)
-				>> SDHCI_PRESET_SDCLK_FREQ_SHIFT;
+			div = (pre_val & SDHCI_PRESET_SDCLK_FREQ_MASK);
 			if (host->clk_mul &&
-				(pre_val & SDHCI_PRESET_CLKGEN_SEL_MASK)) {
+				(pre_val)) {
 				clk = SDHCI_PROG_CLOCK_MODE;
 				real_div = div + 1;
 				clk_mul = host->clk_mul;
@@ -1865,50 +1843,6 @@ static int sdhci_get_tuning_cmd(struct sdhci_host *host)
 		return MMC_SEND_TUNING_BLOCK;
 }
 
-static int sdhci_crypto_cfg(struct sdhci_host *host, struct mmc_request *mrq,
-		u32 slot)
-{
-	int err = 0;
-
-	if (host->mmc->inlinecrypt_reset_needed &&
-			host->ops->crypto_engine_reset) {
-		err = host->ops->crypto_engine_reset(host);
-		if (err) {
-			pr_err("%s: crypto reset failed\n",
-					mmc_hostname(host->mmc));
-			goto out;
-		}
-		host->mmc->inlinecrypt_reset_needed = false;
-	}
-
-	if (host->ops->crypto_engine_cfg) {
-		err = host->ops->crypto_engine_cfg(host, mrq, slot);
-		if (err) {
-			pr_err("%s: failed to configure crypto\n",
-					mmc_hostname(host->mmc));
-			goto out;
-		}
-	}
-out:
-	return err;
-}
-
-static int sdhci_crypto_cfg_end(struct sdhci_host *host,
-				struct mmc_request *mrq)
-{
-	int err = 0;
-
-	if (host->ops->crypto_engine_cfg_end) {
-		err = host->ops->crypto_engine_cfg_end(host, mrq);
-		if (err) {
-			pr_err("%s: failed to configure crypto\n",
-					mmc_hostname(host->mmc));
-			return err;
-		}
-	}
-	return 0;
-}
-
 static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 {
 	struct sdhci_host *host;
@@ -1975,13 +1909,6 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 					sdhci_get_tuning_cmd(host));
 		}
 
-		if (host->is_crypto_en) {
-			spin_unlock_irqrestore(&host->lock, flags);
-			if (sdhci_crypto_cfg(host, mrq, 0))
-				goto end_req;
-			spin_lock_irqsave(&host->lock, flags);
-		}
-
 		if (mrq->sbc && !(host->flags & SDHCI_AUTO_CMD23))
 			sdhci_send_command(host, mrq->sbc);
 		else
@@ -1991,11 +1918,6 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 	mmiowb();
 	spin_unlock_irqrestore(&host->lock, flags);
 	return;
-end_req:
-	mrq->cmd->error = -EIO;
-	if (mrq->data)
-		mrq->data->error = -EIO;
-	mmc_request_done(host->mmc, mrq);
 }
 
 void sdhci_set_bus_width(struct sdhci_host *host, int width)
@@ -2237,8 +2159,7 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 
 			sdhci_enable_preset_value(host, true);
 			preset = sdhci_get_preset_value(host);
-			ios->drv_type = (preset & SDHCI_PRESET_DRV_MASK)
-				>> SDHCI_PRESET_DRV_SHIFT;
+			ios->drv_type = (preset & SDHCI_PRESET_DRV_MASK);
 		}
 
 		/* Re-enable SD Clock */
@@ -3040,7 +2961,6 @@ static bool sdhci_request_done(struct sdhci_host *host)
 	mmiowb();
 	spin_unlock_irqrestore(&host->lock, flags);
 
-	sdhci_crypto_cfg_end(host, mrq);
 	mmc_request_done(host->mmc, mrq);
 
 	return false;
@@ -3283,13 +3203,6 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
 		 * above in sdhci_cmd_irq().
 		 */
 		if (data_cmd && (data_cmd->flags & MMC_RSP_BUSY)) {
-			if (intmask & SDHCI_INT_DATA_TIMEOUT) {
-				host->data_cmd = NULL;
-				data_cmd->error = -ETIMEDOUT;
-				host->mmc->err_stats[MMC_ERR_CMD_TIMEOUT]++;
-				sdhci_finish_mrq(host, data_cmd->mrq);
-				return;
-			}
 			if (intmask & SDHCI_INT_DATA_END) {
 				host->data_cmd = NULL;
 				/*
@@ -4118,59 +4031,6 @@ static void sdhci_cmdq_post_cqe_halt(struct mmc_host *mmc)
 			SDHCI_INT_RESPONSE, SDHCI_INT_ENABLE);
 	sdhci_writel(host, SDHCI_INT_RESPONSE, SDHCI_INT_STATUS);
 }
-static int sdhci_cmdq_crypto_cfg(struct mmc_host *mmc,
-		struct mmc_request *mrq, u32 slot, u64 *ice_ctx)
-{
-	struct sdhci_host *host = mmc_priv(mmc);
-	int err = 0;
-
-	if (!host->is_crypto_en)
-		return 0;
-
-	if (mmc->inlinecrypt_reset_needed && host->ops->crypto_engine_reset) {
-		err = host->ops->crypto_engine_reset(host);
-		if (err) {
-			pr_err("%s: crypto reset failed\n",
-					mmc_hostname(host->mmc));
-			goto out;
-		}
-		mmc->inlinecrypt_reset_needed = false;
-	}
-
-	if (host->ops->crypto_engine_cmdq_cfg) {
-		err = host->ops->crypto_engine_cmdq_cfg(host, mrq,
-				slot, ice_ctx);
-		if (err) {
-			pr_err("%s: failed to configure crypto\n",
-					mmc_hostname(host->mmc));
-			goto out;
-		}
-	}
-out:
-	return err;
-}
-
-static int sdhci_cmdq_crypto_cfg_end(struct mmc_host *mmc,
-					struct mmc_request *mrq)
-{
-	struct sdhci_host *host = mmc_priv(mmc);
-
-	if (!host->is_crypto_en)
-		return 0;
-
-	return sdhci_crypto_cfg_end(host, mrq);
-}
-
-static void sdhci_cmdq_crypto_cfg_reset(struct mmc_host *mmc, unsigned int slot)
-{
-	struct sdhci_host *host = mmc_priv(mmc);
-
-	if (!host->is_crypto_en)
-		return;
-
-	if (host->ops->crypto_cfg_reset)
-		host->ops->crypto_cfg_reset(host, slot);
-}
 #else
 static void sdhci_cmdq_set_transfer_params(struct mmc_host *mmc)
 {
@@ -4216,23 +4076,6 @@ static void sdhci_cmdq_post_cqe_halt(struct mmc_host *mmc)
 {
 
 }
-
-static int sdhci_cmdq_crypto_cfg(struct mmc_host *mmc,
-		struct mmc_request *mrq, u32 slot, u64 *ice_ctx)
-{
-	return 0;
-}
-
-static int sdhci_cmdq_crypto_cfg_end(struct mmc_host *mmc,
-				struct mmc_request *mrq)
-{
-	return 0;
-}
-
-static void sdhci_cmdq_crypto_cfg_reset(struct mmc_host *mmc, unsigned int slot)
-{
-
-}
 #endif
 
 static const struct cmdq_host_ops sdhci_cmdq_ops = {
@@ -4244,9 +4087,6 @@ static const struct cmdq_host_ops sdhci_cmdq_ops = {
 	.enhanced_strobe_mask = sdhci_enhanced_strobe_mask,
 	.post_cqe_halt = sdhci_cmdq_post_cqe_halt,
 	.set_transfer_params = sdhci_cmdq_set_transfer_params,
-	.crypto_cfg	= sdhci_cmdq_crypto_cfg,
-	.crypto_cfg_end	= sdhci_cmdq_crypto_cfg_end,
-	.crypto_cfg_reset	= sdhci_cmdq_crypto_cfg_reset,
 };
 
 #ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
