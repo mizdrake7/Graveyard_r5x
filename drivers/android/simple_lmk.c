@@ -10,6 +10,7 @@
 #include <linux/mm.h>
 #include <linux/moduleparam.h>
 #include <linux/oom.h>
+#include <linux/ratelimit.h>
 #include <linux/sort.h>
 #include <linux/vmpressure.h>
 #include <uapi/linux/sched/types.h>
@@ -192,7 +193,7 @@ static void scan_and_kill(void)
 
 	/* Pretty unlikely but it can happen */
 	if (unlikely(!nr_found)) {
-		pr_err("No processes available to kill!\n");
+		pr_err_ratelimited("No processes available to kill!\n");
 		return;
 	}
 
