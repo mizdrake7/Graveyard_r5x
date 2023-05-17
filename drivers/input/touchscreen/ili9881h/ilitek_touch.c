@@ -861,7 +861,7 @@ void ilitek_tddi_report_ap_mode(u8 *buf, int len)
 	int i = 0;
 	u32 xop = 0, yop = 0, wop;
 
-	memset(touch_info, 0x0, sizeof(touch_info) * MAX_TOUCH_NUM);
+	memset(touch_info, 0x0, sizeof(*touch_info) * MAX_TOUCH_NUM);
 
 	idev->finger = 0;
 
@@ -965,7 +965,7 @@ void ilitek_tddi_report_debug_mode(u8 *buf, int len)
 	int i = 0;
 	u32 xop = 0, yop = 0, wop;
 
-	memset(touch_info, 0x0, sizeof(touch_info) * MAX_TOUCH_NUM);
+	memset(touch_info, 0x0, sizeof(*touch_info) * MAX_TOUCH_NUM);
 
 	idev->finger = 0;
 
