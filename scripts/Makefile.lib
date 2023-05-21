@@ -259,12 +259,17 @@ cmd_ld = $(LD) $(LDFLAGS) $(ldflags-y) $(LDFLAGS_$(@F)) \
 quiet_cmd_objcopy = OBJCOPY $@
 cmd_objcopy = $(OBJCOPY) $(OBJCOPYFLAGS) $(OBJCOPYFLAGS_$(@F)) $< $@
 
-# Gzip
+# Gzip/Pigz
 # ---------------------------------------------------------------------------
 
 quiet_cmd_gzip = GZIP    $@
-cmd_gzip = (cat $(filter-out FORCE,$^) | pigz -n -f -9 > $@) || \
-	(rm -f $@ ; false)
+ifeq (command -v pigz >/dev/null 2>&1,$(shell echo command -v pigz >/dev/null 2>&1))
+    cmd_gzip = (cat $(filter-out FORCE,$^) | pigz -n -f -9 > $@) || \
+               (rm -f $@ ; false)
+else
+    cmd_gzip = (cat $(filter-out FORCE,$^) | gzip -n -f -9 > $@) || \
+               (rm -f $@ ; false)
+endif
 
 # DTC
 # ---------------------------------------------------------------------------
