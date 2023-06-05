@@ -569,12 +569,10 @@ static struct ctl_table kern_table[] = {
 		.extra2		= &max_sched_granularity_ns,
 	},
 		.procname	= "sched_busy_hysteresis_enable_cpus",
-		.data		= &sysctl_sched_busy_hysteresis_enable_cpus,
-		.maxlen		= sizeof(unsigned int),
+		.data		= &sched_busy_hysteresis_cpubits,
+		.maxlen		= NR_CPUS,
 		.mode		= 0644,
-		.proc_handler	= proc_douintvec_minmax,
-		.extra1		= &zero,
-		.extra2		= &two_hundred_fifty_five,
+		.proc_handler	= proc_do_large_bitmap,
 	},
 #endif
 	{
