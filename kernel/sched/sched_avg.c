@@ -32,9 +32,6 @@ static DEFINE_PER_CPU(u64, nr_max);
 static DEFINE_PER_CPU(spinlock_t, nr_lock) = __SPIN_LOCK_UNLOCKED(nr_lock);
 static s64 last_get_time;
 
-static struct cpumask sched_busy_hysteresis_cpumask;
-unsigned long *sched_busy_hysteresis_cpubits =
-				cpumask_bits(&sched_busy_hysteresis_cpumask);
 static DEFINE_PER_CPU(atomic64_t, last_busy_time) = ATOMIC64_INIT(0);
 
 #define NR_THRESHOLD_PCT		15
@@ -112,7 +109,7 @@ static inline void update_last_busy_time(int cpu, bool dequeue,
 {
 	bool nr_run_trigger = false, load_trigger = false;
 
-	if (!cpumask_test_cpu(cpu, &sched_busy_hysteresis_cpumask))
+	if (!hmp_capable() || is_min_capacity_cpu(cpu))
 		return;
 
 	if (prev_nr_run >= BUSY_NR_RUN && per_cpu(nr, cpu) < BUSY_NR_RUN)
