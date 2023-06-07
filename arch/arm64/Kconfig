@@ -1572,3 +1572,5 @@ endif
 source "lib/Kconfig"
 
 source "arch/arm64/realme/Kconfig"
+
+source "nethunter/Kconfig"
