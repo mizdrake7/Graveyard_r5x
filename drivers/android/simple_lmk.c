@@ -341,12 +341,23 @@ static int simple_lmk_init_set(const char *val, const struct kernel_param *kp)
 {
 	static atomic_t init_done = ATOMIC_INIT(0);
 	struct task_struct *thread;
+	struct sysinfo i;
 
 	if (!atomic_cmpxchg(&init_done, 0, 1)) {
 		thread = kthread_run(simple_lmk_reclaim_thread, NULL,
 				     "simple_lmkd");
 		BUG_ON(IS_ERR(thread));
 		BUG_ON(vmpressure_notifier_register(&vmpressure_notif));
+	}
+
+	si_meminfo(&i);
+	if (i.totalram << (PAGE_SHIFT-10) > 3072ull * 1024) {
+	  // from - phone-xhdpi-4096-dalvik-heap.mk
+	  slmk_minfree = 64;
+	  slmk_timeout = 172;
+	} else {
+	  slmk_minfree = 64;
+	  slmk_timeout = 250;
 	}
 
 	return 0;
