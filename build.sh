@@ -5,7 +5,7 @@
 
 SECONDS=0 # builtin bash timer
 ZIPNAME="Graveyard-v15-r5x-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/tc/xRageTC-clang"
+TC_DIR="$HOME/tc/trb_clang"
 AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/RMX1911_defconfig"
 
@@ -17,8 +17,8 @@ fi
 export PATH="$TC_DIR/bin:$PATH"
 
 if ! [ -d "$TC_DIR" ]; then
-echo "xRageTC clang not found! Cloning to $TC_DIR..."
-if ! git clone -q -b main --depth=1 https://github.com/xyz-prjkt/xRageTC-clang $TC_DIR; then
+echo "TRB clang not found! Cloning to $TC_DIR..."
+if ! git clone -q -b 16 --depth=1 https://gitlab.com/varunhardgamer/trb_clang $TC_DIR; then
 echo "Cloning failed! Aborting..."
 exit 1
 fi
