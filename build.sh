@@ -24,6 +24,7 @@ exit 1
 fi
 fi
 
+export TZ=Asia/Kolkata
 export KBUILD_BUILD_USER=MAdMiZ
 export KBUILD_BUILD_HOST=BlackArch
 
