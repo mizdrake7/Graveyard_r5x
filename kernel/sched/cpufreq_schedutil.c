@@ -321,9 +321,13 @@ static void sugov_get_util(unsigned long *util, unsigned long *max, int cpu,
 		*util = min(*util + rt, max_cap);
 	}
 
+#ifdef CONFIG_SCHED_WALT
+	*util = boosted_cpu_util(cpu, &loadcpu->walt_load);
+#endif
+
 #ifdef CONFIG_UCLAMP_TASK
-   	*util = uclamp_util_with(rq, *util, NULL);
-#endif	
+	*util = uclamp_util_with(rq, *util, NULL);
+#endif
 }
 
 static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
