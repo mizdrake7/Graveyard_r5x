@@ -18,7 +18,7 @@ export PATH="$TC_DIR/bin:$PATH"
 
 if ! [ -d "$TC_DIR" ]; then
 echo "TRB clang not found! Cloning to $TC_DIR..."
-if ! git clone -q -b 16 --depth=1 https://gitlab.com/varunhardgamer/trb_clang $TC_DIR; then
+if ! git clone -q -b 16 --depth=1 --single-branch https://gitlab.com/varunhardgamer/trb_clang $TC_DIR; then
 echo "Cloning failed! Aborting..."
 exit 1
 fi
