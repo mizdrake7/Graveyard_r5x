@@ -3430,7 +3430,18 @@ static void walt_init_window_dep(void)
 	walt_scale_demand_divisor = sched_ravg_window >> SCHED_CAPACITY_SHIFT;
 
 	unsigned int init_task_load_pct;
+
+	switch (kp_active_mode()) {
+	case 3:
+		init_task_load_pct = 25;
+		break;
+	case 1:
+		init_task_load_pct = 5;
+		break;
+	default:
 		init_task_load_pct = 15;
+		break;
+	}
 
 	sched_init_task_load_windows =
 		div64_u64((u64)init_task_load_pct *
