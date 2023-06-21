@@ -3209,6 +3209,7 @@ static void walt_tunables_fixup(void)
 	walt_init_window_dep();
 }
 
+extern int kp_active_mode(void);
 /*
  * Runs in hard-irq context. This should ideally run just after the latest
  * window roll-over.
