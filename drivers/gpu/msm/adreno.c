@@ -47,8 +47,8 @@
 #undef MODULE_PARAM_PREFIX
 #define MODULE_PARAM_PREFIX "adreno."
 
-static bool nopreempt;
-module_param(nopreempt, bool, 0444);
+static bool nopreempt __read_mostly = false;
+module_param(nopreempt, bool, 0644);
 MODULE_PARM_DESC(nopreempt, "Disable GPU preemption");
 
 static bool swfdetect;
