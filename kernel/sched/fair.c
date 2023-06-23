@@ -9508,7 +9508,11 @@ static struct task_struct *detach_one_task(struct lb_env *env)
 	return NULL;
 }
 
+#ifdef CONFIG_DEFAULT_USE_ENERGY_AWARE
+static const unsigned int sched_nr_migrate_break = 8;
+#else
 static const unsigned int sched_nr_migrate_break = 64;
+#endif
 
 /*
  * detach_tasks() -- tries to detach up to imbalance weighted load from

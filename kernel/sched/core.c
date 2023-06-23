@@ -69,7 +69,11 @@ const_debug unsigned int sysctl_sched_features =
  * Number of tasks to iterate in a single balance run.
  * Limited because this is done with IRQs disabled.
  */
+#ifdef CONFIG_DEFAULT_USE_ENERGY_AWARE
+const_debug unsigned int sysctl_sched_nr_migrate = 8;
+#else
 const_debug unsigned int sysctl_sched_nr_migrate = 64;
+#endif
 
 /*
  * period over which we average the RT time consumption, measured
