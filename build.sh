@@ -4,7 +4,7 @@
 # Copyright (C) 2020-2021 Adithya R.
 
 SECONDS=0 # builtin bash timer
-ZIPNAME="Graveyard-v15-r5x-$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="Graveyard-v15-OC-r5x-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/tc/trb_clang"
 AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/RMX1911_defconfig"
