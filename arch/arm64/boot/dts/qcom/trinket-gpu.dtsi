@@ -131,9 +131,10 @@
 		qcom,gpu-gaming-bin = <0x6018 0x80 7>;
 
 		/* CX iPeak limit support */
-		qcom,gpu-cx-ipeak = <&cx_ipeak_lm 5>;
-
-		/* GPU Mempools */
+                qcom,gpu-cx-ipeak = <&cx_ipeak_lm 5>;
+                qcom,gpu-cx-ipeak-freq = <1100000000>;
+	
+                /* GPU Mempools */
 		qcom,gpu-mempools {
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -175,19 +176,19 @@
 			/* TURBO_L1 */
 			qcom,gpu-pwrlevel@0 {
 				reg = <0>;
-				qcom,gpu-freq = <950000000>;
-				qcom,bus-freq = <11>;
-				qcom,bus-min = <10>;
-				qcom,bus-max = <11>;
+				qcom,gpu-freq = <1100000000>;
+				qcom,bus-freq = <13>;
+				qcom,bus-min = <12>;
+				qcom,bus-max = <13>;
 			};
 
 			/* TURBO_L1 */
 			qcom,gpu-pwrlevel@1 {
 				reg = <1>;
-				qcom,gpu-freq = <900000000>;
+				qcom,gpu-freq = <950000000>;
 				qcom,bus-freq = <11>;
-				qcom,bus-min = <9>;
-				qcom,bus-max = <11>;
+				qcom,bus-min = <11>;
+				qcom,bus-max = <13>;
 			};
 
 			/* TURBO */
