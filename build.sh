@@ -17,11 +17,23 @@ fi
 export PATH="$TC_DIR/bin:$PATH"
 
 if ! [ -d "$TC_DIR" ]; then
-echo "TRB clang not found! Cloning to $TC_DIR..."
-if ! git clone -q -b 16 --depth=1 --single-branch https://gitlab.com/varunhardgamer/trb_clang $TC_DIR; then
-echo "Cloning failed! Aborting..."
-exit 1
-fi
+  echo "TRB clang not found!"
+  # Determine glibc version
+  glibc_version=$(ldd --version | awk '/ldd/{print $NF}')
+  # Compare glibc version
+  if [[ "$glibc_version" > "2.35" ]]; then
+    # glibc version is newer than 2.35
+    trb_clang_branch="17"
+  else
+    # glibc version is older than 2.36
+    trb_clang_branch="16"
+  fi
+  # Clone TRB Clang repository
+  echo "Cloning TRB Clang $trb_clang_branch to $TC_DIR..."
+  if ! git clone -q -b "$trb_clang_branch" --depth=1 --single-branch https://gitlab.com/varunhardgamer/trb_clang "$TC_DIR"; then
+    echo "Cloning failed! Aborting..."
+    exit 1
+  fi
 fi
 
 export TZ=Asia/Kolkata
