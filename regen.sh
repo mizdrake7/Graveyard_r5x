@@ -1,0 +1,1 @@
+export ARCH=arm64 && export SUBARCH=arm64 && make vendor/RMX1911_defconfig && mv .config arch/arm64/configs/vendor/RMX1911_defconfig && git add arch/arm64/configs/vendor/RMX1911_defconfig && git commit -m "defconfig: Regen" -s
