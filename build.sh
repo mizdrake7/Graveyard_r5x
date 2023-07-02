@@ -57,26 +57,33 @@ echo -e "\nStarting compilation...\n"
 make -j$(nproc --all) O=out ARCH=arm64 CC=clang LD=ld.lld AR=llvm-ar AS=llvm-as NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- Image.gz-dtb dtbo.img 2>&1 | tee error.log
 
 if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.img" ]; then
-echo -e "\nKernel compiled succesfully! Zipping up...\n"
-if [ -d "$AK3_DIR" ]; then
-cp -r $AK3_DIR AnyKernel3
-elif ! git clone -q https://github.com/mizdrake7/AnyKernel3; then
-echo -e "\nAnyKernel3 repo not found locally and cloning failed! Aborting..."
-exit 1
-fi
-cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
-cp out/arch/arm64/boot/dtbo.img AnyKernel3
-rm -f *zip
-cd AnyKernel3
-git checkout master &> /dev/null
-zip -r9 "../$ZIPNAME" * -x '*.git*' README.md *placeholder
-cd ..
-rm -rf AnyKernel3
-rm -rf out/arch/arm64/boot
-echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
-echo "Zip: $ZIPNAME"
-curl --upload-file $ZIPNAME https://temp.sh/$ZIPNAME; echo
+  echo -e "\nKernel compiled successfully! Zipping up...\n"
+  if [ -d "$AK3_DIR" ]; then
+    cp -r "$AK3_DIR" AnyKernel3
+  elif ! git clone -q https://github.com/mizdrake7/AnyKernel3; then
+    echo -e "\nAnyKernel3 repo not found locally, and cloning failed! Aborting..."
+    exit 1
+  fi
+  cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3
+  cp out/arch/arm64/boot/dtbo.img AnyKernel3
+  rm -f *zip
+  cd AnyKernel3
+  git checkout master &> /dev/null
+  zip -r9 "../$ZIPNAME" * -x '*.git*' README.md *placeholder
+  cd ..
+  rm -rf AnyKernel3
+  rm -rf out/arch/arm64/boot
+  echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s)!"
+  echo "Zip: $ZIPNAME"
+  # Get the size of the ZIP file in megabytes
+  ZIP_SIZE=$(stat -c%s "$ZIPNAME")
+  ZIP_SIZE_MB=$(awk "BEGIN {print $ZIP_SIZE/1048576}")
+  echo "Zip Size: $ZIP_SIZE_MB MB"
+  # Upload the ZIP file
+  echo "Uploading the ZIP file..."
+  curl --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
+  echo
 else
-echo -e "\nCompilation failed!"
-exit 1
+  echo -e "\nCompilation failed!"
+  exit 1
 fi
