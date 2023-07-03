@@ -1,5 +1,5 @@
 #!/bin/bash
-#
+
 # Compile script for QuicksilveR kernel
 # Copyright (C) 2020-2021 Adithya R.
 
@@ -75,14 +75,17 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
   rm -rf out/arch/arm64/boot
   echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s)!"
   echo "Zip: $ZIPNAME"
+
   # Get the size of the ZIP file in megabytes
   ZIP_SIZE=$(stat -c%s "$ZIPNAME")
   ZIP_SIZE_MB=$(awk "BEGIN {print $ZIP_SIZE/1048576}")
   echo "Zip Size: $ZIP_SIZE_MB MB"
+
   # Upload the ZIP file
   echo "Uploading the ZIP file..."
-  curl --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
-  echo
+  curl -F chat_id="-1001304524669" -F document=@"$ZIPNAME" "https://api.telegram.org/bot5864964991:AAHbFLyjxq-ruvDzgT8mTEs_-GBswmuq2ZU/sendDocument"
+  echo -e "\nDone !!"
+
 else
   echo -e "\nCompilation failed!"
   exit 1
