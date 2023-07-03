@@ -8087,11 +8087,3 @@ void sched_exit(struct task_struct *p)
 #endif /* CONFIG_SCHED_WALT */
 
 __read_mostly bool sched_predl = 1;
-
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-/*fanhui@PhoneSW.BSP, 2016-06-23, get current task on one cpu*/
-struct task_struct *oppo_get_cpu_task(int cpu)
-{
-	return cpu_curr(cpu);
-}
-#endif
