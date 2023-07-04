@@ -1,8 +1,9 @@
 #!/bin/bash
-#
+
 # Compile script for QuicksilveR kernel
 # Copyright (C) 2020-2021 Adithya R.
 
+#Initializing variables
 SECONDS=0 # builtin bash timer
 ZIPNAME="Graveyard-v15-r5x-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/tc/trb_clang"
@@ -75,14 +76,26 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
   rm -rf out/arch/arm64/boot
   echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s)!"
   echo "Zip: $ZIPNAME"
+  
   # Get the size of the ZIP file in megabytes
   ZIP_SIZE=$(stat -c%s "$ZIPNAME")
   ZIP_SIZE_MB=$(awk "BEGIN {print $ZIP_SIZE/1048576}")
   echo "Zip Size: $ZIP_SIZE_MB MB"
+
   # Upload the ZIP file
-  echo "Uploading the ZIP file..."
-  curl --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
-  echo
+  read -p "Enter 1 to upload zip to Telegram else press any key to continue : " CHOICE
+  if (( $CHOICE == 1 ))
+  then
+    read -p "Enter the bot token: " BOT_TOKEN
+    echo -e "\nBot Token have been set successfully !!"
+    echo -e "\nUploading the ZIP file to Telegram...."
+    curl -F chat_id="-1001304524669" -F document=@"$ZIPNAME" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
+    echo -e "\nDone !!"
+  else
+    echo -e "\nUploading the ZIP file to Temp.sh....."
+    curl --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
+    echo -e "\nDone !!"
+  fi
 else
   echo -e "\nCompilation failed!"
   exit 1
