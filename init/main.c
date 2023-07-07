@@ -134,6 +134,23 @@ static char *initcall_command_line;
 static char *execute_command;
 static char *ramdisk_execute_command;
 
+static bool rom_is_rdp = false;
+
+static int __init rdp_parse_cmdline(char *arg)
+{
+	if (!strcmp(arg, "system") || !strcmp(arg, "system_a") ||
+		!strcmp(arg, "system_b"))
+		rom_is_rdp = true;
+
+	return 0;
+}
+early_param("androidboot.super_partition", rdp_parse_cmdline);
+
+unsigned int check_rdp(void)
+{
+	return rom_is_rdp;
+}
+
 /*
  * Used to generate warnings if static_key manipulation functions are used
  * before jump_label_init is called.
