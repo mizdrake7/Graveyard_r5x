@@ -79,25 +79,22 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
   rm -rf out/arch/arm64/boot
   echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s)!"
   echo "Zip: $ZIPNAME"
-  
   # Get the size of the ZIP file in megabytes
   ZIP_SIZE=$(stat -c%s "$ZIPNAME")
   ZIP_SIZE_MB=$(awk "BEGIN {print $ZIP_SIZE/1048576}")
   echo "Zip Size: $ZIP_SIZE_MB MB"
-
   # Upload the ZIP file
-  read -p "Enter 1 to upload zip to Telegram else press any key to continue : " CHOICE
-  if (( $CHOICE == 1 ))
-  then
+  read -p "Enter 1 to upload the ZIP file to Telegram, or press any key to upload to Temp.sh: " CHOICE
+  if ((CHOICE == 1)); then
     read -p "Enter the bot token: " BOT_TOKEN
-    echo -e "\nBot Token have been set successfully !!"
-    echo -e "\nUploading the ZIP file to Telegram...."
-    curl -F chat_id="-1001304524669" -F document=@"$ZIPNAME" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
-    echo -e "\nDone !!"
+    echo -e "\nBot Token has been set successfully!"
+    echo -e "\nUploading the ZIP file to Telegram..."
+    curl --progress-bar -F chat_id="-1001304524669" -F document=@"$ZIPNAME" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
+    echo -e "\nDone!"
   else
-    echo -e "\nUploading the ZIP file to Temp.sh....."
-    curl --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
-    echo -e "\nDone !!"
+    echo -e "\nUploading the ZIP file to Temp.sh..."
+    curl --progress-bar --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
+    echo -e "\nDone!"
   fi
 else
   echo -e "\nCompilation failed!"
