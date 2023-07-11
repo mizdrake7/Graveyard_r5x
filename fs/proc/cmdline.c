@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0
+#include <linux/check_rdp.h>
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/proc_fs.h>
@@ -90,7 +91,8 @@ static int __init proc_cmdline_init(void)
 	 */
 	patch_safetynet_flags(new_command_line);
 
-	patch_sar_flags(new_command_line);
+	if (check_rdp())
+		patch_sar_flags(new_command_line);
 
 	proc_create("cmdline", 0, NULL, &cmdline_proc_fops);
 	return 0;

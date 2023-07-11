@@ -9,6 +9,7 @@
 #warning "Sparse checking disabled for this file"
 #endif
 
+#include <linux/check_rdp.h>
 #include <linux/init.h>
 #include <linux/fs.h>
 #include <linux/slab.h>
@@ -623,7 +624,7 @@ static int __init populate_rootfs(void)
 {
 	char *err;
 
-	if (do_skip_initramfs) {
+	if (do_skip_initramfs && !check_rdp()) {
 		if (initrd_start)
 			free_initrd();
 		return default_rootfs();
