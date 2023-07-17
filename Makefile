@@ -829,6 +829,18 @@ ifeq ($(ld-name),lld)
 KBUILD_LDFLAGS += -O3
 endif
 
+# Optimize for CPU
+KBUILD_CFLAGS	+= $(call cc-option,-march=armv8-a+crypto+crc,) $(call cc-option,-mcpu=cortex-a53+crypto+crc,)
+
+# Cortex-A53 optimizations
+arch-$(CONFIG_ARCH_TRINKET)	:= $(call cc-option,-mcpu=cortex-a53+crc+crypto,-march=armv8-a+crc+crypto)
+tune-$(CONFIG_ARCH_TRINKET)	:= -mtune=cortex-a53
+arch-y	:= $(call cc-option,-mcpu=cortex-a53+crc+crypto,-march=armv8-a+crc+crypto,-mfloat-abi=hard,-mfpu=neon-fp-armv8,-mneon-for-64bits)
+tune-y	:= -mtune=cortex-a53
+
+KBUILD_CFLAGS	+= $(arch-y) $(tune-y)
+KBUILD_AFLAGS	+= $(arch-y) $(tune-y)
+
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
 
 # These result in bogus false positives
