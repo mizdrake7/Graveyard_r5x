@@ -43,12 +43,12 @@ static DEFINE_MUTEX(zram_index_mutex);
 static int zram_major;
 #ifdef CONFIG_PRODUCT_REALME_TRINKET //YiXue.Ge@PSW.kernel.drv 20170703 modify for enable lz4 default
 #ifdef CONFIG_CRYPTO_LZ4
-static const char *default_compressor = "lz4";
+static const char *default_compressor = "zstd";
 #else /*CONFIG_ZRAM_LZ4_COMPRESS*/
-static const char *default_compressor = "lzo";
+static const char *default_compressor = "zstd";
 #endif /*CONFIG_ZRAM_LZ4_COMPRESS*/
 #else /*CONFIG_PRODUCT_REALME_TRINKET*/
-static const char *default_compressor = "lzo";
+static const char *default_compressor = "zstd";
 #endif/*CONFIG_PRODUCT_REALME_TRINKET*/
 
 /* Module params (documentation at end) */
