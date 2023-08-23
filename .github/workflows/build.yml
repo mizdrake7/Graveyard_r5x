@@ -1,0 +1,33 @@
+name: Build Graveyard Kernel
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_MAXSIZE: "4G"
+      CCACHE_HARDLINK: "true"
+ 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+          fetch-depth: 1
+
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+
+      - name: Install dependencies
+        id: version
+        run: |
+          sudo apt-get update -y 
+          sudo apt install gcc-aarch64-linux-gnu -y
+          sudo apt install gcc-arm-linux-gnueabi -y
+          sudo apt install binutils make python2 python3 libssl-dev build-essential bc bison flex zip unzip libssl-dev ca-certificates xz-utils mkbootimg cpio device-tree-compiler git git-lfs -y bc pigz
+
+      - name: Build Kernel
+        run: |
+           bash build.sh
