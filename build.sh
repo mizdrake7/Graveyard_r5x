@@ -21,6 +21,13 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
 	ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
 
+# Telegram variables
+send_telegram_message(){
+     curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+     -d chat_id="$chat_id" \
+     -d "text=$1"
+}
+
 # <---SETUP CLANG COMPILER/LINKER--->
 
 if ! [ -d "$TC_DIR" ]; then
@@ -64,6 +71,8 @@ mkdir -p out
 make O=out ARCH=arm64 $DEFCONFIG
 
 echo -e "\nStarting compilation...\n"
+# Notify about compilation start
+send_telegram_message "Starting compilation..."
 make -j$(nproc --all) O=out ARCH=arm64 CC=clang LD=ld.lld AR=llvm-ar AS=llvm-as NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- Image.gz-dtb dtbo.img 2>&1 | tee error.log
 
 if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.img" ]; then
@@ -83,7 +92,6 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
   cd ..
   rm -rf AnyKernel3
   rm -rf out/arch/arm64/boot
-  echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s)!"
   echo "Zip: $ZIPNAME"
   # Get the size of the ZIP file in megabytes
   ZIP_SIZE=$(stat -c%s "$ZIPNAME")
@@ -92,20 +100,10 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
 
 # <---UPLOAD--->
 
- # Upload the ZIP file
-  read -p "Enter 1 to upload the ZIP file to Telegram, or press any key to upload to Temp.sh: " CHOICE
-  if ((CHOICE == 1)); then
-    read -p "Enter the bot token: " BOT_TOKEN
-    echo -e "\nBot Token has been set successfully!"
-    echo -e "\nUploading the ZIP file to Telegram..."
-    curl --progress-bar -F chat_id="-1001304524669" -F document=@"$ZIPNAME" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
-    echo -e "\nDone!"
-  else
-    echo -e "\nUploading the ZIP file to Temp.sh..."
-    curl --progress-bar --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
-    echo -e "\nDone!"
-  fi
+ # Upload the ZIP file to Telegram
+  compilation_successfull="Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
+  curl -F chat_id="$chat_id" -F document=@"$ZIPNAME" -F caption="$compilation_successfull" "https://api.telegram.org/bot$token/sendDocument"
 else
-  echo -e "\nCompilation failed!"
+  send_telegram_message "Compilation failed!"
   exit 1
 fi
