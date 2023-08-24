@@ -1,24 +1,27 @@
 #!/bin/bash
 
-# Compile script for QuicksilveR kernel
-# Copyright (C) 2020-2021 Adithya R.
+# Compile script for Graveyard Kernel
+# Copyright (C) 2023-2024 Christopher K.
 
-#Initializing variables
+# <---SETUP ENVIRONMENT-->
+
+# Initializing variables
 SECONDS=0 # builtin bash timer
 ZIPNAME="Graveyard-v15-r5x-$(date '+%Y%m%d-%H%M').zip"
 TC_DIR="$HOME/tc/trb_clang"
 AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/RMX1911_defconfig"
+export TZ=Asia/Kolkata
+export KBUILD_BUILD_USER=MAdMiZ
+export KBUILD_BUILD_HOST=BlackArch
+export PATH="$TC_DIR/bin:$PATH"
 
 if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
 	ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
 
-# Patch with latest KernelSU
-curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-
-export PATH="$TC_DIR/bin:$PATH"
+# <---SETUP CLANG COMPILER/LINKER--->
 
 if ! [ -d "$TC_DIR" ]; then
   echo "TRB clang not found!"
@@ -34,15 +37,18 @@ if ! [ -d "$TC_DIR" ]; then
   fi
   # Clone TRB Clang repository
   echo "Cloning TRB Clang $trb_clang_branch to $TC_DIR..."
-  if ! git clone -q -b "$trb_clang_branch" --depth=1 --single-branch https://gitlab.com/varunhardgamer/trb_clang "$TC_DIR"; then
+  if ! git clone -b "$trb_clang_branch" --depth=1 --single-branch https://gitlab.com/varunhardgamer/trb_clang "$TC_DIR"; then
     echo "Cloning failed! Aborting..."
     exit 1
   fi
 fi
 
-export TZ=Asia/Kolkata
-export KBUILD_BUILD_USER=MAdMiZ
-export KBUILD_BUILD_HOST=BlackArch
+# <---KERNELSU PATCH--->
+
+# Patch with latest KernelSU
+curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+
+# <----START COMPILATION--->
 
 if [[ $1 = "-r" || $1 = "--regen" ]]; then
 make O=out ARCH=arm64 $DEFCONFIG savedefconfig
@@ -83,7 +89,10 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
   ZIP_SIZE=$(stat -c%s "$ZIPNAME")
   ZIP_SIZE_MB=$(awk "BEGIN {print $ZIP_SIZE/1048576}")
   echo "Zip Size: $ZIP_SIZE_MB MB"
-  # Upload the ZIP file
+
+# <---UPLOAD--->
+
+ # Upload the ZIP file
   read -p "Enter 1 to upload the ZIP file to Telegram, or press any key to upload to Temp.sh: " CHOICE
   if ((CHOICE == 1)); then
     read -p "Enter the bot token: " BOT_TOKEN
