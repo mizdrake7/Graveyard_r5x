@@ -8,7 +8,7 @@
 # Initializing variables
 SECONDS=0 # builtin bash timer
 ZIPNAME="Graveyard-v15-r5x-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/tc/trb_clang"
+TC_DIR="$HOME/tc/weebx_clang"
 AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/RMX1911_defconfig"
 export TZ=Asia/Kolkata
@@ -31,20 +31,10 @@ send_telegram_message(){
 # <---SETUP CLANG COMPILER/LINKER--->
 
 if ! [ -d "$TC_DIR" ]; then
-  echo "TRB clang not found!"
-  # Determine glibc version
-  glibc_version=$(ldd --version | awk '/ldd/{print $NF}')
-  # Compare glibc version
-  if [[ "$glibc_version" > "2.35" ]]; then
-    # glibc version is newer than 2.35
-    trb_clang_branch="17"
-  else
-    # glibc version is older than 2.36
-    trb_clang_branch="16"
-  fi
-  # Clone TRB Clang repository
-  echo "Cloning TRB Clang $trb_clang_branch to $TC_DIR..."
-  if ! git clone -b "$trb_clang_branch" --depth=1 --single-branch https://gitlab.com/varunhardgamer/trb_clang "$TC_DIR"; then
+  echo "WeebX clang not found!"
+  # Clone WeebX Clang repository
+  echo "Cloning WeebX Clang 18 to $TC_DIR..."
+  if ! git clone --depth=1 --single-branch https://gitlab.com/mizdrake7/weebx-clang "$TC_DIR"; then
     echo "Cloning failed! Aborting..."
     exit 1
   fi
