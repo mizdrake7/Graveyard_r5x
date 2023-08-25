@@ -5,10 +5,13 @@
 
 # <---SETUP ENVIRONMENT-->
 
+# Initializing Directories
+mkdir -p $HOME/tc/weebx_clang
+
 # Initializing variables
 SECONDS=0 # builtin bash timer
 ZIPNAME="Graveyard-v15-r5x-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/tc/trb_clang"
+TC_DIR="$HOME/tc/weebx_clang"
 AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/RMX1911_defconfig"
 export TZ=Asia/Kolkata
@@ -31,7 +34,7 @@ send_telegram_message(){
 # <---SETUP CLANG COMPILER/LINKER--->
 
 if ! [ -d "$TC_DIR" ]; then
-  echo "TRB clang not found!"
+  echo "WeebX clang not found!"
   # Determine glibc version
   glibc_version=$(ldd --version | awk '/ldd/{print $NF}')
   # Compare glibc version
@@ -42,9 +45,9 @@ if ! [ -d "$TC_DIR" ]; then
     # glibc version is older than 2.36
     trb_clang_branch="16"
   fi
-  # Clone TRB Clang repository
-  echo "Cloning TRB Clang $trb_clang_branch to $TC_DIR..."
-  if ! git clone -b "$trb_clang_branch" --depth=1 --single-branch https://gitlab.com/varunhardgamer/trb_clang "$TC_DIR"; then
+  # Clone WeebX Clang repository
+  echo "Cloning WeebX Clang $trb_clang_branch to $TC_DIR..."
+  if ! curl -L https://github.com/XSans0/WeebX-Clang/releases/download/WeebX-Clang-18.0.0-release/WeebX-Clang-18.0.0.tar.gz | tar -xzvf - -C "$TC_DIR" && echo "Extraction Done"; then
     echo "Cloning failed! Aborting..."
     exit 1
   fi
