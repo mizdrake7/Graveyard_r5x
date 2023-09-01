@@ -13,6 +13,9 @@
 #include <linux/slab.h>
 #include <uapi/linux/sched/types.h>
 
+/* Kprofiles */
+extern int kp_active_mode(void);
+
 enum {
 	SCREEN_OFF,
 	INPUT_BOOST,
