@@ -83,7 +83,7 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
 # <---UPLOAD--->
 
  # Upload the ZIP file
-  read -p "Enter 1 to upload the ZIP file to Telegram, or press any key to upload to Temp.sh: " CHOICE
+  read -p "Enter 1 to upload the ZIP file to Telegram, or press any key to upload to Oshi..at: " CHOICE
   if ((CHOICE == 1)); then
     read -p "Enter the bot token: " BOT_TOKEN
     echo -e "\nBot Token has been set successfully!"
@@ -91,8 +91,8 @@ if [ -f "out/arch/arm64/boot/Image.gz-dtb" ] && [ -f "out/arch/arm64/boot/dtbo.i
     curl --progress-bar -F chat_id="-1001304524669" -F document=@"$ZIPNAME" "https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
     echo -e "\nDone!"
   else
-    echo -e "\nUploading the ZIP file to Temp.sh..."
-    curl --progress-bar --upload-file "$ZIPNAME" "https://temp.sh/$ZIPNAME"
+    echo -e "\nUploading the ZIP file to Oshi.at..."
+    curl --progress-bar --upload-file "$ZIPNAME" "https://oshi.at/$ZIPNAME"
     echo -e "\nDone!"
   fi
 else
