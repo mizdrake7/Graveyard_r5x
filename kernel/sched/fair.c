@@ -9620,7 +9620,7 @@ static struct task_struct *detach_one_task(struct lb_env *env)
 #ifdef CONFIG_DEFAULT_USE_ENERGY_AWARE
 static const unsigned int sched_nr_migrate_break = 8;
 #else
-static const unsigned int sched_nr_migrate_break = 64;
+static const unsigned int sched_nr_migrate_break = 128;
 #endif
 
 /*
