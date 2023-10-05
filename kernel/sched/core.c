@@ -72,7 +72,7 @@ const_debug unsigned int sysctl_sched_features =
 #ifdef CONFIG_DEFAULT_USE_ENERGY_AWARE
 const_debug unsigned int sysctl_sched_nr_migrate = 8;
 #else
-const_debug unsigned int sysctl_sched_nr_migrate = 128;
+const_debug unsigned int sysctl_sched_nr_migrate = NR_CPUS;
 #endif
 
 /*
