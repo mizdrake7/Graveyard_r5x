@@ -419,7 +419,12 @@ static int lvl_divider_map_2[] = {10,1,1,1,1,14,12    ,1,1};
 // for boost == 3 -- boost divide on the low spectrum, dampen the lower freq values, unneeded to boost the low freq spectrum so much at start
 static int lvl_multiplicator_map_3[] = {10,1,1,1,1,11,9    ,1,1};
 static int lvl_divider_map_3[] = {10,1,1,1,1,15,13    ,1,1};
+#endif
 
+#ifdef CONFIG_SIMPLE_GPU_ALGORITHM
+extern int simple_gpu_active;
+extern int simple_gpu_algorithm(int level, int *val,
+				struct devfreq_msm_adreno_tz_data *priv);
 #endif
 
 static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
@@ -512,7 +517,13 @@ static int tz_get_target_freq(struct devfreq *devfreq, unsigned long *freq)
 	if (!priv->disable_busy_time_burst &&
 			priv->bin.busy_time > CEILING) {
 		val = -1 * level;
+#ifdef CONFIG_SIMPLE_GPU_ALGORITHM
+	} else if (simple_gpu_active) {
+			simple_gpu_algorithm(level, &val, priv);
 	} else {
+#else
+	} else {
+#endif
 
 		scm_data[0] = level;
 		scm_data[1] = priv->bin.total_time;
