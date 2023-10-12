@@ -235,7 +235,7 @@ static void scan_and_kill(void)
 		struct victim_info *victim = &victims[i];
 		struct task_struct *t, *vtsk = victim->tsk;
 
-		pr_info("Killing %s with adj %d to free %lu KiB\n", vtsk->comm,
+		pr_debug("Killing %s with adj %d to free %lu KiB\n", vtsk->comm,
 			vtsk->signal->oom_score_adj,
 			victim->size << (PAGE_SHIFT - 10));
 
@@ -271,7 +271,7 @@ static void scan_and_kill(void)
 
 	/* Wait until all the victims die or until the timeout is reached */
 	if (!wait_for_completion_timeout(&reclaim_done, RECLAIM_EXPIRES))
-		pr_info("Timeout hit waiting for victims to die, proceeding\n");
+		pr_debug("Timeout hit waiting for victims to die, proceeding\n");
 
 	/* Clean up for future reclaim invocations */
 	write_lock(&mm_free_lock);
