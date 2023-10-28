@@ -8,6 +8,12 @@
 #include <linux/battery_saver.h>
 
 #include <trace/events/sched.h>
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+/* huangzhigen@oppo.com, 2019/05/09 add for frame boost 2.0 */
+#include <linux/hrtimer.h>
+#include <linux/kthread.h>
+#include <uapi/linux/sched/types.h>
+#endif
 
 #include "sched.h"
 #include "tune.h"
@@ -15,11 +21,11 @@
 bool schedtune_initialized = false;
 extern struct reciprocal_value schedtune_spc_rdiv;
 
+/* We hold schedtune boost in effect for at least this long */
+
 #ifdef CONFIG_KPROFILES
 extern int kp_active_mode(void);
 #endif
-
-/* We hold schedtune boost in effect for at least this long */
 #define SCHEDTUNE_BOOST_HOLD_NS 50000000ULL
 
 /*
@@ -61,6 +67,10 @@ struct schedtune {
 	/* Hint to bias scheduling of tasks on that SchedTune CGroup
 	 * towards idle CPUs */
 	int prefer_idle;
+
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	s64 defered;
+#endif
 };
 
 static inline struct schedtune *css_st(struct cgroup_subsys_state *css)
@@ -97,6 +107,9 @@ root_schedtune = {
 	.colocate_update_disabled = false,
 #endif
 	.prefer_idle = 0,
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	.defered = 0,
+#endif
 };
 
 /*
@@ -110,7 +123,11 @@ root_schedtune = {
  *    implementation especially for the computation of the per-CPU boost
  *    value
  */
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
 #define BOOSTGROUPS_COUNT 8
+#else
+#define BOOSTGROUPS_COUNT 6
+#endif
 
 /* Array of configured boostgroups */
 static struct schedtune *allocated_group[BOOSTGROUPS_COUNT] = {
@@ -127,6 +144,35 @@ static struct schedtune *allocated_group[BOOSTGROUPS_COUNT] = {
  * maximum per-CPU boosting value.
  */
 
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+struct boost_group_timer {
+	/* Boost defered time */
+	s64 defered;
+	/* Number of cpu */
+	int cpu;
+	/* Schedtune index */
+	int index;
+	/* Boost of defered */
+	int dboost;
+	/* Hrtimer */
+	struct hrtimer timer;
+};
+
+/* Work/Worker to boost cpufreq */
+struct boost_work {
+	int cpu;
+	struct kthread_work work;
+	struct irq_work irq_work;
+};
+
+static struct boost_worker {
+	struct kthread_worker worker;
+	struct task_struct *thread;
+} st_boost_worker;
+
+DEFINE_PER_CPU(struct boost_work, cpu_boost_work);
+#endif
+
 struct boost_groups {
 	/* Maximum boost value for all RUNNABLE tasks on a CPU */
 	bool idle;
@@ -140,6 +186,10 @@ struct boost_groups {
 		/* Timestamp of boost activation */
 		u64 ts;
 	} group[BOOSTGROUPS_COUNT];
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	/* Boost group timer */
+	struct boost_group_timer bg_timer[BOOSTGROUPS_COUNT];
+#endif
 	/* CPU's boost group locking */
 	raw_spinlock_t lock;
 };
@@ -227,8 +277,37 @@ schedtune_boost_group_active(int idx, struct boost_groups* bg, u64 now)
 	if (bg->group[idx].tasks)
 		return true;
 
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	if (bg->bg_timer[idx].defered)
+		return false;
+#endif
+
 	return !schedtune_boost_timeout(now, bg->group[idx].ts);
 }
+
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+/* Used for update defered(-1) and boost */
+static inline void
+schedtune_queue_boost_work(struct boost_groups* bg, int idx, int cpu)
+{
+	struct boost_work *bw;
+
+	/* Instantly queue boost work to kthread if defered is negative */
+	if (bg->bg_timer[idx].defered < 0 && bg->group[idx].tasks > 0) {
+		bw = &per_cpu(cpu_boost_work, cpu);
+		kthread_queue_work(&st_boost_worker.worker, &bw->work);
+	}
+}
+
+static inline void
+schedtune_update_cpufreq(int cpu) {
+#ifdef CONFIG_SCHED_WALT
+	cpufreq_update_util(cpu_rq(cpu), SCHED_CPUFREQ_WALT);
+#else
+	cpufreq_update_util(cpu_rq(cpu), 0);
+#endif
+}
+#endif
 
 static void
 schedtune_cpu_update(int cpu, u64 now)
@@ -250,6 +329,16 @@ schedtune_cpu_update(int cpu, u64 now)
 		if (!schedtune_boost_group_active(idx, bg, now))
 			continue;
 
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+		/* Defered does not affect to root schedtune */
+		if (bg->bg_timer[idx].defered) {
+			if (boost_max < bg->bg_timer[idx].dboost) {
+				boost_max = bg->bg_timer[idx].dboost;
+				boost_ts =  bg->group[idx].ts;
+			}
+			continue;
+		}
+#endif
 		/* This boost group is active */
 		if (boost_max > bg->group[idx].boost)
 			continue;
@@ -288,6 +377,26 @@ schedtune_boostgroup_update(int idx, int boost)
 
 		/* Update the boost value of this boost group */
 		bg->group[idx].boost = boost;
+
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+		/* Do not update boost max when defered was enabled.
+		 * defered > 0 : update by hrtimer,
+		 * defered < 0 : instantly update with queue work.
+		 */
+		if (bg->bg_timer[idx].defered < 0
+				&& bg->bg_timer[idx].dboost != bg->group[idx].boost) {
+			bg->bg_timer[idx].dboost = bg->group[idx].boost;
+			schedtune_cpu_update(cpu, sched_clock_cpu(cpu));
+			schedtune_queue_boost_work(bg, idx, cpu);
+		}
+		if (bg->bg_timer[idx].defered) {
+			trace_sched_tune_boostgroup_update(cpu,
+					bg->boost_max == cur_boost_max ?
+					0 : (bg->boost_max < cur_boost_max ? -1 : 1),
+					bg->boost_max);
+			continue;
+		}
+#endif
 
 		/* Check if this update increase current max */
 		now = sched_clock_cpu(cpu);
@@ -330,6 +439,10 @@ schedtune_tasks_update(struct task_struct *p, int cpu, int idx, int task_count)
 {
 	struct boost_groups *bg = &per_cpu(cpu_boost_groups, cpu);
 	int tasks = bg->group[idx].tasks + task_count;
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	int boost_max;
+	struct boost_work *bw;
+#endif
 
 	/* Update boosted tasks count while avoiding to make it negative */
 	bg->group[idx].tasks = max(0, tasks);
@@ -345,6 +458,43 @@ schedtune_tasks_update(struct task_struct *p, int cpu, int idx, int task_count)
 		if (bg->group[idx].tasks == 1)
 			schedtune_cpu_update(cpu, now);
 	}
+
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	/* Update boost max every dequeue/quque when defered was enabled and boost > 0 */
+	if (!(bg->bg_timer[idx].defered && bg->group[idx].boost > 0))
+		goto out;
+
+	if (bg->group[idx].tasks == 0) {
+		hrtimer_try_to_cancel(&bg->bg_timer[idx].timer);
+		/* Cancel boosting */
+		if (bg->bg_timer[idx].dboost > 0) {
+			bg->bg_timer[idx].dboost = 0;
+			schedtune_cpu_update(cpu, sched_clock_cpu(cpu));
+			bw = &per_cpu(cpu_boost_work, cpu);
+			irq_work_queue(&bw->irq_work);
+		}
+	} else if (bg->group[idx].tasks == 1
+			|| (bg->bg_timer[idx].dboost > 0 &&
+			bg->bg_timer[idx].dboost != bg->group[idx].boost)) {
+		if (task_count != ENQUEUE_TASK)
+			goto out;
+
+		if (bg->bg_timer[idx].defered < 0) {
+			bg->bg_timer[idx].dboost = bg->group[idx].boost;
+			boost_max = bg->boost_max;
+			schedtune_cpu_update(cpu, sched_clock_cpu(cpu));
+			bw = &per_cpu(cpu_boost_work, cpu);
+			if (boost_max != bg->boost_max)
+				irq_work_queue(&bw->irq_work);
+		} else if (!hrtimer_active(&bg->bg_timer[idx].timer)
+				&& !hrtimer_callback_running(&bg->bg_timer[idx].timer))
+			/* Setup a timer when enqueue a task of actived bg */
+			hrtimer_start(&bg->bg_timer[idx].timer,
+					ns_to_ktime(bg->bg_timer[idx].defered),
+					HRTIMER_MODE_REL);
+	}
+out:
+#endif
 
 	trace_sched_tune_tasks_update(p, cpu, tasks, idx,
 			bg->group[idx].boost, bg->boost_max,
@@ -538,25 +688,45 @@ int schedtune_cpu_boost(int cpu)
 	return bg->boost_max;
 }
 
+static inline int schedtune_adj_ta(struct task_struct *p)
+{
+	struct schedtune *st;
+	char name_buf[NAME_MAX + 1];
+	int adj = p->signal->oom_score_adj;
+
+	/* We only care about adj == 0 */
+	if (adj != 0)
+		return 0;
+
+	/* Don't touch kthreads */
+	if (p->flags & PF_KTHREAD)
+		return 0;
+
+	st = task_schedtune(p);
+	cgroup_name(st->css.cgroup, name_buf, sizeof(name_buf));
+	if (!strncmp(name_buf, "top-app", strlen("top-app"))) {
+		pr_debug("top app is %s with adj %i\n", p->comm, adj);
+		return 1;
+	}
+
+	return 0;
+}
+
 int schedtune_task_boost(struct task_struct *p)
 {
 	struct schedtune *st;
 	int task_boost;
-
-	if (unlikely(!schedtune_initialized) || unlikely(is_battery_saver_on()))
-		return 0;
-
-#ifdef CONFIG_KPROFILES
-	if (kp_active_mode() == 1)
-		return 0;
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	struct boost_groups *bg;
 #endif
+
+	if (unlikely(!schedtune_initialized))
+		return 0;
 
 	/* Get task boost value */
 	rcu_read_lock();
 	st = task_schedtune(p);
-	task_boost = st->boost;
-
-
+	task_boost = max(st->boost, schedtune_adj_ta(p));
 	rcu_read_unlock();
 
 	return task_boost;
@@ -570,12 +740,12 @@ int schedtune_task_boost_rcu_locked(struct task_struct *p)
 	struct schedtune *st;
 	int task_boost;
 
-	if (unlikely(!schedtune_initialized))
+	if (unlikely(!schedtune_initialized) || is_battery_saver_on())
 		return 0;
 
 	/* Get task boost value */
 	st = task_schedtune(p);
-	task_boost = st->boost;
+	task_boost = max(st->boost, schedtune_adj_ta(p));
 
 	return task_boost;
 }
@@ -585,7 +755,7 @@ int schedtune_prefer_idle(struct task_struct *p)
 	struct schedtune *st;
 	int prefer_idle;
 
-	if (unlikely(!schedtune_initialized) || unlikely(is_battery_saver_on()))
+	if (unlikely(!schedtune_initialized) || is_battery_saver_on())
 		return 0;
 
 #ifdef CONFIG_KPROFILES
@@ -607,7 +777,7 @@ prefer_idle_read(struct cgroup_subsys_state *css, struct cftype *cft)
 {
 	struct schedtune *st = css_st(css);
 
-	if (unlikely(is_battery_saver_on()))
+	if (is_battery_saver_on())
 		return 0;
 
 #ifdef CONFIG_KPROFILES
@@ -633,7 +803,7 @@ boost_read(struct cgroup_subsys_state *css, struct cftype *cft)
 {
 	struct schedtune *st = css_st(css);
 
-	if (unlikely(is_battery_saver_on()))
+	if (is_battery_saver_on())
 		return 0;
 
 #ifdef CONFIG_KPROFILES
@@ -684,31 +854,210 @@ boost_write(struct cgroup_subsys_state *css, struct cftype *cft,
 	return 0;
 }
 
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+#define DEFERED_MAX_MSEC	100
+static int
+schedtune_boostgroup_update_defered(int idx, s64 defered)
+{
+	struct boost_groups *bg;
+	int cpu;
+	int boost_max;
+
+	/* Update per CPU boost groups */
+	for_each_possible_cpu(cpu) {
+		bg = &per_cpu(cpu_boost_groups, cpu);
+
+		/* Update the defered value of this boost group */
+		bg->bg_timer[idx].defered = defered * NSEC_PER_MSEC;
+
+		/* Update the dboost value */
+		if (defered == 0)
+			bg->bg_timer[idx].dboost = 0;
+		else if (defered < 0) {
+			bg->bg_timer[idx].dboost = bg->group[idx].boost;
+			/* Boost instantly if defered is negative */
+			boost_max = bg->boost_max;
+			schedtune_cpu_update(cpu, sched_clock_cpu(cpu));
+			if (boost_max != bg->boost_max)
+				schedtune_queue_boost_work(bg, idx, cpu);
+		}
+	}
+#ifdef CONFIG_STUNE_ASSIST
+#ifdef CONFIG_SCHED_WALT
+static int sched_boost_override_write_wrapper(struct cgroup_subsys_state *css,
+			struct cftype *cft, u64 override)
+{
+	if (!strcmp(current->comm, "init"))
+		return 0;
+
+	sched_boost_override_write(css, NULL, override);
+
+	return 0;
+}
+
+static int sched_colocate_write_wrapper(struct cgroup_subsys_state *css,
+			struct cftype *cft, u64 colocate)
+{
+	if (!strcmp(current->comm, "init"))
+		return 0;
+
+	sched_colocate_write(css, NULL, colocate);
+
+	return 0;
+}
+#endif
+
+static int boost_write_wrapper(struct cgroup_subsys_state *css,
+			struct cftype *cft, s64 boost)
+{
+	if (!strcmp(current->comm, "init"))
+		return 0;
+
+	boost_write(css, NULL, boost);
+
+	return 0;
+}
+
+static int prefer_idle_write_wrapper(struct cgroup_subsys_state *css,
+			struct cftype *cft, u64 prefer_idle)
+{
+	if (!strcmp(current->comm, "init"))
+		return 0;
+
+	prefer_idle_write(css, NULL, prefer_idle);
+
+	return 0;
+}
+#endif
+
 static struct cftype files[] = {
 #ifdef CONFIG_SCHED_WALT
 	{
 		.name = "sched_boost_no_override",
 		.read_u64 = sched_boost_override_read,
-		.write_u64 = sched_boost_override_write,
+		.write_u64 = sched_boost_override_write_wrapper,
 	},
 	{
 		.name = "colocate",
 		.read_u64 = sched_colocate_read,
-		.write_u64 = sched_colocate_write,
+		.write_u64 = sched_colocate_write_wrapper,
 	},
 #endif
 	{
 		.name = "boost",
 		.read_s64 = boost_read,
-		.write_s64 = boost_write,
+		.write_s64 = boost_write_wrapper,
 	},
 	{
 		.name = "prefer_idle",
 		.read_u64 = prefer_idle_read,
-		.write_u64 = prefer_idle_write,
+		.write_u64 = prefer_idle_write_wrapper,
 	},
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	{
+		.name = "defered",
+		.read_s64 = defered_read,
+		.write_s64 = defered_write,
+	},
+#endif
 	{ }	/* terminate */
 };
+
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+static enum hrtimer_restart
+schedtune_boostgroup_timer(struct hrtimer *htimer)
+{
+	unsigned long flags;
+	struct boost_groups *bg;
+	struct boost_work *bw;
+	struct boost_group_timer *bg_timer =
+			container_of(htimer, struct boost_group_timer, timer);
+	int cpu = bg_timer->cpu;
+	int update = 0;
+	int boost_max;
+
+	bg = &per_cpu(cpu_boost_groups, cpu);
+
+	raw_spin_lock_irqsave(&bg->lock, flags);
+
+	/* Update cpu boost value */
+	if (bg_timer->defered > 0 && bg->group[bg_timer->index].tasks > 0) {
+		bg_timer->dboost = bg->group[bg_timer->index].boost;
+		boost_max = bg->boost_max;
+		schedtune_cpu_update(cpu, sched_clock_cpu(cpu));
+		if (boost_max != bg->boost_max)
+			update = 1;
+	}
+
+	raw_spin_unlock_irqrestore(&bg->lock, flags);
+
+	if (update) {
+		bw = &per_cpu(cpu_boost_work, cpu);
+		kthread_queue_work(&st_boost_worker.worker, &bw->work);
+	}
+
+	return HRTIMER_NORESTART;
+}
+
+static void
+schedtune_boost_work(struct kthread_work *work)
+{
+	unsigned long flags;
+	struct boost_work *bw = container_of(work, struct boost_work, work);
+	int cpu = bw->cpu;
+
+	/* It's better to check bg tasks before update cpufreq... */
+	raw_spin_lock_irqsave(&cpu_rq(cpu)->lock, flags);
+	schedtune_update_cpufreq(cpu);
+	raw_spin_unlock_irqrestore(&cpu_rq(cpu)->lock, flags);
+}
+
+static void
+schedtune_irq_work(struct irq_work *work)
+{
+	struct boost_work *bw =
+			container_of(work, struct boost_work, irq_work);
+
+	kthread_queue_work(&st_boost_worker.worker, &bw->work);
+}
+
+static inline int
+schedtune_init_boost_kthread(void)
+{
+	int cpu;
+	int ret;
+	struct task_struct *thread;
+	struct boost_work *bw;
+	struct sched_param param = { .sched_priority = 1 };
+
+	for_each_possible_cpu(cpu) {
+		bw = &per_cpu(cpu_boost_work, cpu);
+		bw->cpu = cpu;
+		kthread_init_work(&bw->work, schedtune_boost_work);
+		init_irq_work(&bw->irq_work, schedtune_irq_work);
+	}
+	st_boost_worker.thread = NULL;
+	kthread_init_worker(&st_boost_worker.worker);
+	thread = kthread_create(kthread_worker_fn,
+			&st_boost_worker.worker, "kworker/st10:0");
+	if (IS_ERR_OR_NULL(thread)) {
+		pr_err("failed to create stbw thread: %ld\n", PTR_ERR(thread));
+		return PTR_ERR(thread);
+	}
+
+	ret = sched_setscheduler_nocheck(thread, SCHED_FIFO, &param);
+	if (ret) {
+		kthread_stop(thread);
+		pr_warn("%s: failed to set SCHED_FIFO\n", __func__);
+		return ret;
+	}
+
+	st_boost_worker.thread = thread;
+	wake_up_process(thread);
+
+	return 0;
+}
+#endif
 
 static int
 schedtune_boostgroup_init(struct schedtune *st)
@@ -725,45 +1074,45 @@ schedtune_boostgroup_init(struct schedtune *st)
 		bg->group[st->idx].boost = 0;
 		bg->group[st->idx].tasks = 0;
 		bg->group[st->idx].ts = 0;
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+		bg->bg_timer[st->idx].defered = 0;
+		bg->bg_timer[st->idx].dboost = 0;
+		bg->bg_timer[st->idx].index = st->idx;
+		bg->bg_timer[st->idx].cpu = cpu;
+		hrtimer_init(&bg->bg_timer[st->idx].timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+		bg->bg_timer[st->idx].timer.function = schedtune_boostgroup_timer;
+#endif
 	}
 
 	return 0;
 }
 
 #ifdef CONFIG_STUNE_ASSIST
-struct st_data {
-	char *name;
-	int boost;
-	bool prefer_idle;
-	bool colocate;
-	bool no_override;
-};
-
 static void write_default_values(struct cgroup_subsys_state *css)
 {
-	static struct st_data st_targets[] = {
-		{ "audio-app",	0, 0, 0, 0 },
-		{ "background",	0, 0, 0, 0 },
-		{ "foreground",	5, 1, 0, 1 },
-		{ "rt",		0, 0, 0, 0 },
-		{ "top-app",	10, 1, 0, 1 },
+	u8 i;
+	struct groups_data {
+		char *name;
+		int boost;
+		bool prefer_idle;
+		bool colocate;
+		bool no_override;
 	};
-	int i;
+	struct groups_data groups[3] = {
+		{ "top-app",	5, 1, 0, 1 },
+		{ "foreground", 1, 1, 0, 1 },
+		{ "background", 0, 0, 1, 0 }};
 
-	for (i = 0; i < ARRAY_SIZE(st_targets); i++) {
-		struct st_data tgt = st_targets[i];
-
-		if (!strcmp(css->cgroup->kn->name, tgt.name)) {
-			pr_info("stune_assist: setting values for %s: boost=%d prefer_idle=%d colocate=%d no_override=%d\n",
-				tgt.name, tgt.boost, tgt.prefer_idle,
-				tgt.colocate, tgt.no_override);
-
-			boost_write(css, NULL, tgt.boost);
-			prefer_idle_write(css, NULL, tgt.prefer_idle);
-#ifdef CONFIG_SCHED_WALT
-			sched_colocate_write(css, NULL, tgt.colocate);
-			sched_boost_override_write(css, NULL, tgt.no_override);
-#endif
+	for (i = 0; i < ARRAY_SIZE(groups); i++) {
+		if (!strcmp(css->cgroup->kn->name, groups[i].name)) {
+			pr_info("%s: %i - %i - %i - %i\n", groups[i].name,
+					groups[i].boost, groups[i].prefer_idle,
+					groups[i].colocate,
+					groups[i].no_override);
+			boost_write(css, NULL, groups[i].boost);
+			prefer_idle_write(css, NULL, groups[i].prefer_idle);
+			sched_colocate_write(css, NULL, groups[i].colocate);
+			sched_boost_override_write(css, NULL, groups[i].no_override);
 		}
 	}
 }
@@ -784,10 +1133,13 @@ schedtune_css_alloc(struct cgroup_subsys_state *parent_css)
 		return ERR_PTR(-ENOMEM);
 	}
 
-	/* Allow only a limited number of boosting groups */
-	for (idx = 1; idx < BOOSTGROUPS_COUNT; ++idx)
+	for (idx = 1; idx < BOOSTGROUPS_COUNT; ++idx) {
 		if (!allocated_group[idx])
 			break;
+#ifdef CONFIG_STUNE_ASSIST
+		write_default_values(&allocated_group[idx]->css);
+#endif
+	}
 	if (idx == BOOSTGROUPS_COUNT) {
 		pr_err("Trying to create more than %d SchedTune boosting groups\n",
 		       BOOSTGROUPS_COUNT);
@@ -815,6 +1167,11 @@ out:
 static void
 schedtune_boostgroup_release(struct schedtune *st)
 {
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	/* Reset defered and dboost */
+	schedtune_boostgroup_update_defered(st->idx, 0);
+#endif
+
 	/* Reset this boost group */
 	schedtune_boostgroup_update(st->idx, 0);
 
@@ -852,6 +1209,11 @@ schedtune_init_cgroups(void)
 		bg = &per_cpu(cpu_boost_groups, cpu);
 		memset(bg, 0, sizeof(struct boost_groups));
 		raw_spin_lock_init(&bg->lock);
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+		bg->bg_timer[0].cpu = cpu;
+		hrtimer_init(&bg->bg_timer[0].timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+		bg->bg_timer[0].timer.function = schedtune_boostgroup_timer;
+#endif
 	}
 
 	pr_info("schedtune: configured to support %d boost groups\n",
@@ -868,6 +1230,9 @@ schedtune_init(void)
 {
 	schedtune_spc_rdiv = reciprocal_value(100);
 	schedtune_init_cgroups();
+#ifdef CONFIG_PRODUCT_REALME_TRINKET
+	schedtune_init_boost_kthread();
+#endif
 	return 0;
 }
 postcore_initcall(schedtune_init);
