@@ -36,7 +36,13 @@ fi
 # <---KERNELSU PATCH--->
 
 # Patch with latest KernelSU
-curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+  echo "Applying latest KernelSU patch"
+if ! [ -d "$KERNEL_DIR"/KernelSU ]; then
+  curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+else
+  echo -e "KernelSU patch failed, stopping build now..."
+  exit 1
+fi
 
 # <----START COMPILATION--->
 
