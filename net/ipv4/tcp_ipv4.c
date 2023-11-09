@@ -2535,8 +2535,7 @@ static int __net_init tcp_sk_init(struct net *net)
 	net->ipv4.sysctl_tcp_sack = 1;
 	net->ipv4.sysctl_tcp_window_scaling = 1;
 	net->ipv4.sysctl_tcp_timestamps = 0;
-	net->ipv4.sysctl_tcp_default_init_rwnd = TCP_INIT_CWND * 2;
-
+	
 	#ifdef CONFIG_PRODUCT_REALME_TRINKET
 	//Hao.Peng@PSW.CN.WiFi.Network.login.1854960, 2019/03/30,
 	//add for [BUGID],disable tcp random timestamp,some networks limit tcp syn before login
