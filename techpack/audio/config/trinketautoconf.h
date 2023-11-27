@@ -62,6 +62,7 @@
 #define CONFIG_SND_SOC_WCD937X 1
 #define CONFIG_SND_SOC_WCD937X_SLAVE 1
 #define CONFIG_SND_EVENT 1
+#define CONFIG_SOUND_CONTROL 1
 #ifndef CONFIG_PRODUCT_REALME_TRINKET
 /*huanli.chang@PSW.MM.AudioDriver.Machine,2019/04/03, Add for audio bringup*/
 #define CONFIG_PRODUCT_REALME_TRINKET
