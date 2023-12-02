@@ -1038,8 +1038,8 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 
 		if (tsk) {
 			if (tsk->in_iowait) {
-				__schedstat_add(se->statistics.iowait_sum, delta);
-				__schedstat_inc(se->statistics.iowait_count);
+				schedstat_add(se->statistics.iowait_sum, delta);
+				schedstat_inc(se->statistics.iowait_count);
 			}
 
 			/*
@@ -7434,7 +7434,7 @@ static inline bool task_fits_max(struct task_struct *p, int cpu)
 {
 	unsigned long capacity = capacity_orig_of(cpu);
 	unsigned long max_capacity = cpu_rq(cpu)->rd->max_cpu_capacity.val;
-	unsigned long task_boost = per_task_boost(p);
+	unsigned long task_boost __maybe_unused = per_task_boost(p);
 
 	if (capacity == max_capacity)
 		return true;
@@ -7564,7 +7564,7 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 	bool next_group_higher_cap = false;
 	int isolated_candidate = -1;
 	int mid_cap_orig_cpu = cpu_rq(smp_processor_id())->rd->mid_cap_orig_cpu;
-	struct task_struct *curr_tsk;
+	struct task_struct __maybe_unused *curr_tsk;
 
 	*backup_cpu = -1;
 
