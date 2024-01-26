@@ -50,6 +50,7 @@ obj-$(CONFIG_SRAM)		+= sram.o
 obj-$(CONFIG_SRAM_EXEC)		+= sram-exec.o
 obj-y				+= mic/
 obj-$(CONFIG_GENWQE)		+= genwqe/
+obj-$(CONFIG_KPROFILES)         += kprofiles/
 obj-$(CONFIG_HDCP_QSEECOM)	+= hdcp_qseecom.o
 obj-$(CONFIG_HDCP_QSEECOM)	+= msm_hdcp.o
 obj-$(CONFIG_QSEECOM)		+= qseecom.o
@@ -64,7 +65,6 @@ obj-$(CONFIG_FPR_FPC) 	+= fpr_FingerprintCard/
 obj-$(CONFIG_UID_SYS_STATS)	+= uid_sys_stats.o
 obj-$(CONFIG_MEMORY_STATE_TIME)	+= memory_state_time.o
 obj-$(CONFIG_QPNP_MISC) 	+= qpnp-misc.o
-obj-$(CONFIG_KPROFILES)	        += kprofiles.o
 # Hongzhu.Su@ODM_WT.BSP 2020/08/27, Add for WT hardware information
 obj-$(CONFIG_ODM_WT_EDIT)       += hardware_info.o
 
