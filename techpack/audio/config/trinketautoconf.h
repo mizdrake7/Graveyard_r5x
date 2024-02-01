@@ -74,3 +74,4 @@
 /* He.Lu@PSW.MM.AudioDriver, 2019/12/18, Add for homer */
 //#define CONFIG_SND_SOC_SIA81XX 1
 //#endif /* CONFIG_PRODUCT_REALME_TRINKET */
+#define CONFIG_SOUND_CONTROL 1
