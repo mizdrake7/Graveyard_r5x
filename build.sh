@@ -22,6 +22,15 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
 	ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
 
+# Patch with latest KernelSU
+  echo "Applying latest KernelSU patch"
+if ! [ -d "$KERNEL_DIR"/KernelSU ]; then
+  curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+else
+  echo -e "KernelSU patch failed, stopping build now..."
+  exit 1
+fi
+
 # <---SETUP CLANG COMPILER/LINKER--->
 
 if ! [ -d "$TC_DIR" ]; then
