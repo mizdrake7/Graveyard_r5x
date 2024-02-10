@@ -9,7 +9,7 @@
 SECONDS=0 # builtin bash timer
 TZ=Asia/Kolkata
 ZIPNAME="Graveyard-v16-r5x-$(date '+%Y%m%d-%H%M').zip"
-TC_DIR="$HOME/tc/weebx_clang"
+TC_DIR="$HOME/tc/zyc_clang"
 AK3_DIR="$HOME/android/AnyKernel3"
 DEFCONFIG="vendor/RMX1911_defconfig"
 export TZ=Asia/Kolkata
@@ -34,10 +34,10 @@ fi
 # <---SETUP CLANG COMPILER/LINKER--->
 
 if ! [ -d "$TC_DIR" ]; then
-  echo "WeebX clang not found!"
-  # Clone WeebX Clang repository
-  echo "Cloning WeebX Clang 18 to $TC_DIR..."
-  if ! git clone --depth=1 --single-branch https://gitlab.com/mizdrake7/weebx-clang "$TC_DIR"; then
+  echo "ZYC clang not found!"
+  # Clone ZYC Clang repository
+  echo "Cloning ZYC Clang 18 to $TC_DIR..."
+  if ! git clone --depth=1 --single-branch https://gitlab.com/mizdrake7/zyc_clang "$TC_DIR"; then
     echo "Cloning failed! Aborting..."
     exit 1
   fi
