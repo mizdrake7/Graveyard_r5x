@@ -115,4 +115,5 @@ obj-$(CONFIG_INPUT_TOUCHSCREEN)      += usb_notifier.o
 obj-$(CONFIG_INPUT_TOUCHSCREEN)      += update_tpfw_notifier.o
 obj-$(CONFIG_INPUT_TOUCHSCREEN)      += tpd_summer.o
 obj-$(CONFIG_TOUCHSCREEN_NT36525B)	 += NT36525B/
+obj-$(CONFIG_TOUCHSCREEN_COMMON)     += tp_common.o
 endif

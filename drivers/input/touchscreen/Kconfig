@@ -1294,4 +1294,14 @@ source "drivers/input/touchscreen/ili9881h/Kconfig"
 source "drivers/input/touchscreen/NT36525B/Kconfig"
 #Bo.Zhang@ODM_WT.BSP.Touchscreen,2020/03/21,Add Litchi TP for RM end
 #endif
+
+config TOUCHSCREEN_COMMON
+	bool "Common touchscreen interface to interact with userspace"
+	default y
+	help
+	  Say Y here if you want to control touchpanel features via
+	  /sys/touchpanel.
+
+	  If unsure, say N.
+
 endif
