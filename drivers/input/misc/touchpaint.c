@@ -40,7 +40,6 @@ static size_t fb_max_size = 0x02400000;
 static int fb_width = 1080;
 static int fb_height = 2340;
 static enum tp_mode mode = MODE_PAINT;
-module_param(mode, int, 0644);
 /* Brush size in pixels - odd = slower but centered, even = faster but not centered */
 static int brush_size = 2;
 module_param(brush_size, int, 0644);
