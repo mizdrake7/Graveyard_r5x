@@ -190,7 +190,7 @@ static int __init init_ladder(void)
 	 * governor.
 	 */
 	if (!tick_nohz_enabled)
-		ladder_governor.rating = 25;
+		ladder_governor.rating = 40;
 
 	return cpuidle_register_governor(&ladder_governor);
 }
