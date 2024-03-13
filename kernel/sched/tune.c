@@ -925,18 +925,18 @@ static int prefer_high_cap_write(struct cgroup_subsys_state *css,
 static struct cftype files[] = {
 #ifdef CONFIG_SCHED_WALT
 	{
-		.name = "sched_boost_no_override",
+		.name = "sched_boost_no_override_alt",
 		.read_u64 = sched_boost_override_read,
 		.write_u64 = sched_boost_override_write,
 	},
 	{
-		.name = "colocate",
+		.name = "colocate_alt",
 		.read_u64 = sched_colocate_read,
 		.write_u64 = sched_colocate_write,
 	},
 #endif
 	{
-		.name = "boost",
+		.name = "boost_alt",
 		.read_s64 = boost_read,
 #ifdef CONFIG_STUNE_ASSIST
 		.write_s64 = boost_write_wrapper,
@@ -945,7 +945,7 @@ static struct cftype files[] = {
 #endif
 	},
 	{
-		.name = "prefer_idle",
+		.name = "prefer_idle_alt",
 		.read_u64 = prefer_idle_read,
 #ifdef CONFIG_STUNE_ASSIST
 		.write_u64 = prefer_idle_write_wrapper,
