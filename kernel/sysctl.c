@@ -1825,12 +1825,7 @@ static struct ctl_table vm_table[] = {
 		.procname	= "compact_memory",
 		.data		= &sysctl_compact_memory,
 		.maxlen		= sizeof(int),
-#ifdef CONFIG_PRODUCT_REALME_TRINKET
-/*Huacai.Zhou@PSW.kernel.mm, 2018-08-20, modify permission for coloros.athena*/
-		.mode		= 0222,
-#else
 		.mode		= 0200,
-#endif /*CONFIG_PRODUCT_REALME_TRINKET*/
 		.proc_handler	= sysctl_compaction_handler,
 	},
 	{
