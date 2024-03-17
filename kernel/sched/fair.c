@@ -6564,7 +6564,6 @@ static void dump_eenv_debug(struct energy_env *eenv)
  */
 static inline int select_energy_cpu_idx(struct energy_env *eenv)
 {
-	int last_cpu_idx = eenv->max_cpu_count - 1;
 	struct sched_domain *sd;
 	struct sched_group *sg;
 	int sd_cpu = -1;
@@ -6618,10 +6617,7 @@ static inline int select_energy_cpu_idx(struct energy_env *eenv)
 	 * Compare the other CPU candidates to find a CPU which can be
 	 * more energy efficient then EAS_CPU_PRV
 	 */
-	if (sched_feat(FBT_STRICT_ORDER))
-		last_cpu_idx = EAS_CPU_BKP;
-
-	for(cpu_idx = EAS_CPU_NXT; cpu_idx <= last_cpu_idx; cpu_idx++) {
+	for(cpu_idx = EAS_CPU_NXT; cpu_idx < eenv->max_cpu_count; cpu_idx++) {
 		if (eenv->cpu[cpu_idx].cpu_id < 0)
 			continue;
 		eenv->cpu[cpu_idx].nrg_delta =
