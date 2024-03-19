@@ -415,42 +415,20 @@
 	soc: soc { };
 
 	firmware: firmware {
-		android {
-			compatible = "android,firmware";
-			vbmeta {
-				compatible = "android,vbmeta";
-				//#ifndef CONFIG_PRODUCT_REALME_TRINKET
-				//parts = "vbmeta,boot,system,vendor,dtbo";
-				//#else
-				parts = "vbmeta,boot,system,vendor,dtbo,recovery,odm";
-				//#endif
-			};
-			fstab {
-				compatible = "android,fstab";
-				vendor {
-					compatble = "android,vendor";
-					//#ifndef CONFIG_PRODUCT_REALME_TRINKET
-					//dev = "/dev/block/platform/soc/4804000.ufshc/by-name/vendor";
-					//#else
-					dev = "/dev/block/platform/soc/4744000.sdhci/by-name/vendor";
-					//#endif
-					type = "ext4";
-                /*#if defined(CONFIG_PRODUCT_REALME_TRINKET) && defined(CONFIG_EXT4_ASYNC_DISCARD_SUPPORT)*/
-                /*yh@PSW.BSP.Storage.EXT4, 2018-11-26 add for ext4 async discard suppot*/
-					mnt_flags = "ro,barrier=1,async_discard";
-                /*#else*/
-					/*mnt_flags = "ro,barrier=1,discard";*/
-                /*#endif*/
-					//#ifndef CONFIG_PRODUCT_REALME_TRINKET
-					//#Yunqing.Zeng@BSP.Kernel.Driver, 2019/03/28, Modify for AB partition disable.
-					//fsmgr_flags = "wait,slotselect,avb";
-					//#else
-					fsmgr_flags = "wait";
-					//#endif
-					status = "ok";
-				};
-			};
-		};
+	    android {
+	        boot_devices = "soc/4744000.sdhci";
+	        compatible = "android,firmware";
+	        vbmeta {
+	            compatible = "android,vbmeta";
+	            parts = "vbmeta,boot,system,vendor,dtbo,recovery,odm";
+	        };
+	        fstab {
+	            compatible = "android,fstab";
+	            vendor {
+					status = "disabled";
+	            };
+	        };
+	    };
 	};
 
 	reserved-memory {
