@@ -1016,7 +1016,7 @@ static void pm_print_active_wakeup_sources(void)
 		    #ifdef CONFIG_PRODUCT_REALME_TRINKET
             //Yongyao.Song@PSW.NW.PWR.919039,2018/11/19, add for analysis power coumption.
             //add for modem wake up source
-			pr_info("active wakeup source: %s\n", ws->name);
+			pr_debug("active wakeup source: %s\n", ws->name);
 			#else
 			pr_debug("active wakeup source: %s\n", ws->name);
 			#endif
@@ -1059,7 +1059,7 @@ static void pm_print_active_wakeup_sources(void)
     */
     #else
 	if (!active && last_activity_ws){
-		pr_info("last active wakeup source: %s\n",
+		pr_debug("last active wakeup source: %s\n",
 			last_activity_ws->name);
 		for(i = 0; i < MODEM_WAKEUP_SRC_NUM - 1; i++)
 		{
@@ -1454,7 +1454,7 @@ static void active_max_reset(void)
 	ktime_t total_time;
 	struct wakeup_source *ws;
 
-	pr_info("%s\n", __func__);
+	pr_debug("%s\n", __func__);
 	active_max_reset_time = ktime_get();
 	srcuidx = srcu_read_lock(&wakeup_srcu);
 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
@@ -1604,7 +1604,7 @@ static int ws_fb_notify_callback(struct notifier_block *nb, unsigned long val, v
 
 	if(evdata && evdata->data) {
 		blank = evdata->data;
-		pr_info(KERN_INFO  "%s, val=%ld, blank=%d\n", __func__,val,*blank);
+		pr_debug(KERN_INFO  "%s, val=%ld, blank=%d\n", __func__,val,*blank);
 		#ifdef CONFIG_DRM_MSM
 		if (*blank == MSM_DRM_BLANK_POWERDOWN) { //suspend
 			if (val == MSM_DRM_EARLY_EVENT_BLANK) {    //early event
@@ -1617,7 +1617,7 @@ static int ws_fb_notify_callback(struct notifier_block *nb, unsigned long val, v
 				//kernel_time_reset();
 				//active_max_reset();
 				#endif
-				pr_info(KERN_INFO  "%s, POWERDOWN\n", __func__);
+				pr_debug(KERN_INFO  "%s, POWERDOWN\n", __func__);
 			}
 		}
 		#ifdef CONFIG_DRM_MSM
@@ -1627,7 +1627,7 @@ static int ws_fb_notify_callback(struct notifier_block *nb, unsigned long val, v
 		else if (*blank == FB_BLANK_UNBLANK) { //resume
 			if (val == FB_EVENT_BLANK) {    //event
 		#endif
-				pr_info(KERN_INFO  "%s, UNBLANK\n", __func__);
+				pr_debug(KERN_INFO  "%s, UNBLANK\n", __func__);
 			}
 		}
 	}
@@ -1660,25 +1660,25 @@ static int __init wakelock_profiler_init(void)
 	active_max_reset_time = ktime_set(0, 0);
 	wakelock_profiler = kobject_create_and_add("wakelock_profiler", kernel_kobj);
 	if (!wakelock_profiler) {
-		pr_info(KERN_WARNING "[%s] failed to create a sysfs kobject\n",
+		pr_debug(KERN_WARNING "[%s] failed to create a sysfs kobject\n",
 				__func__);
 		return 1;
 	}
 	retval = sysfs_create_group(wakelock_profiler, &attr_group);
 	if (retval) {
 		kobject_put(wakelock_profiler);
-		pr_info(KERN_WARNING "[%s] failed to create a sysfs group %d\n",
+		pr_debug(KERN_WARNING "[%s] failed to create a sysfs group %d\n",
 				__func__, retval);
 	}
 #if defined(CONFIG_DRM_MSM)
 	retval = msm_drm_register_client(&ws_fb_notify_block);
 	if (retval) {
-		pr_info("%s error: register notifier failed,drm!\n", __func__);
+		pr_debug("%s error: register notifier failed,drm!\n", __func__);
 	}
 #elif defined(CONFIG_FB)
 	retval = fb_register_client(&ws_fb_notify_block);
 	if (retval) {
-		pr_info("%s error: register notifier failed!\n", __func__);
+		pr_debug("%s error: register notifier failed!\n", __func__);
 	}
 #endif
 
