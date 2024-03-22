@@ -33,14 +33,27 @@ fi
 
 # <---SETUP CLANG COMPILER/LINKER--->
 
-if ! [ -d "$TC_DIR" ]; then
-  echo "ZYC clang not found!"
-  # Clone ZYC Clang repository
-  echo "Cloning ZYC Clang 18 to $TC_DIR..."
-  if ! git clone --depth=1 --single-branch https://gitlab.com/mizdrake7/zyc_clang "$TC_DIR"; then
-    echo "Cloning failed! Aborting..."
+if [ ! -d "$TC_DIR" ]; then
+  mkdir -p "$TC_DIR" || { echo "Failed to create directory $TC_DIR! Aborting..."; exit 1; }
+  echo "ZYC Clang 19 not found!"
+  # Fetch latest ZYC Clang release
+  LATEST_RELEASE_INFO=$(curl -s https://api.github.com/repos/ZyCromerZ/Clang/releases/latest)
+  TARBALL_URL=$(echo "$LATEST_RELEASE_INFO" | jq -r '.assets[0].browser_download_url')
+  if [ -z "$TARBALL_URL" ]; then
+    echo "Failed to fetch tarball URL! Aborting..."
     exit 1
   fi
+  echo "Downloading ZYC Clang 19..."
+  if ! wget -O zyc_clang.tar.gz "$TARBALL_URL"; then
+    echo "Downloading failed! Aborting..."
+    exit 1
+  fi
+  echo "Extracting ZYC Clang 19 to $TC_DIR..."
+  if ! tar -xzf zyc_clang.tar.gz -C "$TC_DIR"; then
+    echo "Extraction failed! Aborting..."
+    exit 1
+  fi
+  rm zyc_clang.tar.gz
 fi
 
 # <---KERNELSU PATCH--->
