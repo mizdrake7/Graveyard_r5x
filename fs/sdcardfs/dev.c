@@ -201,7 +201,7 @@ static int sdcardfs_getuid(struct dentry *dentry)
 			uid = -1;
 		}
 	}
-	pr_info("sdcardfs uid=%d", uid);
+	pr_debug("sdcardfs uid=%d", uid);
 	return uid;
 }
 

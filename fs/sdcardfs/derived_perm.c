@@ -547,7 +547,7 @@ int setup_obb_dentry(struct dentry *dentry, struct path *lower_path)
 		 * because the sdcard daemon also regards this case as
 		 * a lookup fail.
 		 */
-		pr_info("sdcardfs: the sbi->obbpath is not available\n");
+		pr_debug("sdcardfs: the sbi->obbpath is not available\n");
 	}
 	return err;
 }
